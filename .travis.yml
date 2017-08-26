@@ -1,9 +1,14 @@
 language: node_js
 node_js:
-  - 6
+- 6
 cache:
   directories:
-    - node_modules
+  - node_modules
 script:
-  - npm run build
-  - npm test
+- npm run build
+- npm test
+notifications:
+  irc: chat.freenode.net#contextubot
+  slack:
+    rooms:
+      secure: KuDr6gQNRwzxfvW1TlrYJxoYErAFVdtj/UgVDw7484J/3XviXZ5hA2znPA1AoPlxI/YGMhdVw1VOUPUFMBBsKKPnyBIAMJs4mE5xWalCoenlECSxc/P1X9/toRTR0sJiyWSLSiJejmsjQ2xqXJT6nI8ZulU8JUTd2TdrjJG9uy6yWhC4z4+sTkvu1Jwy/hyz8G9EpAL1cemrLxC1ebzK0Px2oX+6annWT6dsdZLbOaYV/gWon/QSARTqJEDIe6Ukq9eif4bgjpFvJEBj8pxbhDGpiqRT5+GcKFmx2Ftq4cQZPalQawn5gnuRDDTD8FqXWrGMeRs7x0SqaPgXQo8dO5D4SxseXQDjZpfBNmrj74trnFgfUs4Q/nx8MRFCqbgCqIA+dN4FA6T0+17t7uMw1SJhN+rVGagF4ypUGFFH+4adl6wpLYFWO5s/9gDCh2ln79fVwjPWYveV1FCLXj4GrI38UH7oCocS8aCrJMJlLmCUGbI2hzn5nyVWoteUGlLziFnfUUxzxPhXSlg3FX7QyVyDGK4+q3t27GbfxkBzDoj6sBPub8Ys7Td3sK7qds1sdv0h9Cr1oxWHW12vno8E/W+6wJ+z1khJpJ5tdX0aRMsYP9URVxLMGwRKbkb7XGtZYEtHyh0NWCgKALcdix3eoo6wRBEYxTTV7GSiyoyIXaE=
