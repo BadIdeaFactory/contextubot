@@ -1,10 +1,16 @@
 @import '~antd/dist/antd.css';
 
 .App {
-  text-align: center;
+  /*text-align: center;*/
 }
 
-@keyframes App-logo-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+.steps-content {
+  margin-top: 16px;
+  border: 1px dashed #e9e9e9;
+  border-radius: 6px;
+  background-color: #fafafa;
+  min-height: 200px;
+  padding-top: 20px;
+  padding-left: 20px;
+  padding-right: 20px;
 }
