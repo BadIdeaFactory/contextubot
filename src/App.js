@@ -155,9 +155,13 @@ class App extends Component {
 
   renderErrors() {
     if (!this.state.data.errors) return null;
+    const filteredArr = this.state.data.errors.filter((err) => {
+      return Object.keys(err).length;
+    });
+
     return (
-      <Panel header={`Errors${this.state.data.errors ? ': ' + this.state.data.errors.length : ''}`} key="7">
-        <ReactJson name="errors" src={this.state.data.errors} />
+      <Panel header={`Errors${filteredArr ? ': ' + filteredArr.length : ''}`} key="7">
+        <ReactJson name="errors" src={filteredArr} />
       </Panel>
     );
   }
