@@ -3,7 +3,7 @@ import ReactJson from 'react-json-view';
 import axios from 'axios';
 import isUrl from 'is-url-superb';
 
-import { Layout, BackTop, Input, Steps, Collapse, Spin } from 'antd';
+import { Layout, BackTop, Input, Steps, Collapse, Spin, Switch } from 'antd';
 import Button from 'antd/lib/button';
 
 import './App.css';
@@ -108,6 +108,56 @@ class App extends Component {
       });
   }
 
+  renderTitle() {
+    if (!this.state.data.info) return null;
+    return (
+      <div style={{
+        padding: 16,
+        width: 480,
+        fontWeight: '600',
+        fontSize: 24
+      }}>
+        <span>{this.state.data.info.title}</span>
+      </div>
+    );
+  }
+
+  renderThumbnail() {
+    if (!this.state.data.embed) return null;
+    return (
+      <div style={{
+        padding: 16
+      }}>
+        <img alt="thumbnail" src={this.state.data.embed[0].thumbnail_url} />
+      </div>
+    );
+  }
+
+  renderDescription() {
+    if (!this.state.data.embed) return null;
+    return (
+      <div style={{
+        padding: 16,
+        width: 480
+      }}>
+        <span>{this.state.data.embed[0].description}</span>
+      </div>
+    );
+  }
+
+  renderViewCount() {
+    if (!this.state.data.info) return null;
+    return (
+      <div style={{
+        padding: 16,
+        width: 480,
+        fontWeight: '600'
+      }}>
+        <span>Views : {new Intl.NumberFormat().format(this.state.data.info.view_count)}</span>
+      </div>
+    );
+  }
+
   renderHeaders() {
     if (!this.state.data.headers) return null;
     return (
@@ -186,18 +236,33 @@ class App extends Component {
         <BackTop />
         <Content>
           <div style={{ background: '#fff', padding: 24, minHeight: 280 }}>
+
+          <div style={{ textAlign: 'right', paddingTop: 16, paddingBottom: 16 }}>
+            <Switch checkedChildren="Simple" unCheckedChildren="Detailed" />
+          </div>
+
           <Search
             placeholder="please enter link here"
             size="large"
+            value="https://www.youtube.com/watch?v=4F4qzPbcFiA"
             onChange={event => this.handleChange.bind(this)(event)}
             onSearch={value => this.handleSearch.bind(this)(value)}
           />
+
           <Steps current={this.state.step} status={this.state.status} style={{marginTop: 24}}>
             <Step title={<span>Analyze Link {this.state.status === 'process' ? <Spin size="small" style={{marginTop: 3, marginLeft: 4}} /> : null}</span>} description={this.state.step0} />
             <Step title="Detect Media" description={this.state.step1} />
             <Step title="Fingerprint" description={this.state.step2} />
             <Step title="Show Context" description={this.state.step3} />
           </Steps>
+
+          {this.renderTitle()}
+
+          {this.renderThumbnail()}
+
+          {this.renderDescription()}
+
+          {this.renderViewCount()}
 
           {this.renderCollapse()}
 
