@@ -237,34 +237,36 @@ class App extends Component {
         <Content>
           <div style={{ background: '#fff', padding: 24, minHeight: 280 }}>
 
-          <div style={{ textAlign: 'right', paddingTop: 16, paddingBottom: 16 }}>
-            <Switch checkedChildren="Simple" unCheckedChildren="Detailed" />
-          </div>
+            <h1>The Glorious Contextubot</h1>
 
-          <Search
-            placeholder="please enter link here"
-            size="large"
-            value="https://www.youtube.com/watch?v=4F4qzPbcFiA"
-            onChange={event => this.handleChange.bind(this)(event)}
-            onSearch={value => this.handleSearch.bind(this)(value)}
-          />
+            <div style={{ textAlign: 'right', paddingTop: 16, paddingBottom: 16 }}>
+              <Switch checkedChildren="Simple" unCheckedChildren="Detailed" />
+            </div>
 
-          <Steps current={this.state.step} status={this.state.status} style={{marginTop: 24}}>
-            <Step title={<span>Analyze Link {this.state.status === 'process' ? <Spin size="small" style={{marginTop: 3, marginLeft: 4}} /> : null}</span>} description={this.state.step0} />
-            <Step title="Detect Media" description={this.state.step1} />
-            <Step title="Fingerprint" description={this.state.step2} />
-            <Step title="Show Context" description={this.state.step3} />
-          </Steps>
+            <Search
+              placeholder="please enter link here"
+              size="large"
+              value="https://www.youtube.com/watch?v=4F4qzPbcFiA"
+              onChange={event => this.handleChange.bind(this)(event)}
+              onSearch={value => this.handleSearch.bind(this)(value)}
+            />
 
-          {this.renderTitle()}
+            <Steps current={this.state.step} status={this.state.status} style={{marginTop: 24}}>
+              <Step title={<span>Analyze Link {this.state.status === 'process' ? <Spin size="small" style={{marginTop: 3, marginLeft: 4}} /> : null}</span>} description={this.state.step0} />
+              <Step title="Detect Media" description={this.state.step1} />
+              <Step title="Fingerprint" description={this.state.step2} />
+              <Step title="Show Context" description={this.state.step3} />
+            </Steps>
 
-          {this.renderThumbnail()}
+            {this.renderTitle()}
 
-          {this.renderDescription()}
+            {this.renderThumbnail()}
 
-          {this.renderViewCount()}
+            {this.renderDescription()}
 
-          {this.renderCollapse()}
+            {this.renderViewCount()}
+
+            {this.renderCollapse()}
 
           </div>
         </Content>
