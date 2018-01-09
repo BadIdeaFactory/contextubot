@@ -97,6 +97,44 @@ class App extends Component {
             status: 'finish',
             step2: <a href={data.fingerprint}><Button type="dashed" icon="download" size="small" style={{marginTop: 10}}>Download</Button></a>
           });
+
+          var video = document.getElementById('video');
+          var scd = Scd(video, { // eslint-disable-line no-undef
+          		mode: 'PlaybackMode',
+          		step_width: 50,
+          		step_height: 37,
+          		debug: true
+          	}, function(sceneTimecodes){
+              console.log(sceneTimecodes.join(', '));
+          });
+
+          video.addEventListener('scenechange', function(e) {
+            console.log('scenechange', e.timeStamp);
+          });
+
+          console.log("attempting to play ....");
+
+          video.playbackRate = 10000;
+          video.muted = true;
+
+
+          /*document.getElementById('start').addEventListener('click', function() {
+            var debugContainer = document.getElementById('__scd-debug');
+            while(debugContainer.firstChild)
+              debugContainer.removeChild(debugContainer.firstChild);
+          });*/
+
+          video.addEventListener('play', function() {
+            var debugContainer = document.getElementById('__scd-debug');
+            while(debugContainer.firstChild)
+              debugContainer.removeChild(debugContainer.firstChild);
+          });
+
+          ['start'].forEach(function(element) {
+            document.getElementById(element).addEventListener('click', scd[element]);
+          });
+
+          //video.play();
         }
       })
       .catch(error => {
@@ -216,6 +254,20 @@ class App extends Component {
     );
   }
 
+  renderComic() {
+    if (!this.state.data.fingerprint) return null;
+    return (
+      <div>
+        <video id="video" width="340" height="254">
+          <source src="JimAcostaTrump.mp4"/>
+        </video>
+        <div><button id="start">Generate scenes</button></div>
+        <div><a href="comicview.html">comicview</a></div>
+        <div id="__scd-debug"></div>
+      </div>
+    );
+  }
+
   renderCollapse() {
     if (Object.keys(this.state.data).length === 0) return null;
     return (
@@ -265,6 +317,8 @@ class App extends Component {
             {this.renderDescription()}
 
             {this.renderViewCount()}
+
+            {this.renderComic()}
 
             {this.renderCollapse()}
 
