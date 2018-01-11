@@ -26,6 +26,7 @@ video {
   text-align: right;
 }
 </style>
+
 </head>
 <body>
 
@@ -34,7 +35,6 @@ video {
     <div class="span3">
       <div class="well">
         <video id="video" width="170" height="127" class="img-polaroid">
-          <source src="JimAcostaTrump.mp4">
         </video>
 
         <div>
@@ -66,13 +66,26 @@ video {
   <footer>
     <p>&copy; 2017 <a href="https://github.com/badideafactory">Bad Idea Factory</a></p>
     <p id="footer-right"><a href="https://twitter.com/biffud" class="twitter-follow-button" data-show-count="false" data-lang="en">Follow @g_marty</a></p>
-    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
   </footer>
 
 </div>
 
 <script>
 var video = document.getElementById('video');
+
+const params = location.search.split('/');
+console.log(params);
+const uid = params[0].slice(1);
+const clipStart = params[1];
+const clipEnd = params[2];
+
+const mp4Url = "https://archive.org/download/"+uid+"/"+uid+".mp4?t="+clipStart+"/"+clipEnd;
+
+console.log(uid);
+
+video.src = mp4Url;
+
+
 var scd = Scd(video, {
 		mode: 'PlaybackMode',
 		step_width: 50,

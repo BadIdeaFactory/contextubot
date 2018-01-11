@@ -254,15 +254,21 @@ class App extends Component {
     );
   }
 
-  renderComic() {
+  renderResults() {
     if (!this.state.data.fingerprint) return null;
+    const uid = 'MSNBCW_20171209_020000_The_Rachel_Maddow_Show';
+    const clipStart = 130;
+    const clipEnd = 190;
+    const mp4Url = "https://archive.org/download/"+uid+"/"+uid+".mp4?t="+clipStart+"/"+clipEnd;
+    const comicUrl = "comicview.html?"+uid+"/"+clipStart+"/"+clipEnd;
+
     return (
       <div>
         <video id="video" width="340" height="254">
-          <source src="JimAcostaTrump.mp4"/>
+          <source src={mp4Url}/>
         </video>
         <div><button id="start">Generate scenes</button></div>
-        <div><a href="comicview.html">comicview</a></div>
+        <div><a href={comicUrl}>comicview</a></div>
         <div id="__scd-debug"></div>
       </div>
     );
@@ -318,7 +324,7 @@ class App extends Component {
 
             {this.renderViewCount()}
 
-            {this.renderComic()}
+            {this.renderResults()}
 
             {this.renderCollapse()}
 
