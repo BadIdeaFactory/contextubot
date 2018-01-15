@@ -1,29 +1,16 @@
 <html>
 <head>
-  <script src="scd.debug.js"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.1.0/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Bangers" rel="stylesheet">
+  <script src="imagefilters.js"></script>
 <style>
-video {
-  margin-bottom: 6px;
-}
-.container {
-  padding-top: 20px;
-}
-#__scd-debug div {
-  float:left;
-  text-align:center;
-  display:inline;
-  margin: 0 46px 30px 0;
-}
-#__scd-debug canvas {
-  background-color: #fff;
-  border: 1px solid rgba(0, 0, 0, 0.2);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  padding: 4px;
-}
 #footer-right {
   margin-top: -30px;
   text-align: right;
+}
+
+.container {
+  font-family: 'Bangers', cursive;
 }
 </style>
 
@@ -31,100 +18,186 @@ video {
 <body>
 
   <div class="container">
-  <div class="row">
-    <div class="span3">
-      <div class="well">
-        <video id="video" width="170" height="127" class="img-polaroid">
-        </video>
 
-        <div>
-          <button id="start" class="btn btn-primary btn-small"><i class="icon-play icon-white"></i>Start</button>
-          <button id="pause" class="btn btn-mini"><i class="icon-pause"></i>Pause</button>
-          <button id="stop" class="btn btn-mini"><i class="icon-stop"></i>Stop</button>
-          <form>
-            <input id="pbr" type="range" value="10000" min="0.5" max="10000" step="0.1" style="width:180px; padding: 10px">
-            <p>Playback Rate <span id="currentPbr">10000</span></p>
-          </form>
-        </div>
-      </div>
-    </div>
-
-    <div class="span9">
-      <div class="hero-unit">
-        <h1>Comiciser</h1>
-        <p>A component to create a comic view from a video.</p>
-      </div>
+    <div style="display:none" class="span12">
       <div>
-        <h2>Detected scenes</h2>
-        <div id="__scd-debug"><p>Click the <i class="icon-play"></i>Start button on the left.</p></div>
+        <video id="video" crossorigin="anonymous" width="320">
+        </video>
       </div>
     </div>
-  </div>
+
+    <div class="span12">
+      <div>
+        <h2>Comic View</h2>
+      </div>
+    </div>
+
+    <div class="row">
+      <div id="frames">
+      </div>
+    </div>
 
   <hr>
 
   <footer>
     <p>&copy; 2017 <a href="https://github.com/badideafactory">Bad Idea Factory</a></p>
-    <p id="footer-right"><a href="https://twitter.com/biffud" class="twitter-follow-button" data-show-count="false" data-lang="en">Follow @g_marty</a></p>
+    <p id="footer-right"><a href="https://twitter.com/biffud" class="twitter-follow-button" data-show-count="false" data-lang="en">Follow @Biffud</a></p>
   </footer>
+  </div>
 
 </div>
 
 <script>
-var video = document.getElementById('video');
-
+const video = document.getElementById('video');
 const params = location.search.split('/');
 console.log(params);
 const uid = params[0].slice(1);
 const clipStart = params[1];
 const clipEnd = params[2];
 
-const mp4Url = "https://archive.org/download/"+uid+"/"+uid+".mp4?t="+clipStart+"/"+clipEnd;
+//const mp4Url = "https://archive.org/download/"+uid+"/"+uid+".mp4?t="+clipStart+"/"+clipEnd;
+//const mp4Url = "test.mp4";
+const mp4Url = "https://api.contextubot.net/proxy?url=https%3A//archive.org/download/MSNBCW_20171209_020000_The_Rachel_Maddow_Show/MSNBCW_20171209_020000_The_Rachel_Maddow_Show.mp4%3Ft%3D130/190";
+//const srtUrl = "https://archive.org/download/"+uid+"/"+uid+".srt?t="+clipStart+"/"+clipEnd;
 
-console.log(uid);
+const srtUrl = "https://api.contextubot.net/proxy?url=https%3A//archive.org/download/MSNBCW_20171209_020000_The_Rachel_Maddow_Show/MSNBCW_20171209_020000_The_Rachel_Maddow_Show.cc5.srt%3Ft%3D130/190";
+//const srtUrl = "test.srt";
+
+let subsObj = null;
+
+let sceneSplits = [];
+let textSplits = [];
+
+fetch(srtUrl).then(function(response) {
+  console.log("here");
+  response.text().then(function(data) {
+    var text = data.toString();
+    var lines = text.split('\n');
+
+    var output = [];
+    var buffer = {
+      content: []
+    };
+
+    var parts;
+    var hms;
+
+    lines.forEach(function(line) {
+      if(!buffer.id)
+        buffer.id = line;
+      else if(!buffer.start) {
+        var range = line.split(' --> ');
+        buffer.start = range[0];
+        buffer.end = range[1];
+        parts = range[0].split(',');
+        hms = parts[0].split(':');
+        buffer.startSec = (parseInt((hms[0] * 60 * 60),10) + parseInt((hms[1] * 60),10) + parseInt(hms[2],10));
+        parts = range[1].split(',');
+        hms = parts[0].split(':');
+        buffer.endSec = (parseInt((hms[0] * 60 * 60),10) + parseInt((hms[1] * 60),10) + parseInt(hms[2],10));
+      }
+      else if(line !== '')
+        buffer.content.push(line);
+      else {
+        output.push(buffer);
+        buffer = {
+          content: []
+        };
+      }
+    });
+    console.log(output);
+    subsObj = output;
+    split();
+  });
+});
+
+function split() {
+
+  let splitIndex = 0;
+  textSplits[0] = "";
+
+  subsObj.forEach(function(subs) {
+    subs.content.forEach(function(text) {
+      let periodIndex = text.indexOf('.');
+      let commaIndex = text.indexOf(',');
+      let puncIndex = -1;
+
+      if (periodIndex >= 0) {
+        puncIndex = periodIndex;
+      } else if (commaIndex >= 0) {
+        puncIndex = commaIndex;
+      }
+
+      if (puncIndex >= 0) {
+        textSplits[splitIndex] += text.substr(0, puncIndex + 1) + " ";
+        sceneSplits[splitIndex] = subs.startSec;
+        splitIndex++;
+        textSplits[splitIndex] = "";
+        textSplits[splitIndex] += text.substr(puncIndex + 1, text.length + " ");
+      } else {
+        textSplits[splitIndex] += text + " ";
+      }
+    });
+  });
+}
 
 video.src = mp4Url;
 
+let index = 0;
 
-var scd = Scd(video, {
-		mode: 'PlaybackMode',
-		step_width: 50,
-		step_height: 37,
-		debug: true
-	}, function(sceneTimecodes){
-    console.log(sceneTimecodes.join(', '));
+function addFrames() {
+  if (index < sceneSplits.length) {
+    setTimeout(function(){
+      addFrame(video, sceneSplits[index], textSplits[index]);
+      index++;
+      addFrames();
+    }, 1000);
+  }
+  // TODO: use promises instead of timeouts
+}
+
+video.addEventListener('loadedmetadata', function() {
+  console.log('loadedmetadata');
+  setTimeout(addFrames, 2000);
+  // TODO: use promises instead of timeouts
 });
 
-video.addEventListener('scenechange', function(e) {
-  console.log('scenechange', e.timeStamp);
-});
+function addFrame(video, seconds, text) {
+  const canvas = document.createElement('canvas');
 
-// Attach click events to buttons.
-document.getElementById('start').addEventListener('click', function() {
-  var debugContainer = document.getElementById('__scd-debug');
-  while(debugContainer.firstChild)
-    debugContainer.removeChild(debugContainer.firstChild);
-});
+  canvas.width = video.videoWidth / 2.1;
+  canvas.height = video.videoHeight / 2.1;
 
-['start', 'pause', 'stop'].forEach(function(element) {
-  document.getElementById(element).addEventListener('click', scd[element]);
-});
+  const div = document.createElement("div");
 
+  div.appendChild(canvas);
+  const textNode = document.createTextNode(text);
+  div.appendChild(textNode);
+  div.style.width = "300px";
+  div.style.height = "240px";
+  div.style.padding = "8px";
+  div.style.float = "left";
+  document.getElementById('frames').appendChild(div);
+  ctx = canvas.getContext("2d");
+  video.currentTime = seconds;
 
-window.onload = function () {
+  video.addEventListener('timeupdate', function() {
 
-  var v = document.getElementById("video");
-  var p = document.getElementById("pbr");
-  var c = document.getElementById("currentPbr");
+    console.log("adding images ...");
 
-  p.addEventListener('input',function(){
-    c.innerHTML = p.value;
-    v.playbackRate = p.value;
-  },false);
+    ctx.drawImage(video, 0, 0, video.videoWidth / 2.1, video.videoHeight / 2.1);
 
-  v.playbackRate = p.value;
+    var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    //var filtered = ImageFilters.GrayScale(imageData);
+    var filtered = ImageFilters.Oil (imageData, 1, 32);
 
-};
+    // put it back into a context to view the results
+
+    ctx.putImageData(filtered, 0, 0);
+
+  });
+}
+
 </script>
 </body>
 </html>
