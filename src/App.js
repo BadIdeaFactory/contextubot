@@ -232,52 +232,52 @@ class App extends Component {
 
     return (
       <div>
-        <div class="video-hldr">
+        <div className="video-hldr">
           <span>The Rachel Maddow Show <br/> MSNBC December 9, 2017 6:03pm-6:15pm PST</span>
-          <video class="video" width="300" height="254" controls>
+          <video className="video" width="300" height="254" controls>
             <source src={mp4Url}/>
           </video>
           <span><a href={comicUrl}>comicview </a></span>
         </div>
 
-        <div class="video-hldr">
+        <div className="video-hldr">
           <span>The O Reilly Factor <br/> FOX News February 6, 2017 8:03pm-8:18pm PST</span>
-          <video class="video" width="300" height="254" controls>
-            <source src="https://archive.org/download/FOXNEWSW_20170207_040300_The_OReilly_Factor/FOXNEWSW_20170207_040300_The_OReilly_Factor.mp4"/>
+          <video className="video" width="300" height="254" controls>
+            <source src="https://archive.org/download/FOXNEWSW_20170207_040300_The_OReilly_Factor/FOXNEWSW_20170207_040300_The_OReilly_Factor.mp4?t=10/70"/>
           </video>
-          <span><a href={comicUrl}>comicview </a></span>
+          <span><a href="comicview.html?FOXNEWSW_20170207_040300_The_OReilly_Factor/10/70">comicview </a></span>
         </div>
 
-        <div class="video-hldr">
+        <div className="video-hldr">
           <span>President Trump Holds First Rally Following ... <br/> CSPAN  August 22, 2017 9:43pm-11:29pm EDT</span>
-          <video class="video" width="300" height="254" controls>
-            <source src="https://archive.org/download/CSPAN_20170823_014300_President_Trump_Holds_First_Rally_Following_Charlottesville_Remarks/CSPAN_20170823_014300_President_Trump_Holds_First_Rally_Following_Charlottesville_Remarks.mp4" />
+          <video className="video" width="300" height="254" controls>
+            <source src="https://archive.org/download/CSPAN_20170823_014300_President_Trump_Holds_First_Rally_Following_Charlottesville_Remarks/CSPAN_20170823_014300_President_Trump_Holds_First_Rally_Following_Charlottesville_Remarks.mp4?t=80/140" />
           </video>
-          <span><a href={comicUrl}>comicview </a></span>
+          <span><a href="comicview.html?CSPAN_20170823_014300_President_Trump_Holds_First_Rally_Following_Charlottesville_Remarks/80/140">comicview </a></span>
         </div>
 
-        <div class="video-hldr">
+        <div className="video-hldr">
           <span>President Trump Holds Rally in Melbourne Florida  <br/> CSPAN  February 18, 2017 9:32pm-10:29pm EST</span>
-          <video class="video" width="300" height="254" controls>
-            <source src="https://archive.org/download/CSPAN_20170219_023200_President_Trump_Holds_Rally_in_Melbourne_Florida/CSPAN_20170219_023200_President_Trump_Holds_Rally_in_Melbourne_Florida.mp4"/>
+          <video className="video" width="300" height="254" controls>
+            <source src="https://archive.org/download/CSPAN_20170219_023200_President_Trump_Holds_Rally_in_Melbourne_Florida/CSPAN_20170219_023200_President_Trump_Holds_Rally_in_Melbourne_Florida.mp4?t=30/90"/>
           </video>
-          <span><a href={comicUrl}>comicview </a></span>
+          <span><a href="comicview.html?CSPAN_20170219_023200_President_Trump_Holds_Rally_in_Melbourne_Florida/30/90">comicview </a></span>
         </div>
 
-        <div class="video-hldr">
+        <div className="video-hldr">
           <span>President Trump Says There is Blame on Both Sides <br/> CSPAN   August 15, 2017 6:37pm-7:01pm EDT</span>
-          <video class="video" width="300" height="254" controls>
-            <source src="https://archive.org/download/CSPAN_20170815_223700_President_Trump_Says_There_is_Blame_on_Both_Sides_for_Violence_in.../CSPAN_20170815_223700_President_Trump_Says_There_is_Blame_on_Both_Sides_for_Violence_in....mp4"/>
+          <video className="video" width="300" height="254" controls>
+            <source src="https://archive.org/download/CSPAN_20170815_223700_President_Trump_Says_There_is_Blame_on_Both_Sides_for_Violence_in.../CSPAN_20170815_223700_President_Trump_Says_There_is_Blame_on_Both_Sides_for_Violence_in....mp4?t=10/70"/>
           </video>
-          <span><a href={comicUrl}>comicview </a></span>
+          <span><a href="comicview.html?CSPAN_20170815_223700_President_Trump_Says_There_is_Blame_on_Both_Sides_for_Violence_in.../10/70">comicview </a></span>
         </div>
 
-        <div class="video-hldr">
+        <div className="video-hldr">
           <span>President Trump Addresses Joint Session of Congress <br/> CSPAN   February 28, 2017 9:03pm-10:15pm EST</span>
-          <video class="video" width="300" height="254" controls>
-            <source src="https://archive.org/download/CSPAN2_20170301_020300_President_Trump_Addresses_Joint_Session_of_Congress/CSPAN2_20170301_020300_President_Trump_Addresses_Joint_Session_of_Congress.mp4"/>
+          <video className="video" width="300" height="254" controls>
+            <source src="https://archive.org/download/CSPAN2_20170301_020300_President_Trump_Addresses_Joint_Session_of_Congress/CSPAN2_20170301_020300_President_Trump_Addresses_Joint_Session_of_Congress.mp4?t=20/80"/>
           </video>
-          <span><a href={comicUrl}>comicview </a></span>
+          <span><a href="comicview.html?CSPAN2_20170301_020300_President_Trump_Addresses_Joint_Session_of_Congress/20/80">comicview </a></span>
         </div>
       </div>
     );

@@ -54,14 +54,16 @@ console.log(params);
 const uid = params[0].slice(1);
 const clipStart = params[1];
 const clipEnd = params[2];
+const clipCc5Start = parseInt(clipStart) + 5; // adding 5 secs to subs as they're usually delayed
+const clipCc5End = parseInt(clipEnd) + 5;
 
-//const mp4Url = "https://archive.org/download/"+uid+"/"+uid+".mp4?t="+clipStart+"/"+clipEnd;
-//const mp4Url = "test.mp4";
-const mp4Url = "https://api.contextubot.net/proxy?url=https%3A//archive.org/download/MSNBCW_20171209_020000_The_Rachel_Maddow_Show/MSNBCW_20171209_020000_The_Rachel_Maddow_Show.mp4%3Ft%3D130/190";
-//const srtUrl = "https://archive.org/download/"+uid+"/"+uid+".srt?t="+clipStart+"/"+clipEnd;
+const mp4Url = "https://api.contextubot.net/proxy?url=https%3A//archive.org/download/"+uid+"/"+uid+".mp4%3Ft%3D"+clipStart+"/"+clipEnd;
 
-const srtUrl = "https://api.contextubot.net/proxy?url=https%3A//archive.org/download/MSNBCW_20171209_020000_The_Rachel_Maddow_Show/MSNBCW_20171209_020000_The_Rachel_Maddow_Show.cc5.srt%3Ft%3D130/190";
-//const srtUrl = "test.srt";
+console.log(mp4Url);
+
+const srtUrl = "https://api.contextubot.net/proxy?url=https%3A//archive.org/download/"+uid+"/"+uid+".cc5.srt%3Ft%3D"+clipCc5Start+"/"+clipCc5End;
+
+console.log(srtUrl);
 
 let subsObj = null;
 
@@ -69,18 +71,18 @@ let sceneSplits = [];
 let textSplits = [];
 
 fetch(srtUrl).then(function(response) {
-  console.log("here");
-  response.text().then(function(data) {
-    var text = data.toString();
-    var lines = text.split('\n');
 
-    var output = [];
-    var buffer = {
+  response.text().then(function(data) {
+    let text = data.toString();
+    let lines = text.split('\n');
+
+    let output = [];
+    let buffer = {
       content: []
     };
 
-    var parts;
-    var hms;
+    let parts;
+    let hms;
 
     lines.forEach(function(line) {
       if(!buffer.id)
@@ -97,7 +99,7 @@ fetch(srtUrl).then(function(response) {
         buffer.endSec = (parseInt((hms[0] * 60 * 60),10) + parseInt((hms[1] * 60),10) + parseInt(hms[2],10));
       }
       else if(line !== '')
-        buffer.content.push(line);
+        buffer.content.push(line+ " "); //mb added space for easier sentence detection versus abbreviations and numbers that tend to occur in the middle of subtitles.
       else {
         output.push(buffer);
         buffer = {
@@ -105,7 +107,6 @@ fetch(srtUrl).then(function(response) {
         };
       }
     });
-    console.log(output);
     subsObj = output;
     split();
   });
@@ -114,15 +115,20 @@ fetch(srtUrl).then(function(response) {
 function split() {
 
   let splitIndex = 0;
-  textSplits[0] = "";
+  textSplits[0] = "...";
 
   subsObj.forEach(function(subs) {
     subs.content.forEach(function(text) {
-      let periodIndex = text.indexOf('.');
-      let commaIndex = text.indexOf(',');
+
+      const periodIndex = text.indexOf('. '); // the space is important!
+      const commaIndex = text.indexOf(',');
+      const qmarkIndex = text.indexOf('?');
+
       let puncIndex = -1;
 
-      if (periodIndex >= 0) {
+      if (qmarkIndex >= 0) {
+        puncIndex = qmarkIndex;
+      } else if (periodIndex >= 0) {
         puncIndex = periodIndex;
       } else if (commaIndex >= 0) {
         puncIndex = commaIndex;
@@ -133,7 +139,7 @@ function split() {
         sceneSplits[splitIndex] = subs.startSec;
         splitIndex++;
         textSplits[splitIndex] = "";
-        textSplits[splitIndex] += text.substr(puncIndex + 1, text.length + " ");
+        textSplits[splitIndex] += text.substr(puncIndex + 1, text.length) + " ";
       } else {
         textSplits[splitIndex] += text + " ";
       }
@@ -176,6 +182,7 @@ function addFrame(video, seconds, text) {
   div.style.width = "300px";
   div.style.height = "240px";
   div.style.padding = "8px";
+  div.style.marginBottom = "48px";
   div.style.float = "left";
   document.getElementById('frames').appendChild(div);
   ctx = canvas.getContext("2d");
@@ -187,9 +194,9 @@ function addFrame(video, seconds, text) {
 
     ctx.drawImage(video, 0, 0, video.videoWidth / 2.1, video.videoHeight / 2.1);
 
-    var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    //var filtered = ImageFilters.GrayScale(imageData);
-    var filtered = ImageFilters.Oil (imageData, 1, 32);
+    let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+    let filtered = ImageFilters.Oil (imageData, 1, 32);
 
     // put it back into a context to view the results
 
