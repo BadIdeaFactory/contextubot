@@ -19,6 +19,7 @@ deploy:
     secret_access_key:
       secure: "Ie8KaUHsDuoJD9kVTA2nhQUEvsFMeWMd/lr4L8UVpPr6MvftTnVhagwgJB/cpR4GKfbEdGqfljnR7Ouup93yMmus+FLEhFOjtLtzJDyW0jnyw7MhATeoqRlnsscKsgobdpMLE0EGdq3BBLkKg80AJSiR8Lnz0xq6vhlUL5YnGexqZsVcxSi3L4exiFpbiWGvsHl1QXsW6jm5k3eX7P7opW5yFFfHqaTUXpMGjYk4sucgd4QvFw4ACbdJX5zSOCauG9DsZcmnwEc//8pjxngylFITlju6cldtezTTuvDSun/cspFqjMa/MqcZu1Fc5KTf0er5tGmGCscPB6c1Fx8DAchePwmscz/AdgjcI6x3h9BmE/23qh3WoNBWw+DjlUMQCIMN3vdkrlELG4a2MhrsZBw2b6s2VXVEkFMDg7RIWdPc+0prdpTJDokwIstttggSkZz2TRya/ZkJN0Huxr+tUCcDEdpTl3KibwDLZ/aA+Amr1Mk8PddGnNyDchh9Cl3ECqw0XZaNFNBraBguqDxugllHEIoIZQHPfCARfdlFAag2d0rKT+7Z2dXknfdqtx3HuIUfS9an5hLe31sqAoPypEG4OYvLFDF5sRkjJqa+9WOQOT3plI8ouVsDH+K5nfxdebKm9MkoV++yDaFjZVwktJocyzy8Yv7b1W0Y4/+9tJ8="
     bucket: contextubot.net
+    region: us-east-2
     acl: public_read
     local_dir: build
     on:
