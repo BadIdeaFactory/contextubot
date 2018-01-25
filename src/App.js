@@ -228,7 +228,7 @@ class App extends Component {
     const clipStart = 130;
     const clipEnd = 190;
     const mp4Url = "https://archive.org/download/"+uid+"/"+uid+".mp4?t="+clipStart+"/"+clipEnd;
-    const comicUrl = "comicview.html?"+uid+"/"+clipStart+"/"+clipEnd;
+    const comicUrl = "transcriptview.html?"+uid+"/"+clipStart+"/"+clipEnd;
 
     return (
       <div>
@@ -237,7 +237,7 @@ class App extends Component {
           <video className="video" width="300" height="254" controls>
             <source src={mp4Url}/>
           </video>
-          <span><a href={comicUrl}>comicview </a></span>
+          <span><a href={comicUrl}>transcriptview </a></span>
         </div>
 
         <div className="video-hldr">
@@ -245,7 +245,7 @@ class App extends Component {
           <video className="video" width="300" height="254" controls>
             <source src="https://archive.org/download/FOXNEWSW_20170207_040300_The_OReilly_Factor/FOXNEWSW_20170207_040300_The_OReilly_Factor.mp4?t=10/70"/>
           </video>
-          <span><a href="comicview.html?FOXNEWSW_20170207_040300_The_OReilly_Factor/10/70">comicview </a></span>
+          <span><a href="transcriptview.html?FOXNEWSW_20170207_040300_The_OReilly_Factor/10/70">transcriptview </a></span>
         </div>
 
         <div className="video-hldr">
@@ -253,7 +253,7 @@ class App extends Component {
           <video className="video" width="300" height="254" controls>
             <source src="https://archive.org/download/CSPAN_20170823_014300_President_Trump_Holds_First_Rally_Following_Charlottesville_Remarks/CSPAN_20170823_014300_President_Trump_Holds_First_Rally_Following_Charlottesville_Remarks.mp4?t=80/140" />
           </video>
-          <span><a href="comicview.html?CSPAN_20170823_014300_President_Trump_Holds_First_Rally_Following_Charlottesville_Remarks/80/140">comicview </a></span>
+          <span><a href="transcriptview.html?CSPAN_20170823_014300_President_Trump_Holds_First_Rally_Following_Charlottesville_Remarks/80/140">transcriptview </a></span>
         </div>
 
         <div className="video-hldr">
@@ -261,7 +261,7 @@ class App extends Component {
           <video className="video" width="300" height="254" controls>
             <source src="https://archive.org/download/CSPAN_20170219_023200_President_Trump_Holds_Rally_in_Melbourne_Florida/CSPAN_20170219_023200_President_Trump_Holds_Rally_in_Melbourne_Florida.mp4?t=30/90"/>
           </video>
-          <span><a href="comicview.html?CSPAN_20170219_023200_President_Trump_Holds_Rally_in_Melbourne_Florida/30/90">comicview </a></span>
+          <span><a href="transcriptview.html?CSPAN_20170219_023200_President_Trump_Holds_Rally_in_Melbourne_Florida/30/90">transcriptview </a></span>
         </div>
 
         <div className="video-hldr">
@@ -269,7 +269,7 @@ class App extends Component {
           <video className="video" width="300" height="254" controls>
             <source src="https://archive.org/download/CSPAN_20170815_223700_President_Trump_Says_There_is_Blame_on_Both_Sides_for_Violence_in.../CSPAN_20170815_223700_President_Trump_Says_There_is_Blame_on_Both_Sides_for_Violence_in....mp4?t=10/70"/>
           </video>
-          <span><a href="comicview.html?CSPAN_20170815_223700_President_Trump_Says_There_is_Blame_on_Both_Sides_for_Violence_in.../10/70">comicview </a></span>
+          <span><a href="transcriptview.html?CSPAN_20170815_223700_President_Trump_Says_There_is_Blame_on_Both_Sides_for_Violence_in.../10/70">transcriptview </a></span>
         </div>
 
         <div className="video-hldr">
@@ -277,7 +277,7 @@ class App extends Component {
           <video className="video" width="300" height="254" controls>
             <source src="https://archive.org/download/CSPAN2_20170301_020300_President_Trump_Addresses_Joint_Session_of_Congress/CSPAN2_20170301_020300_President_Trump_Addresses_Joint_Session_of_Congress.mp4?t=20/80"/>
           </video>
-          <span><a href="comicview.html?CSPAN2_20170301_020300_President_Trump_Addresses_Joint_Session_of_Congress/20/80">comicview </a></span>
+          <span><a href="transcriptview.html?CSPAN2_20170301_020300_President_Trump_Addresses_Joint_Session_of_Congress/20/80">transcriptview </a></span>
         </div>
       </div>
     );
