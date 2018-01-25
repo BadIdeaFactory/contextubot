@@ -9,6 +9,7 @@ import App from './App';
 import registerServiceWorker from './registerServiceWorker';
 
 
+
 ReactDOM.render(
   <LocaleProvider locale={enUS}><App /></LocaleProvider>,
   document.getElementById('root')

@@ -97,6 +97,7 @@ class App extends Component {
             status: 'finish',
             step2: <a href={data.fingerprint}><Button type="dashed" icon="download" size="small" style={{marginTop: 10}}>Download</Button></a>
           });
+
         }
       })
       .catch(error => {
@@ -110,7 +111,7 @@ class App extends Component {
 
   renderTitle() {
     if (!this.state.data.info) return null;
-    return (
+    /* return (
       <div style={{
         padding: 16,
         width: 480,
@@ -119,35 +120,38 @@ class App extends Component {
       }}>
         <span>{this.state.data.info.title}</span>
       </div>
-    );
+    ); */
+    return null;
   }
 
   renderThumbnail() {
     if (!this.state.data.embed) return null;
-    return (
+    /*return (
       <div style={{
         padding: 16
       }}>
         <img alt="thumbnail" src={this.state.data.embed[0].thumbnail_url} />
       </div>
-    );
+    );*/
+    return null;
   }
 
   renderDescription() {
     if (!this.state.data.embed) return null;
-    return (
+    /*return (
       <div style={{
         padding: 16,
         width: 480
       }}>
         <span>{this.state.data.embed[0].description}</span>
       </div>
-    );
+    );*/
+    return null;
   }
 
   renderViewCount() {
     if (!this.state.data.info) return null;
-    return (
+    /*return (
       <div style={{
         padding: 16,
         width: 480,
@@ -155,7 +159,8 @@ class App extends Component {
       }}>
         <span>Views : {new Intl.NumberFormat().format(this.state.data.info.view_count)}</span>
       </div>
-    );
+    );*/
+    return null;
   }
 
   renderHeaders() {
@@ -169,11 +174,12 @@ class App extends Component {
 
   renderEmbed() {
     if (!this.state.data.embed) return null;
-    return (
+    /*return (
       <Panel header="Embed" key="2">
         <ReactJson name="embed" src={this.state.data.embed} />
       </Panel>
-    );
+    );*/
+    return null;
   }
 
   renderInfo() {
@@ -216,9 +222,70 @@ class App extends Component {
     );
   }
 
+  renderResults() {
+    if (!this.state.data.fingerprint) return null;
+    const uid = 'MSNBCW_20171209_020000_The_Rachel_Maddow_Show';
+    const clipStart = 130;
+    const clipEnd = 190;
+    const mp4Url = "https://archive.org/download/"+uid+"/"+uid+".mp4?t="+clipStart+"/"+clipEnd;
+    const comicUrl = "comicview.html?"+uid+"/"+clipStart+"/"+clipEnd;
+
+    return (
+      <div>
+        <div className="video-hldr">
+          <span>The Rachel Maddow Show <br/> MSNBC December 9, 2017 6:03pm-6:15pm PST</span>
+          <video className="video" width="300" height="254" controls>
+            <source src={mp4Url}/>
+          </video>
+          <span><a href={comicUrl}>comicview </a></span>
+        </div>
+
+        <div className="video-hldr">
+          <span>The O Reilly Factor <br/> FOX News February 6, 2017 8:03pm-8:18pm PST</span>
+          <video className="video" width="300" height="254" controls>
+            <source src="https://archive.org/download/FOXNEWSW_20170207_040300_The_OReilly_Factor/FOXNEWSW_20170207_040300_The_OReilly_Factor.mp4?t=10/70"/>
+          </video>
+          <span><a href="comicview.html?FOXNEWSW_20170207_040300_The_OReilly_Factor/10/70">comicview </a></span>
+        </div>
+
+        <div className="video-hldr">
+          <span>President Trump Holds First Rally Following ... <br/> CSPAN  August 22, 2017 9:43pm-11:29pm EDT</span>
+          <video className="video" width="300" height="254" controls>
+            <source src="https://archive.org/download/CSPAN_20170823_014300_President_Trump_Holds_First_Rally_Following_Charlottesville_Remarks/CSPAN_20170823_014300_President_Trump_Holds_First_Rally_Following_Charlottesville_Remarks.mp4?t=80/140" />
+          </video>
+          <span><a href="comicview.html?CSPAN_20170823_014300_President_Trump_Holds_First_Rally_Following_Charlottesville_Remarks/80/140">comicview </a></span>
+        </div>
+
+        <div className="video-hldr">
+          <span>President Trump Holds Rally in Melbourne Florida  <br/> CSPAN  February 18, 2017 9:32pm-10:29pm EST</span>
+          <video className="video" width="300" height="254" controls>
+            <source src="https://archive.org/download/CSPAN_20170219_023200_President_Trump_Holds_Rally_in_Melbourne_Florida/CSPAN_20170219_023200_President_Trump_Holds_Rally_in_Melbourne_Florida.mp4?t=30/90"/>
+          </video>
+          <span><a href="comicview.html?CSPAN_20170219_023200_President_Trump_Holds_Rally_in_Melbourne_Florida/30/90">comicview </a></span>
+        </div>
+
+        <div className="video-hldr">
+          <span>President Trump Says There is Blame on Both Sides <br/> CSPAN   August 15, 2017 6:37pm-7:01pm EDT</span>
+          <video className="video" width="300" height="254" controls>
+            <source src="https://archive.org/download/CSPAN_20170815_223700_President_Trump_Says_There_is_Blame_on_Both_Sides_for_Violence_in.../CSPAN_20170815_223700_President_Trump_Says_There_is_Blame_on_Both_Sides_for_Violence_in....mp4?t=10/70"/>
+          </video>
+          <span><a href="comicview.html?CSPAN_20170815_223700_President_Trump_Says_There_is_Blame_on_Both_Sides_for_Violence_in.../10/70">comicview </a></span>
+        </div>
+
+        <div className="video-hldr">
+          <span>President Trump Addresses Joint Session of Congress <br/> CSPAN   February 28, 2017 9:03pm-10:15pm EST</span>
+          <video className="video" width="300" height="254" controls>
+            <source src="https://archive.org/download/CSPAN2_20170301_020300_President_Trump_Addresses_Joint_Session_of_Congress/CSPAN2_20170301_020300_President_Trump_Addresses_Joint_Session_of_Congress.mp4?t=20/80"/>
+          </video>
+          <span><a href="comicview.html?CSPAN2_20170301_020300_President_Trump_Addresses_Joint_Session_of_Congress/20/80">comicview </a></span>
+        </div>
+      </div>
+    );
+  }
+
   renderCollapse() {
     if (Object.keys(this.state.data).length === 0) return null;
-    return (
+    /*return (
       <Collapse style={{marginTop: 14}}>
         {this.renderHeaders()}
         {this.renderEmbed()}
@@ -227,7 +294,8 @@ class App extends Component {
         {this.renderFingerprint()}
         {this.renderErrors()}
       </Collapse>
-    );
+    );*/
+    return null;
   }
 
   render() {
@@ -265,6 +333,8 @@ class App extends Component {
             {this.renderDescription()}
 
             {this.renderViewCount()}
+
+            {this.renderResults()}
 
             {this.renderCollapse()}
 

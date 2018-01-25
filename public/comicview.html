@@ -1,0 +1,210 @@
+<html>
+<head>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.1.0/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Bangers" rel="stylesheet">
+  <script src="imagefilters.js"></script>
+<style>
+#footer-right {
+  margin-top: -30px;
+  text-align: right;
+}
+
+.container {
+  font-family: 'Bangers', cursive;
+}
+</style>
+
+</head>
+<body>
+
+  <div class="container">
+
+    <div style="display:none" class="span12">
+      <div>
+        <video id="video" crossorigin="anonymous" width="320">
+        </video>
+      </div>
+    </div>
+
+    <div class="span12">
+      <div>
+        <h2>Comic View</h2>
+      </div>
+    </div>
+
+    <div class="row">
+      <div id="frames">
+      </div>
+    </div>
+
+  <hr>
+
+  <footer>
+    <p>&copy; 2017 <a href="https://github.com/badideafactory">Bad Idea Factory</a></p>
+    <p id="footer-right"><a href="https://twitter.com/biffud" class="twitter-follow-button" data-show-count="false" data-lang="en">Follow @Biffud</a></p>
+  </footer>
+  </div>
+
+</div>
+
+<script>
+const video = document.getElementById('video');
+const params = location.search.split('/');
+console.log(params);
+const uid = params[0].slice(1);
+const clipStart = params[1];
+const clipEnd = params[2];
+const clipCc5Start = parseInt(clipStart) + 5; // adding 5 secs to subs as they're usually delayed
+const clipCc5End = parseInt(clipEnd) + 5;
+
+const mp4Url = "https://api.contextubot.net/proxy?url=https%3A//archive.org/download/"+uid+"/"+uid+".mp4%3Ft%3D"+clipStart+"/"+clipEnd;
+
+console.log(mp4Url);
+
+const srtUrl = "https://api.contextubot.net/proxy?url=https%3A//archive.org/download/"+uid+"/"+uid+".cc5.srt%3Ft%3D"+clipCc5Start+"/"+clipCc5End;
+
+console.log(srtUrl);
+
+let subsObj = null;
+
+let sceneSplits = [];
+let textSplits = [];
+
+fetch(srtUrl).then(function(response) {
+
+  response.text().then(function(data) {
+    let text = data.toString();
+    let lines = text.split('\n');
+
+    let output = [];
+    let buffer = {
+      content: []
+    };
+
+    let parts;
+    let hms;
+
+    lines.forEach(function(line) {
+      if(!buffer.id)
+        buffer.id = line;
+      else if(!buffer.start) {
+        var range = line.split(' --> ');
+        buffer.start = range[0];
+        buffer.end = range[1];
+        parts = range[0].split(',');
+        hms = parts[0].split(':');
+        buffer.startSec = (parseInt((hms[0] * 60 * 60),10) + parseInt((hms[1] * 60),10) + parseInt(hms[2],10));
+        parts = range[1].split(',');
+        hms = parts[0].split(':');
+        buffer.endSec = (parseInt((hms[0] * 60 * 60),10) + parseInt((hms[1] * 60),10) + parseInt(hms[2],10));
+      }
+      else if(line !== '')
+        buffer.content.push(line+ " "); //mb added space for easier sentence detection versus abbreviations and numbers that tend to occur in the middle of subtitles.
+      else {
+        output.push(buffer);
+        buffer = {
+          content: []
+        };
+      }
+    });
+    subsObj = output;
+    split();
+  });
+});
+
+function split() {
+
+  let splitIndex = 0;
+  textSplits[0] = "...";
+
+  subsObj.forEach(function(subs) {
+    subs.content.forEach(function(text) {
+
+      const periodIndex = text.indexOf('. '); // the space is important!
+      const commaIndex = text.indexOf(',');
+      const qmarkIndex = text.indexOf('?');
+
+      let puncIndex = -1;
+
+      if (qmarkIndex >= 0) {
+        puncIndex = qmarkIndex;
+      } else if (periodIndex >= 0) {
+        puncIndex = periodIndex;
+      } else if (commaIndex >= 0) {
+        puncIndex = commaIndex;
+      }
+
+      if (puncIndex >= 0) {
+        textSplits[splitIndex] += text.substr(0, puncIndex + 1) + " ";
+        sceneSplits[splitIndex] = subs.startSec;
+        splitIndex++;
+        textSplits[splitIndex] = "";
+        textSplits[splitIndex] += text.substr(puncIndex + 1, text.length) + " ";
+      } else {
+        textSplits[splitIndex] += text + " ";
+      }
+    });
+  });
+}
+
+video.src = mp4Url;
+
+let index = 0;
+
+function addFrames() {
+  if (index < sceneSplits.length) {
+    setTimeout(function(){
+      addFrame(video, sceneSplits[index], textSplits[index]);
+      index++;
+      addFrames();
+    }, 1000);
+  }
+  // TODO: use promises instead of timeouts
+}
+
+video.addEventListener('loadedmetadata', function() {
+  console.log('loadedmetadata');
+  setTimeout(addFrames, 2000);
+  // TODO: use promises instead of timeouts
+});
+
+function addFrame(video, seconds, text) {
+  const canvas = document.createElement('canvas');
+
+  canvas.width = video.videoWidth / 2.1;
+  canvas.height = video.videoHeight / 2.1;
+
+  const div = document.createElement("div");
+
+  div.appendChild(canvas);
+  const textNode = document.createTextNode(text);
+  div.appendChild(textNode);
+  div.style.width = "300px";
+  div.style.height = "240px";
+  div.style.padding = "8px";
+  div.style.marginBottom = "48px";
+  div.style.float = "left";
+  document.getElementById('frames').appendChild(div);
+  ctx = canvas.getContext("2d");
+  video.currentTime = seconds;
+
+  video.addEventListener('timeupdate', function() {
+
+    console.log("adding images ...");
+
+    ctx.drawImage(video, 0, 0, video.videoWidth / 2.1, video.videoHeight / 2.1);
+
+    let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+    let filtered = ImageFilters.Oil (imageData, 1, 32);
+
+    // put it back into a context to view the results
+
+    ctx.putImageData(filtered, 0, 0);
+
+  });
+}
+
+</script>
+</body>
+</html>
