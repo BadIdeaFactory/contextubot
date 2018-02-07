@@ -8,7 +8,7 @@ import Button from 'antd/lib/button';
 
 import './App.css';
 
-const { Content, Footer } = Layout;
+const { Content } = Layout;
 const Search = Input.Search;
 const Step = Steps.Step;
 const Panel = Collapse.Panel;
@@ -340,9 +340,6 @@ class SearchMedia extends Component {
 
           </div>
         </Content>
-        <Footer style={{ textAlign: 'center' }}>
-          <a href="https://github.com/BadIdeaFactory/contextubot">The Glorious Contextubot</a> — created by <a href="https://github.com/BadIdeaFactory">Bad Idea Factory</a>
-        </Footer>
       </Layout>
     );
   }
