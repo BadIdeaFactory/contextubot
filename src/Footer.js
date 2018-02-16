@@ -1,9 +1,9 @@
 import React from 'react'
 
-const Footer = () => (
-  <Footer style={{ textAlign: 'center' }}>
+const FooterSection = () => (
+  <div style={{ textAlign: 'center' }}>
     <a href="https://github.com/BadIdeaFactory/contextubot">The Glorious Contextubot</a> — created by <a href="https://github.com/BadIdeaFactory">Bad Idea Factory</a>
-  </Footer>
+  </div>
 )
 
-export default Footer
+export default FooterSection

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom'
 import ReactJson from 'react-json-view';
 import axios from 'axios';
 import isUrl from 'is-url-superb';
@@ -223,12 +224,14 @@ class SearchMedia extends Component {
   }
 
   renderResults() {
+
+    // Probably want to move all these consts into componentDidMount
     if (!this.state.data.fingerprint) return null;
     const uid = 'MSNBCW_20171209_020000_The_Rachel_Maddow_Show';
     const clipStart = 130;
     const clipEnd = 190;
     const mp4Url = "https://archive.org/download/"+uid+"/"+uid+".mp4?t="+clipStart+"/"+clipEnd;
-    const comicUrl = "transcriptview.html?"+uid+"/"+clipStart+"/"+clipEnd;
+    const transcriptUrl = "transcriptview/?"+uid+"/"+clipStart+"/"+clipEnd;
 
     return (
       <div>
@@ -237,7 +240,7 @@ class SearchMedia extends Component {
           <video className="video" width="300" height="254" controls>
             <source src={mp4Url}/>
           </video>
-          <span><a href={comicUrl}>transcriptview </a></span>
+          <span><Link to={transcriptUrl}>transcriptview </Link></span>
         </div>
 
         <div className="video-hldr">

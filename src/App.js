@@ -1,10 +1,11 @@
 import React from 'react'
-//import Footer from './Footer'
-import SearchMedia from './SearchMedia'
+import FooterSection from './Footer'
+import Main from './Main'
 
 const App = () => (
   <div>
-    <SearchMedia />
+    <Main />
+    <FooterSection />
   </div>
 )
 
