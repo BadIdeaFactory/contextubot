@@ -3,7 +3,7 @@ import ReactJson from 'react-json-view';
 import axios from 'axios';
 import isUrl from 'is-url-superb';
 
-import { Layout, BackTop, Input, Steps, Collapse, Spin, Switch } from 'antd';
+import { Layout, BackTop, Input, Steps, Collapse, Spin } from 'antd';
 import Button from 'antd/lib/button';
 
 import './App.css';
@@ -97,8 +97,16 @@ class App extends Component {
             status: 'finish',
             step2: <a href={data.fingerprint}><Button type="dashed" icon="download" size="small" style={{marginTop: 10}}>Download</Button></a>
           });
-
         }
+
+        // matches?
+        if (data.matches) {
+          this.setState({
+            step: 3,
+            status: 'finish',
+          });
+        }
+
       })
       .catch(error => {
         console.log(error);
@@ -111,7 +119,7 @@ class App extends Component {
 
   renderTitle() {
     if (!this.state.data.info) return null;
-    /* return (
+    return (
       <div style={{
         padding: 16,
         width: 480,
@@ -120,38 +128,35 @@ class App extends Component {
       }}>
         <span>{this.state.data.info.title}</span>
       </div>
-    ); */
-    return null;
+    );
   }
 
   renderThumbnail() {
     if (!this.state.data.embed) return null;
-    /*return (
+    return (
       <div style={{
         padding: 16
       }}>
         <img alt="thumbnail" src={this.state.data.embed[0].thumbnail_url} />
       </div>
-    );*/
-    return null;
+    );
   }
 
   renderDescription() {
     if (!this.state.data.embed) return null;
-    /*return (
+    return (
       <div style={{
         padding: 16,
         width: 480
       }}>
         <span>{this.state.data.embed[0].description}</span>
       </div>
-    );*/
-    return null;
+    );
   }
 
   renderViewCount() {
     if (!this.state.data.info) return null;
-    /*return (
+    return (
       <div style={{
         padding: 16,
         width: 480,
@@ -159,8 +164,7 @@ class App extends Component {
       }}>
         <span>Views : {new Intl.NumberFormat().format(this.state.data.info.view_count)}</span>
       </div>
-    );*/
-    return null;
+    );
   }
 
   renderHeaders() {
@@ -174,12 +178,11 @@ class App extends Component {
 
   renderEmbed() {
     if (!this.state.data.embed) return null;
-    /*return (
+    return (
       <Panel header="Embed" key="2">
         <ReactJson name="embed" src={this.state.data.embed} />
       </Panel>
-    );*/
-    return null;
+    );
   }
 
   renderInfo() {
@@ -209,6 +212,15 @@ class App extends Component {
     );
   }
 
+  renderMatches() {
+    if (!this.state.data.matches) return null;
+    return (
+      <Panel header="Matches" key="6">
+        <ReactJson name="matches" src={this.state.data.matches} />
+      </Panel>
+    );
+  }
+
   renderErrors() {
     if (!this.state.data.errors) return null;
     const filteredArr = this.state.data.errors.filter((err) => {
@@ -216,8 +228,17 @@ class App extends Component {
     });
 
     return (
-      <Panel header={`Errors${filteredArr ? ': ' + filteredArr.length : ''}`} key="7">
+      <Panel header={`Errors${filteredArr ? ': ' + filteredArr.length : ''}`} key="X">
         <ReactJson name="errors" src={filteredArr} />
+      </Panel>
+    );
+  }
+
+  renderWrappedResults() {
+    if (!this.state.data.matches) return null;
+    return (
+      <Panel header="Results" key="7">
+        { this.renderResults() }
       </Panel>
     );
   }
@@ -285,17 +306,18 @@ class App extends Component {
 
   renderCollapse() {
     if (Object.keys(this.state.data).length === 0) return null;
-    /*return (
+    return (
       <Collapse style={{marginTop: 14}}>
         {this.renderHeaders()}
         {this.renderEmbed()}
         {this.renderInfo()}
         {this.renderFile()}
         {this.renderFingerprint()}
+        {this.renderMatches()}
         {this.renderErrors()}
+        {this.renderWrappedResults()}
       </Collapse>
-    );*/
-    return null;
+    );
   }
 
   render() {
@@ -307,14 +329,9 @@ class App extends Component {
 
             <h1>The Glorious Contextubot</h1>
 
-            <div style={{ textAlign: 'right', paddingTop: 16, paddingBottom: 16 }}>
-              <Switch checkedChildren="Simple" unCheckedChildren="Detailed" />
-            </div>
-
             <Search
               placeholder="please enter link here"
               size="large"
-              value="https://www.youtube.com/watch?v=4F4qzPbcFiA"
               onChange={event => this.handleChange.bind(this)(event)}
               onSearch={value => this.handleSearch.bind(this)(value)}
             />
@@ -326,15 +343,10 @@ class App extends Component {
               <Step title="Show Context" description={this.state.step3} />
             </Steps>
 
-            {this.renderTitle()}
-
-            {this.renderThumbnail()}
-
-            {this.renderDescription()}
-
-            {this.renderViewCount()}
-
-            {this.renderResults()}
+            { /* this.renderTitle() */}
+            { /* this.renderThumbnail() */}
+            { /* this.renderDescription() */}
+            { /* this.renderViewCount() */}
 
             {this.renderCollapse()}
 
