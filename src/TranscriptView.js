@@ -19,6 +19,7 @@ class TranscriptView extends Component {
     super(props);
     this.state = { ht: null };
     this.state = { mp4: null };
+    this.state = { comicUrl: "" };
   }
 
   getTranscript(srtUrl) {
@@ -222,7 +223,10 @@ class TranscriptView extends Component {
     const srtUrl = "https://api.contextubot.net/proxy?url=https%3A//archive.org/download/"+uid+"/"+uid+".cc5.srt%3Ft%3D"+clipCc5Start+"/"+clipCc5End;
 
     console.log(srtUrl);
+    const comicUrl = "/comicview/?"+uid+"/"+clipStart+"/"+clipEnd;
 
+
+    this.setState({ comicUrl: comicUrl });
 
     this.setState({ mp4: mp4Url });
     this.getTranscript(srtUrl);
@@ -231,7 +235,13 @@ class TranscriptView extends Component {
 
   render() {
     // Probably want to move this const into componentDidMount
-    const comicUrl = "comicview/?"+this.uid+"/"+this.clipStart+"/"+this.clipEnd;
+
+    const comicUrl = this.state.comicUrl;// + "";
+
+    // no idea why I have to append a blank string to the comicUrl
+    // but it avoids a number of bizarre router errors.
+
+
     return (
       <Layout className="layout">
         <BackTop />
