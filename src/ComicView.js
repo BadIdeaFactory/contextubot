@@ -31,8 +31,8 @@ class ComicView extends Component {
     let splitIndex = 0;
     this.textSplits[0] = "...";
 
-    data.forEach(function(subs) {
-      subs.content.forEach(function(text) {
+    data.forEach(subs => {
+      subs.content.forEach((text) => {
 
         const periodIndex = text.indexOf('. '); // the space is important!
         const commaIndex = text.indexOf(',');
@@ -49,27 +49,32 @@ class ComicView extends Component {
         }
 
         if (puncIndex >= 0) {
-          this.textSplits[splitIndex] += text.substr(0, puncIndex + 1) + " ";
+          this.textSplits[splitIndex] += `${text.substr(0, puncIndex + 1)} `;
           this.sceneSplits[splitIndex] = subs.startSec;
           splitIndex++;
           this.textSplits[splitIndex] = "";
-          this.textSplits[splitIndex] += text.substr(puncIndex + 1, text.length) + " ";
+          this.textSplits[splitIndex] += `${text.substr(puncIndex + 1, text.length)} `;
         } else {
-          this.textSplits[splitIndex] += text + " ";
+          this.textSplits[splitIndex] += `${text} `;
         }
       });
     });
   }
 
   addFrames(index) {
+
+    console.log("addFrames");
+
     const video = document.getElementById('video');
 
     if (index !== null || index !== undefined) {
       index= 0;
     }
 
+
+
     if (index < this.sceneSplits.length) {
-      window.setTimeout(function(){
+      window.setTimeout(() => {
         this.addFrame(video, this.sceneSplits[index], this.textSplits[index]);
         index++;
         this.addFrames(index);
@@ -81,9 +86,10 @@ class ComicView extends Component {
 
   getSrt(srtUrl) {
 
-    fetch(srtUrl).then(function(response) {
 
-      response.text().then(function(data) {
+    fetch(srtUrl).then(response => {
+      response.text().then(data => {
+
         let text = data.toString();
         let lines = text.split('\n');
 
@@ -119,7 +125,7 @@ class ComicView extends Component {
           }
         });
         console.log(output);
-        //this.subsObj = output;
+
         this.splitMedia(output);
       });
     });
@@ -145,9 +151,14 @@ class ComicView extends Component {
 
     const video = document.getElementById('video');
 
-    video.addEventListener('loadedmetadata', function() {
+    video.addEventListener('loadedmetadata', () => {
       console.log('loadedmetadata');
-      window.setTimeout(this.addFrames, 2000);
+
+      window.setTimeout(() => {
+        console.log(this);
+        this.addFrames(0);
+      }, 2000)
+
       // TODO: use promises instead of timeouts
     });
 
@@ -173,6 +184,9 @@ class ComicView extends Component {
     document.getElementById('frames').appendChild(div);
     const ctx = canvas.getContext("2d");
     video.currentTime = seconds;
+
+    console.log("seconds");
+    console.log(seconds);
 
     video.addEventListener('timeupdate', function() {
 
