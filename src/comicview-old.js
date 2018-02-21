@@ -26,9 +26,6 @@ class ComicView extends Component {
     this.sceneSplits = [];
     this.textSplits = [];
     this.canvas = null;
-    this.index = 0;
-    this.prevIndex = -1;
-
   }
 
   splitMedia(data) {
@@ -62,27 +59,24 @@ class ComicView extends Component {
           this.textSplits[splitIndex] += `${text} `;
         }
       });
-
     });
-    const video = document.getElementById('video');
-
-    console.log(video.readyState);
-    this.addFrames();
   }
 
-  addFrames() {
+  addFrames(index) {
 
     console.log("addFrames");
 
     const video = document.getElementById('video');
-    video.currentTime = this.sceneSplits[0];
-    // get the ball rolling (this should trigger a timeupdate event)
 
+    if (index < this.sceneSplits.length) {
+      this.addSnap(video, this.sceneSplits[index], this.textSplits[index], index);
+    }
     // TODO: use promises instead of timeouts
   }
 
 
   getSrt(srtUrl) {
+
 
     fetch(srtUrl).then(response => {
       response.text().then(data => {
@@ -121,7 +115,6 @@ class ComicView extends Component {
             };
           }
         });
-
         console.log(output);
 
         this.splitMedia(output);
@@ -149,66 +142,65 @@ class ComicView extends Component {
 
     this.setState({ mp4: mp4Url });
 
-    this.getSrt(srtUrl);
-
     const video = document.getElementById('video');
 
-    video.addEventListener('timeupdate', () => {
+    video.addEventListener('loadeddata', () => {
+      console.log('loadeddata');
 
-      if ((this.index > this.prevIndex) && (this.index < this.sceneSplits.length)) {
-        console.log("in the loop");
+      window.setTimeout(() => {
+        console.log(this);
+        this.addFrames(0);
+      }, 2000)
 
-        const div = document.createElement("div");
-
-        let text = this.textSplits[this.index];
-        let seconds = this.sceneSplits[this.index];
-
-        this.canvas = document.createElement('canvas');
-
-        this.canvas.width = document.getElementById('video').videoWidth / 2.1;
-        this.canvas.height = document.getElementById('video').videoHeight / 2.1;
-
-        div.appendChild(this.canvas);
-        const textNode = document.createTextNode(text);
-        div.appendChild(textNode);
-        div.style.width = "300px";
-        div.style.height = "240px";
-        div.style.padding = "8px";
-        div.style.marginBottom = "48px";
-        div.style.float = "left";
-        document.getElementById('frames').appendChild(div);
-
-
-        let ctx = this.canvas.getContext("2d");
-
-        console.log("timpeupdate");
-
-        ctx.drawImage(document.getElementById('video'), 0, 0, document.getElementById('video').videoWidth / 2.1, document.getElementById('video').videoHeight / 2.1);
-
-        let imageData = ctx.getImageData(0, 0, this.canvas.width, this.canvas.height);
-
-        let filtered = window.ImageFilters.Oil (imageData, 1, 32);
-
-        // put it back into a context to view the results
-
-        ctx.putImageData(filtered, 0, 0);
-        //ctx.putImageData(imageData, 0, 0);
-        console.log("index = "+this.index);
-        this.prevIndex = this.index;
-        this.index = this.index + 1;
-
-        const video = document.getElementById('video');
-        video.currentTime = seconds;
-
-        console.log("seconds");
-        console.log(seconds);
-      }
+      // TODO: use promises instead of timeouts
     });
+
+    this.getSrt(srtUrl);
   }
 
   addSnap(video, seconds, text, index) {
     console.log("in addSnap");
+    this.canvas = document.createElement('canvas');
 
+    this.canvas.width = video.videoWidth / 2.1;
+    this.canvas.height = video.videoHeight / 2.1;
+
+    const div = document.createElement("div");
+
+    div.appendChild(this.canvas);
+    const textNode = document.createTextNode(text);
+    div.appendChild(textNode);
+    div.style.width = "300px";
+    div.style.height = "240px";
+    div.style.padding = "8px";
+    div.style.marginBottom = "48px";
+    div.style.float = "left";
+    document.getElementById('frames').appendChild(div);
+    let ctx = this.canvas.getContext("2d");
+    video.currentTime = seconds;
+
+    console.log("seconds");
+    console.log(seconds);
+
+    video.addEventListener('timeupdate', () => {
+
+      console.log("adding images ...");
+
+      ctx.drawImage(video, 0, 0, video.videoWidth / 2.1, video.videoHeight / 2.1);
+
+      let imageData = ctx.getImageData(0, 0, this.canvas.width, this.canvas.height);
+
+      let filtered = window.ImageFilters.Oil (imageData, 1, 32);
+
+      // put it back into a context to view the results
+
+      ctx.putImageData(filtered, 0, 0);
+      //ctx.putImageData(imageData, 0, 0);
+      console.log("index = "+index);
+      index++;
+      this.addFrames(index);
+
+    });
   }
 
 
