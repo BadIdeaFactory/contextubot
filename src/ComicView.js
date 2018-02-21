@@ -20,6 +20,7 @@ class ComicView extends Component {
     this.state = { ht: null };
     this.state = { mp4: null };
     this.state = { comicUrl: null };
+    this.state = { frame: 0 };
 
     this.subsObj = "";
 
@@ -76,9 +77,7 @@ class ComicView extends Component {
 
     const video = document.getElementById('video');
     video.currentTime = this.sceneSplits[0];
-    // get the ball rolling (this should trigger a timeupdate event)
 
-    // TODO: use promises instead of timeouts
   }
 
 
@@ -155,13 +154,18 @@ class ComicView extends Component {
 
     video.addEventListener('timeupdate', () => {
 
+      console.log("timpeupdate");
+
       if ((this.index > this.prevIndex) && (this.index < this.sceneSplits.length)) {
+
         console.log("in the loop");
 
-        const div = document.createElement("div");
+        alert("appending text");
 
         let text = this.textSplits[this.index];
         let seconds = this.sceneSplits[this.index];
+
+        const div = document.createElement("div");
 
         this.canvas = document.createElement('canvas');
 
@@ -176,14 +180,15 @@ class ComicView extends Component {
         div.style.padding = "8px";
         div.style.marginBottom = "48px";
         div.style.float = "left";
+        div.style.borderStyle = "solid";
+        div.style.borderColor = "red";
         document.getElementById('frames').appendChild(div);
 
+        this.setState({ frame: this.index});
 
         let ctx = this.canvas.getContext("2d");
 
-        console.log("timpeupdate");
-
-        ctx.drawImage(document.getElementById('video'), 0, 0, document.getElementById('video').videoWidth / 2.1, document.getElementById('video').videoHeight / 2.1);
+        ctx.drawImage(video, 0, 0, video.videoWidth / 2.5, video.videoHeight / 2.5);
 
         let imageData = ctx.getImageData(0, 0, this.canvas.width, this.canvas.height);
 
@@ -191,17 +196,18 @@ class ComicView extends Component {
 
         // put it back into a context to view the results
 
+        alert("appending image");
+
         ctx.putImageData(filtered, 0, 0);
         //ctx.putImageData(imageData, 0, 0);
         console.log("index = "+this.index);
         this.prevIndex = this.index;
         this.index = this.index + 1;
 
-        const video = document.getElementById('video');
-        video.currentTime = seconds;
+        this.setState({ frame: this.index});
 
-        console.log("seconds");
-        console.log(seconds);
+        video.currentTime = seconds;
+        console.log("seeking ............ to "+ seconds);
       }
     });
   }
@@ -219,7 +225,7 @@ class ComicView extends Component {
         <BackTop />
         <Content>
           <div className="container">
-
+            <span>Frame: {this.state.frame}</span>
             <div className="span12">
               <div>
                 <video id="video" crossOrigin="anonymous" width="320" src={this.state.mp4}>
