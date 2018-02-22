@@ -28,7 +28,7 @@ class ComicView extends Component {
     this.sceneSplits = [];
     this.textSplits = [];
     this.index = 0;
-    this.prevIndex = -1;
+    this.timeUpdates = 0;
   }
 
   splitMedia(data) {
@@ -67,7 +67,14 @@ class ComicView extends Component {
     const video = document.getElementById('video');
 
     console.log(video.readyState);
+
+    while (video.readyState < 0) {
+      console.log("waiting for video to be ready");
+    }
+
+    console.log("video loaded");
     this.addFrames();
+
   }
 
   addFrames() {
@@ -151,51 +158,65 @@ class ComicView extends Component {
 
       console.log("timpeupdate");
 
-      if ((this.index < this.sceneSplits.length)) {
+      this.timeUpdates++;
+      console.log("timeUpdates = "+this.timeUpdates);
 
-        console.log("in the loop");
+      let text = this.textSplits[this.index];
+      let seconds = this.sceneSplits[this.index];
 
-        let text = this.textSplits[this.index];
-        let seconds = this.sceneSplits[this.index];
+      // MB: It makes absolutely no sense to me why we need to ignore every second timeupdate event
+      // but if we don't we get blank images :(
 
-        let canvas = document.createElement('canvas');
-        canvas.width = document.getElementById('video').videoWidth / 2.1;
-        canvas.height = document.getElementById('video').videoHeight / 2.1;
+      if (this.timeUpdates % 2) {
+        if (this.index < this.sceneSplits.length) {
 
-        this.setState({ frame: this.index});
+          console.log("in the loop");
 
-        let ctx = canvas.getContext("2d");
-        ctx.drawImage(video, 0, 0, video.videoWidth / 2.5, video.videoHeight / 2.5);
+          let canvas = document.createElement('canvas');
+          canvas.width = document.getElementById('video').videoWidth / 2.1;
+          canvas.height = document.getElementById('video').videoHeight / 2.1;
 
-        let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        let filtered = window.ImageFilters.Oil (imageData, 1, 32);
+          this.setState({ frame: this.index});
 
-        ctx.putImageData(filtered, 0, 0);
+          let ctx = canvas.getContext("2d");
+          ctx.drawImage(video, 0, 0, video.videoWidth / 2.5, video.videoHeight / 2.5);
 
-        console.log("index = "+this.index);
-        this.prevIndex = this.index;
-        this.index = this.index + 1;
+          let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+          let filtered = window.ImageFilters.Oil (imageData, 1, 32);
 
-        let comicFrame = {
-          "imageData": imageData,
-          "png": canvas.toDataURL("image/png"),
-          "textData": text
+          ctx.putImageData(filtered, 0, 0);
+
+          console.log("index = "+this.index);
+          this.prevIndex = this.index;
+          this.index = this.index + 1;
+
+          let comicFrame = {
+            "imageData": imageData,
+            "png": canvas.toDataURL("image/png"),
+            "textData": text
+          }
+
+          this.setState({
+            comicFrames: this.state.comicFrames.concat(comicFrame)
+          })
+
+          this.setState({ frame: this.index });
+
+          console.log("imageData");
+          console.log(imageData);
+
+          console.log("this.state.comicFrames");
+          console.log(this.state.comicFrames);
+
+          video.currentTime = seconds;
+          console.log("seeking ............ to "+ seconds);
+
         }
-
-        this.setState({
-          comicFrames: this.state.comicFrames.concat(comicFrame)
-        })
-
-        this.setState({ frame: this.index });
-
-        console.log("imageData");
-        console.log(imageData);
-
-        console.log("this.state.comicFrames");
-        console.log(this.state.comicFrames);
-
-        video.currentTime = seconds;
-        console.log("seeking ............ to "+ seconds);
+      } else {
+        if (typeof seconds !== 'undefined' && seconds !== null) {
+          console.log(seconds);
+          video.currentTime = seconds;
+        }
       }
     });
   }
@@ -240,7 +261,7 @@ class ComicView extends Component {
             <span>Frame: {this.state.frame}</span>
             <div className="span12">
               <div>
-                <video id="video" crossOrigin="anonymous" width="320" src={this.state.mp4}>
+                <video id="video" crossOrigin="anonymous" width="320" src={this.state.mp4} style={{display: 'none' }}>
                 </video>
               </div>
             </div>
