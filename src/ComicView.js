@@ -21,15 +21,14 @@ class ComicView extends Component {
     this.state = { mp4: null };
     this.state = { comicUrl: null };
     this.state = { frame: 0 };
+    this.state = { comicFrames: [] };
 
     this.subsObj = "";
 
     this.sceneSplits = [];
     this.textSplits = [];
-    this.canvas = null;
     this.index = 0;
     this.prevIndex = -1;
-
   }
 
   splitMedia(data) {
@@ -72,14 +71,10 @@ class ComicView extends Component {
   }
 
   addFrames() {
-
     console.log("addFrames");
-
     const video = document.getElementById('video');
     video.currentTime = this.sceneSplits[0];
-
   }
-
 
   getSrt(srtUrl) {
 
@@ -156,55 +151,48 @@ class ComicView extends Component {
 
       console.log("timpeupdate");
 
-      if ((this.index > this.prevIndex) && (this.index < this.sceneSplits.length)) {
+      if ((this.index < this.sceneSplits.length)) {
 
         console.log("in the loop");
-
-        alert("appending text");
 
         let text = this.textSplits[this.index];
         let seconds = this.sceneSplits[this.index];
 
-        const div = document.createElement("div");
-
-        this.canvas = document.createElement('canvas');
-
-        this.canvas.width = document.getElementById('video').videoWidth / 2.1;
-        this.canvas.height = document.getElementById('video').videoHeight / 2.1;
-
-        div.appendChild(this.canvas);
-        const textNode = document.createTextNode(text);
-        div.appendChild(textNode);
-        div.style.width = "300px";
-        div.style.height = "240px";
-        div.style.padding = "8px";
-        div.style.marginBottom = "48px";
-        div.style.float = "left";
-        div.style.borderStyle = "solid";
-        div.style.borderColor = "red";
-        document.getElementById('frames').appendChild(div);
+        let canvas = document.createElement('canvas');
+        canvas.width = document.getElementById('video').videoWidth / 2.1;
+        canvas.height = document.getElementById('video').videoHeight / 2.1;
 
         this.setState({ frame: this.index});
 
-        let ctx = this.canvas.getContext("2d");
-
+        let ctx = canvas.getContext("2d");
         ctx.drawImage(video, 0, 0, video.videoWidth / 2.5, video.videoHeight / 2.5);
 
-        let imageData = ctx.getImageData(0, 0, this.canvas.width, this.canvas.height);
-
+        let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
         let filtered = window.ImageFilters.Oil (imageData, 1, 32);
 
-        // put it back into a context to view the results
-
-        alert("appending image");
-
         ctx.putImageData(filtered, 0, 0);
-        //ctx.putImageData(imageData, 0, 0);
+
         console.log("index = "+this.index);
         this.prevIndex = this.index;
         this.index = this.index + 1;
 
-        this.setState({ frame: this.index});
+        let comicFrame = {
+          "imageData": imageData,
+          "png": canvas.toDataURL("image/png"),
+          "textData": text
+        }
+
+        this.setState({
+          comicFrames: this.state.comicFrames.concat(comicFrame)
+        })
+
+        this.setState({ frame: this.index });
+
+        console.log("imageData");
+        console.log(imageData);
+
+        console.log("this.state.comicFrames");
+        console.log(this.state.comicFrames);
 
         video.currentTime = seconds;
         console.log("seeking ............ to "+ seconds);
@@ -212,9 +200,33 @@ class ComicView extends Component {
     });
   }
 
-  addSnap(video, seconds, text, index) {
-    console.log("in addSnap");
+  renderComicFrame(frame) {
+    if (frame.length === 0) return null;
 
+    return (
+      <div className="frame-hldr" style={{
+        width: 300,
+        height: 240,
+        padding: 8,
+        marginBottom: 48,
+        float: 'left',
+        borderStyle: 'solid',
+        borderColor: 'red'
+      }}>
+        <img alt="comic frame" src={frame.png}></img>
+        <span>{frame.textData}</span>
+      </div>
+    );
+  }
+
+  renderComicFrames() {
+    if (!this.state.comicFrames) return null;
+
+    return (
+      <div>
+        {this.state.comicFrames.map(this.renderComicFrame)}
+      </div>
+    );
   }
 
 
@@ -241,6 +253,7 @@ class ComicView extends Component {
 
             <div className="row">
               <div id="frames">
+               {this.renderComicFrames()}
               </div>
             </div>
 
