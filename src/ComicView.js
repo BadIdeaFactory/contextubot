@@ -231,8 +231,9 @@ class ComicView extends Component {
         padding: 8,
         marginBottom: 48,
         float: 'left',
-        borderStyle: 'solid',
-        borderColor: 'red'
+        fontFamily: 'Bangers'
+        //borderStyle: 'solid', //debug
+        //borderColor: 'red'    //debug
       }}>
         <img alt="comic frame" src={frame.png}></img>
         <span>{frame.textData}</span>
@@ -258,7 +259,6 @@ class ComicView extends Component {
         <BackTop />
         <Content>
           <div className="container">
-            <span>Frame: {this.state.frame}</span>
             <div className="span12">
               <div>
                 <video id="video" crossOrigin="anonymous" width="320" src={this.state.mp4} style={{display: 'none' }}>
