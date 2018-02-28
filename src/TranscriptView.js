@@ -133,7 +133,7 @@ class TranscriptView extends Component {
       // Modified version of regex from Phil Haack's blog: http://haacked.com/archive/2004/10/25/usingregularexpressionstomatchhtml.aspx
       // Later modified by kev: http://kevin.deldycke.com/2007/03/ultimate-regular-expression-for-html-tag-parsing-with-php/
       sub.text = sub.text.replace(
-        /&lt;(\/?(font|b|u|i|s))((\s+(\w|\w[\w\-]*\w)(\s*=\s*(?:\".*?\"|'.*?'|[^'\">\s]+))?)+\s*|\s*)(\/?)&gt;/gi,
+        /&lt;(\/?(font|b|u|i|s))((\s+(\w|\w[\w-]*\w)(\s*=\s*(?:".*?"|'.*?'|[^'">\s]+))?)+\s*|\s*)(\/?)&gt;/gi,
         '<$1$3$7>'
       );
       //sub.text = sub.text.replace( /\\N/gi, "<br />" );
