@@ -1,6 +1,6 @@
-import React from "react";
-import FooterSection from "./Footer";
-import Main from "./Main";
+import React from 'react';
+import FooterSection from './Footer';
+import Main from './Main';
 
 const App = () => (
   <div>

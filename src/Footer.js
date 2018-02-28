@@ -1,11 +1,11 @@
-import React from "react";
+import React from 'react';
 
 const FooterSection = () => (
-  <div style={{ textAlign: "center" }}>
+  <div style={{ textAlign: 'center' }}>
     <a href="https://github.com/BadIdeaFactory/contextubot">
       The Glorious Contextubot
     </a>
-    — created by
+    <span> — created by </span>
     <a href="https://github.com/BadIdeaFactory">Bad Idea Factory</a>
   </div>
 );

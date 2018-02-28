@@ -1,8 +1,8 @@
-import React from "react";
-import { Switch, Route } from "react-router-dom";
-import SearchMedia from "./SearchMedia";
-import TranscriptView from "./TranscriptView";
-import ComicView from "./ComicView";
+import React from 'react';
+import { Switch, Route } from 'react-router-dom';
+import SearchMedia from './SearchMedia';
+import TranscriptView from './TranscriptView';
+import ComicView from './ComicView';
 
 // The Main component renders one of the three provided
 // Routes (provided that one matches). Both the /roster

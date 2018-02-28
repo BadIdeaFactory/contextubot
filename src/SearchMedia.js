@@ -1,48 +1,48 @@
-import React, { Component } from "react";
-import { Link } from "react-router-dom";
-import ReactJson from "react-json-view";
-import axios from "axios";
-import isUrl from "is-url-superb";
+import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
+import ReactJson from 'react-json-view';
+import axios from 'axios';
+import isUrl from 'is-url-superb';
 
-import { Layout, BackTop, Input, Steps, Collapse, Spin } from "antd";
-import Button from "antd/lib/button";
+import { Layout, BackTop, Input, Steps, Collapse, Spin } from 'antd';
+import Button from 'antd/lib/button';
 
-import "./App.css";
+import './App.css';
 
 const { Content } = Layout;
 const Search = Input.Search;
 const Step = Steps.Step;
 const Panel = Collapse.Panel;
 
-let API = "https://api.contextubot.net";
-if (document.location.hostname === "127.0.0.1.xip.io")
-  API = "http://localhost:8080";
-if (document.location.hostname === "eb.127.0.0.1.xip.io")
-  API = "http://contextubot-dev-api.us-east-1.elasticbeanstalk.com";
+let API = 'https://api.contextubot.net';
+if (document.location.hostname === '127.0.0.1.xip.io')
+  API = 'http://localhost:8080';
+if (document.location.hostname === 'eb.127.0.0.1.xip.io')
+  API = 'http://contextubot-dev-api.us-east-1.elasticbeanstalk.com';
 
 class SearchMedia extends Component {
   constructor(props) {
     super(props);
     this.state = {
       step: 0,
-      status: "wait",
-      step0: "",
-      step1: "",
-      step2: "",
-      step3: "",
+      status: 'wait',
+      step0: '',
+      step1: '',
+      step2: '',
+      step3: '',
       data: {},
       preview: false
     };
   }
 
   handleChange(event) {
-    if (event.target.value === "") {
+    if (event.target.value === '') {
       this.setState({
-        status: "wait",
-        step0: "",
-        step1: "",
-        step2: "",
-        step3: "",
+        status: 'wait',
+        step0: '',
+        step1: '',
+        step2: '',
+        step3: '',
         data: {},
         step: 0
       });
@@ -52,8 +52,8 @@ class SearchMedia extends Component {
   handleSearch(value) {
     if (!isUrl(value)) {
       this.setState({
-        status: "error",
-        step0: "invalid link"
+        status: 'error',
+        step0: 'invalid link'
       });
       return;
     }
@@ -61,11 +61,11 @@ class SearchMedia extends Component {
     this.setState({
       data: {},
       step: 0,
-      step0: "",
-      step1: "",
-      step2: "",
-      step3: "",
-      status: "process"
+      step0: '',
+      step1: '',
+      step2: '',
+      step3: '',
+      status: 'process'
     });
 
     axios
@@ -74,12 +74,12 @@ class SearchMedia extends Component {
         console.log(data);
         this.setState({
           data,
-          status: "finish"
+          status: 'finish'
         });
 
         if (data.headers) {
           this.setState({
-            step0: data.headers["content-type"]
+            step0: data.headers['content-type']
           });
         }
 
@@ -87,13 +87,13 @@ class SearchMedia extends Component {
         if (data.info) {
           this.setState({
             step: 1,
-            status: "finish",
+            status: 'finish',
             step1: data.info.extractor
           });
         } else if (data.file) {
           this.setState({
             step: 1,
-            status: "finish",
+            status: 'finish',
             step1: `${data.file.streams.length} streams`
           });
         }
@@ -102,7 +102,7 @@ class SearchMedia extends Component {
         if (data.fingerprint) {
           this.setState({
             step: 2,
-            status: "finish",
+            status: 'finish',
             step2: (
               <a href={data.fingerprint}>
                 <Button
@@ -122,14 +122,14 @@ class SearchMedia extends Component {
         if (data.matches) {
           this.setState({
             step: 3,
-            status: "finish"
+            status: 'finish'
           });
         }
       })
       .catch(error => {
         console.log(error);
         this.setState({
-          status: "error",
+          status: 'error',
           step0: error.message
         });
       });
@@ -142,7 +142,7 @@ class SearchMedia extends Component {
         style={{
           padding: 16,
           width: 480,
-          fontWeight: "600",
+          fontWeight: '600',
           fontSize: 24
         }}
       >
@@ -185,11 +185,11 @@ class SearchMedia extends Component {
         style={{
           padding: 16,
           width: 480,
-          fontWeight: "600"
+          fontWeight: '600'
         }}
       >
         <span>
-          Views :{" "}
+          Views :{' '}
           {new Intl.NumberFormat().format(this.state.data.info.view_count)}
         </span>
       </div>
@@ -264,7 +264,7 @@ class SearchMedia extends Component {
 
     return (
       <Panel
-        header={`Errors${filteredArr ? ": " + filteredArr.length : ""}`}
+        header={`Errors${filteredArr ? ': ' + filteredArr.length : ''}`}
         key="X"
       >
         <ReactJson name="errors" src={filteredArr} />
@@ -284,7 +284,7 @@ class SearchMedia extends Component {
   renderResult(match) {
     if (match.duration === 0) return null;
 
-    const uid = match.source.replace(".afpt", "").replace("_tva", "");
+    const uid = match.source.replace('.afpt', '').replace('_tva', '');
     const clipStart = match.time;
     const clipEnd = match.time + match.duration;
     const mp4Url = `https://archive.org/download/${uid}/${uid}.mp4?t=${clipStart}/${clipEnd}`;
@@ -293,7 +293,7 @@ class SearchMedia extends Component {
     return (
       <div className="video-hldr" key={mp4Url}>
         <span>
-          {uid.replace(/_/g, " ")} ({match.duration}s)
+          {uid.replace(/_/g, ' ')} ({match.duration}s)
         </span>
         <video className="video" width="300" height="254" controls>
           <source src={mp4Url} />
@@ -332,7 +332,7 @@ class SearchMedia extends Component {
       <Layout className="layout">
         <BackTop />
         <Content>
-          <div style={{ background: "#fff", padding: 24, minHeight: 280 }}>
+          <div style={{ background: '#fff', padding: 24, minHeight: 280 }}>
             <h1>The Glorious Contextubot</h1>
 
             <Search
@@ -350,8 +350,8 @@ class SearchMedia extends Component {
               <Step
                 title={
                   <span>
-                    Analyze Link{" "}
-                    {this.state.status === "process" ? (
+                    Analyze Link{' '}
+                    {this.state.status === 'process' ? (
                       <Spin
                         size="small"
                         style={{ marginTop: 3, marginLeft: 4 }}
