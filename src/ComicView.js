@@ -1,20 +1,19 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 // import { Link } from 'react-router-dom'
 //import ReactJson from 'react-json-view';
 //import axios from 'axios';
 //import isUrl from 'is-url-superb';
 
 //import { Layout, BackTop, Input, Steps, Collapse, Spin, Switch } from 'antd';
-import { Layout, BackTop } from 'antd';
+import { Layout, BackTop } from "antd";
 //import Button from 'antd/lib/button';
 
-import './App.css';
-import './Hyperaudio.css';
+import "./App.css";
+import "./Hyperaudio.css";
 
 const { Content } = Layout;
 
 class ComicView extends Component {
-
   constructor(props) {
     super(props);
     this.state = { ht: null };
@@ -36,11 +35,10 @@ class ComicView extends Component {
     this.textSplits[0] = "...";
 
     data.forEach(subs => {
-      subs.content.forEach((text) => {
-
-        const periodIndex = text.indexOf('. '); // the space is important!
-        const commaIndex = text.indexOf(',');
-        const qmarkIndex = text.indexOf('?');
+      subs.content.forEach(text => {
+        const periodIndex = text.indexOf(". "); // the space is important!
+        const commaIndex = text.indexOf(",");
+        const qmarkIndex = text.indexOf("?");
 
         let puncIndex = -1;
 
@@ -57,14 +55,16 @@ class ComicView extends Component {
           this.sceneSplits[splitIndex] = subs.startSec;
           splitIndex++;
           this.textSplits[splitIndex] = "";
-          this.textSplits[splitIndex] += `${text.substr(puncIndex + 1, text.length)} `;
+          this.textSplits[splitIndex] += `${text.substr(
+            puncIndex + 1,
+            text.length
+          )} `;
         } else {
           this.textSplits[splitIndex] += `${text} `;
         }
       });
-
     });
-    const video = document.getElementById('video');
+    const video = document.getElementById("video");
 
     console.log(video.readyState);
 
@@ -74,22 +74,19 @@ class ComicView extends Component {
 
     console.log("video loaded");
     this.addFrames();
-
   }
 
   addFrames() {
     console.log("addFrames");
-    const video = document.getElementById('video');
+    const video = document.getElementById("video");
     video.currentTime = this.sceneSplits[0];
   }
 
   getSrt(srtUrl) {
-
     fetch(srtUrl).then(response => {
       response.text().then(data => {
-
         let text = data.toString();
-        let lines = text.split('\n');
+        let lines = text.split("\n");
 
         let output = [];
         let buffer = {
@@ -100,22 +97,26 @@ class ComicView extends Component {
         let hms;
 
         lines.forEach(function(line) {
-          if(!buffer.id)
-            buffer.id = line;
-          else if(!buffer.start) {
-            var range = line.split(' --> ');
+          if (!buffer.id) buffer.id = line;
+          else if (!buffer.start) {
+            var range = line.split(" --> ");
             buffer.start = range[0];
             buffer.end = range[1];
-            parts = range[0].split(',');
-            hms = parts[0].split(':');
-            buffer.startSec = (parseInt((hms[0] * 60 * 60),10) + parseInt((hms[1] * 60),10) + parseInt(hms[2],10));
-            parts = range[1].split(',');
-            hms = parts[0].split(':');
-            buffer.endSec = (parseInt((hms[0] * 60 * 60),10) + parseInt((hms[1] * 60),10) + parseInt(hms[2],10));
-          }
-          else if(line !== '')
-            buffer.content.push(line+ " "); //mb added space for easier sentence detection versus abbreviations and numbers that tend to occur in the middle of subtitles.
+            parts = range[0].split(",");
+            hms = parts[0].split(":");
+            buffer.startSec =
+              parseInt(hms[0] * 60 * 60, 10) +
+              parseInt(hms[1] * 60, 10) +
+              parseInt(hms[2], 10);
+            parts = range[1].split(",");
+            hms = parts[0].split(":");
+            buffer.endSec =
+              parseInt(hms[0] * 60 * 60, 10) +
+              parseInt(hms[1] * 60, 10) +
+              parseInt(hms[2], 10);
+          } else if (line !== "") buffer.content.push(line + " ");
           else {
+            //mb added space for easier sentence detection versus abbreviations and numbers that tend to occur in the middle of subtitles.
             output.push(buffer);
             buffer = {
               content: []
@@ -131,8 +132,7 @@ class ComicView extends Component {
   }
 
   componentDidMount() {
-
-    const params = window.location.search.split('/');
+    const params = window.location.search.split("/");
 
     const uid = params[0].slice(1);
     const clipStart = params[1];
@@ -140,11 +140,27 @@ class ComicView extends Component {
     const clipCc5Start = parseInt(clipStart, 0) + 5; // adding 5 secs to subs as they're usually delayed
     const clipCc5End = parseInt(clipEnd, 0) + 5;
 
-    const mp4Url = "https://api.contextubot.net/proxy?url=https%3A//archive.org/download/"+uid+"/"+uid+".mp4%3Ft%3D"+clipStart+"/"+clipEnd;
+    const mp4Url =
+      "https://api.contextubot.net/proxy?url=https%3A//archive.org/download/" +
+      uid +
+      "/" +
+      uid +
+      ".mp4%3Ft%3D" +
+      clipStart +
+      "/" +
+      clipEnd;
 
     console.log(mp4Url);
 
-    const srtUrl = "https://api.contextubot.net/proxy?url=https%3A//archive.org/download/"+uid+"/"+uid+".cc5.srt%3Ft%3D"+clipCc5Start+"/"+clipCc5End;
+    const srtUrl =
+      "https://api.contextubot.net/proxy?url=https%3A//archive.org/download/" +
+      uid +
+      "/" +
+      uid +
+      ".cc5.srt%3Ft%3D" +
+      clipCc5Start +
+      "/" +
+      clipCc5End;
 
     console.log(srtUrl);
 
@@ -152,14 +168,13 @@ class ComicView extends Component {
 
     this.getSrt(srtUrl);
 
-    const video = document.getElementById('video');
+    const video = document.getElementById("video");
 
-    video.addEventListener('timeupdate', () => {
-
+    video.addEventListener("timeupdate", () => {
       console.log("timpeupdate");
 
       this.timeUpdates++;
-      console.log("timeUpdates = "+this.timeUpdates);
+      console.log("timeUpdates = " + this.timeUpdates);
 
       let text = this.textSplits[this.index];
       let seconds = this.sceneSplits[this.index];
@@ -169,37 +184,42 @@ class ComicView extends Component {
 
       if (this.timeUpdates % 2) {
         if (this.index < this.sceneSplits.length) {
-
           console.log("in the loop");
 
-          let canvas = document.createElement('canvas');
-          canvas.width = document.getElementById('video').videoWidth / 2.1;
-          canvas.height = document.getElementById('video').videoHeight / 2.1;
+          let canvas = document.createElement("canvas");
+          canvas.width = document.getElementById("video").videoWidth / 2.1;
+          canvas.height = document.getElementById("video").videoHeight / 2.1;
 
-          this.setState({ frame: this.index});
+          this.setState({ frame: this.index });
 
           let ctx = canvas.getContext("2d");
-          ctx.drawImage(video, 0, 0, video.videoWidth / 2.5, video.videoHeight / 2.5);
+          ctx.drawImage(
+            video,
+            0,
+            0,
+            video.videoWidth / 2.5,
+            video.videoHeight / 2.5
+          );
 
           let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-          let filtered = window.ImageFilters.Oil (imageData, 1, 32);
+          let filtered = window.ImageFilters.Oil(imageData, 1, 32);
 
           ctx.putImageData(filtered, 0, 0);
 
-          console.log("index = "+this.index);
+          console.log("index = " + this.index);
           this.prevIndex = this.index;
           this.index = this.index + 1;
 
           let comicFrame = {
-            "imageData": imageData,
-            "png": canvas.toDataURL("image/png"),
-            "textData": text,
+            imageData: imageData,
+            png: canvas.toDataURL("image/png"),
+            textData: text,
             key: this.index
-          }
+          };
 
           this.setState({
             comicFrames: this.state.comicFrames.concat(comicFrame)
-          })
+          });
 
           this.setState({ frame: this.index });
 
@@ -210,11 +230,10 @@ class ComicView extends Component {
           console.log(this.state.comicFrames);
 
           video.currentTime = seconds;
-          console.log("seeking ............ to "+ seconds);
-
+          console.log("seeking ............ to " + seconds);
         }
       } else {
-        if (typeof seconds !== 'undefined' && seconds !== null) {
+        if (typeof seconds !== "undefined" && seconds !== null) {
           console.log(seconds);
           video.currentTime = seconds;
         }
@@ -226,17 +245,21 @@ class ComicView extends Component {
     if (frame.length === 0) return null;
 
     return (
-      <div className="frame-hldr" style={{
-        width: 300,
-        height: 240,
-        padding: 8,
-        marginBottom: 48,
-        float: 'left',
-        fontFamily: 'Bangers'
-        //borderStyle: 'solid', //debug
-        //borderColor: 'red'    //debug
-      }} key={frame.key}>
-        <img alt="comic frame" src={frame.png}></img>
+      <div
+        className="frame-hldr"
+        style={{
+          width: 300,
+          height: 240,
+          padding: 8,
+          marginBottom: 48,
+          float: "left",
+          fontFamily: "Bangers"
+          //borderStyle: 'solid', //debug
+          //borderColor: 'red'    //debug
+        }}
+        key={frame.key}
+      >
+        <img alt="comic frame" src={frame.png} />
         <span>{frame.textData}</span>
       </div>
     );
@@ -245,16 +268,10 @@ class ComicView extends Component {
   renderComicFrames() {
     if (!this.state.comicFrames) return null;
 
-    return (
-      <div>
-        {this.state.comicFrames.map(this.renderComicFrame)}
-      </div>
-    );
+    return <div>{this.state.comicFrames.map(this.renderComicFrame)}</div>;
   }
 
-
   render() {
-
     return (
       <Layout className="layout">
         <BackTop />
@@ -262,8 +279,13 @@ class ComicView extends Component {
           <div className="container">
             <div className="span12">
               <div>
-                <video id="video" crossOrigin="anonymous" width="320" src={this.state.mp4} style={{display: 'none' }}>
-                </video>
+                <video
+                  id="video"
+                  crossOrigin="anonymous"
+                  width="320"
+                  src={this.state.mp4}
+                  style={{ display: "none" }}
+                />
               </div>
             </div>
 
@@ -274,11 +296,8 @@ class ComicView extends Component {
             </div>
 
             <div className="row">
-              <div id="frames">
-               {this.renderComicFrames()}
-              </div>
+              <div id="frames">{this.renderComicFrames()}</div>
             </div>
-
           </div>
         </Content>
       </Layout>
