@@ -1,8 +1,8 @@
-import React from 'react'
-import { Switch, Route } from 'react-router-dom'
-import SearchMedia from './SearchMedia'
-import TranscriptView from './TranscriptView'
-import ComicView from './ComicView'
+import React from 'react';
+import { Switch, Route } from 'react-router-dom';
+import SearchMedia from './SearchMedia';
+import TranscriptView from './TranscriptView';
+import ComicView from './ComicView';
 
 // The Main component renders one of the three provided
 // Routes (provided that one matches). Both the /roster
@@ -12,11 +12,11 @@ import ComicView from './ComicView'
 const Main = () => (
   <main>
     <Switch>
-      <Route exact path='/' component={SearchMedia}/>
-      <Route path='/TranscriptView' component={TranscriptView}/>
-      <Route path='/ComicView' component={ComicView}/>
+      <Route exact path="/" component={SearchMedia} />
+      <Route path="/TranscriptView" component={TranscriptView} />
+      <Route path="/ComicView" component={ComicView} />
     </Switch>
   </main>
-)
+);
 
-export default Main
+export default Main;

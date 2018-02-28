@@ -14,12 +14,11 @@ import './Hyperaudio.css';
 const { Content } = Layout;
 
 class TranscriptView extends Component {
-
   constructor(props) {
     super(props);
     this.state = { ht: null };
     this.state = { mp4: null };
-    this.state = { comicUrl: "" };
+    this.state = { comicUrl: '' };
   }
 
   getTranscript(srtUrl) {
@@ -27,7 +26,6 @@ class TranscriptView extends Component {
 
     fetch(srtUrl).then(response => {
       response.text().then(data => {
-
         // ===== NOTE =====
         // 2800 is a frig factor just to sync the subtitles to video.
         // This figure may or may not work on other clips.
@@ -35,13 +33,12 @@ class TranscriptView extends Component {
 
         transData = this.srtToHypertranscript(data, 2800);
         this.setState({ ht: transData });
-        window.hyperaudiolite.init("hypertranscript", "video", false);
+        window.hyperaudiolite.init('hypertranscript', 'video', false);
       });
     });
   }
 
   srtToHypertranscript(data, ccdelay) {
-
     var i = 0,
       len = 0,
       idx = 0,
@@ -77,7 +74,8 @@ class TranscriptView extends Component {
       }
     };
 
-    var outputString = '<article><header></header><section><header></header><p>';
+    var outputString =
+      '<article><header></header><section><header></header><p>';
     var lineBreaks = true;
     var paraPunct = true;
     var ltime = 0;
@@ -124,7 +122,9 @@ class TranscriptView extends Component {
 
       // Join into 1 line, SSA-style linebreaks
       // Strip out other SSA-style tags
-      sub.text = text.join('\\N').replace(/\{(\\[\w]+\(?([\w\d]+,?)+\)?)+\}/gi, '');
+      sub.text = text
+        .join('\\N')
+        .replace(/\{(\\[\w]+\(?([\w\d]+,?)+\)?)+\}/gi, '');
 
       // Escape HTML entities
       sub.text = sub.text.replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -138,7 +138,6 @@ class TranscriptView extends Component {
       );
       //sub.text = sub.text.replace( /\\N/gi, "<br />" );
       sub.text = sub.text.replace(/\\N/gi, ' ');
-
 
       var wordLengthSplit = true;
 
@@ -189,13 +188,17 @@ class TranscriptView extends Component {
         if (stime - ltime > paraSplitTime * 1000 && paraSplitTime > 0) {
           //console.log("fullstop? "+stext+" - "+stext.indexOf("."));
           var punctPresent =
-            ltext && (ltext.indexOf('.') > 0 || ltext.indexOf('?') > 0 || ltext.indexOf('!') > 0);
+            ltext &&
+            (ltext.indexOf('.') > 0 ||
+              ltext.indexOf('?') > 0 ||
+              ltext.indexOf('!') > 0);
           if (!paraPunct || (paraPunct && punctPresent)) {
             outputString += '</p><p>';
           }
         }
 
-        outputString += '<span data-m="' + (stime + ccdelay) +'">' + stext + ' </span>';
+        outputString +=
+          '<span data-m="' + (stime + ccdelay) + '">' + stext + ' </span>';
 
         ltime = stime;
         ltext = stext;
@@ -203,9 +206,11 @@ class TranscriptView extends Component {
         if (lineBreaks) outputString = outputString + '\n';
       }
     }
-    return outputString + '</p><footer></footer></section></footer></footer></article>';
+    return (
+      outputString +
+      '</p><footer></footer></section></footer></footer></article>'
+    );
   }
-
 
   componentDidMount() {
     this.setState({ ht: 'loading...' });
@@ -218,13 +223,28 @@ class TranscriptView extends Component {
     const clipCc5Start = parseInt(clipStart, 0) + 5; // adding 5 secs to subs as they're usually delayed
     const clipCc5End = parseInt(clipEnd, 0) + 5;
 
-    const mp4Url = "https://api.contextubot.net/proxy?url=https%3A//archive.org/download/"+uid+"/"+uid+".mp4%3Ft%3D"+clipStart+"/"+clipEnd;
+    const mp4Url =
+      'https://api.contextubot.net/proxy?url=https%3A//archive.org/download/' +
+      uid +
+      '/' +
+      uid +
+      '.mp4%3Ft%3D' +
+      clipStart +
+      '/' +
+      clipEnd;
 
-    const srtUrl = "https://api.contextubot.net/proxy?url=https%3A//archive.org/download/"+uid+"/"+uid+".cc5.srt%3Ft%3D"+clipCc5Start+"/"+clipCc5End;
+    const srtUrl =
+      'https://api.contextubot.net/proxy?url=https%3A//archive.org/download/' +
+      uid +
+      '/' +
+      uid +
+      '.cc5.srt%3Ft%3D' +
+      clipCc5Start +
+      '/' +
+      clipCc5End;
 
     console.log(srtUrl);
-    const comicUrl = "/ComicView/?"+uid+"/"+clipStart+"/"+clipEnd;
-
+    const comicUrl = '/ComicView/?' + uid + '/' + clipStart + '/' + clipEnd;
 
     this.setState({ comicUrl: comicUrl });
 
@@ -232,48 +252,54 @@ class TranscriptView extends Component {
     this.getTranscript(srtUrl);
   }
 
-
   render() {
     // Probably want to move this const into componentDidMount
 
-    const comicUrl = this.state.comicUrl;// + "";
+    const comicUrl = this.state.comicUrl; // + "";
 
     // no idea why I have to append a blank string to the comicUrl
     // but it avoids a number of bizarre router errors.
-
 
     return (
       <Layout className="layout">
         <BackTop />
         <Content>
           <div style={{ background: '#fff', padding: 24, minHeight: 280 }}>
-
             <h1>The Glorious Contextubot</h1>
             <h2>Transcript View</h2>
 
             <div className="container">
-
               <div className="span12">
                 <div>
-                  <video id="video" controls crossOrigin="anonymous" width="640" src={this.state.mp4}>
-                  </video>
+                  <video
+                    id="video"
+                    controls
+                    crossOrigin="anonymous"
+                    width="640"
+                    src={this.state.mp4}
+                  />
                 </div>
               </div>
 
               <div className="span12">
                 <h4>(click on words to navigate, select text to tweet)</h4>
-                <h3><span><Link to={comicUrl}>Jump to Comic View</Link></span></h3>
+                <h3>
+                  <span>
+                    <Link to={comicUrl}>Jump to Comic View</Link>
+                  </span>
+                </h3>
                 <div className="row">
-                  <div id="hypertranscript" style={{paddingLeft:20}} dangerouslySetInnerHTML={{__html: this.state.ht}} />
+                  <div
+                    id="hypertranscript"
+                    style={{ paddingLeft: 20 }}
+                    dangerouslySetInnerHTML={{ __html: this.state.ht }}
+                  />
                 </div>
               </div>
 
-            <hr/>
-
+              <hr />
             </div>
-
           </div>
-
         </Content>
       </Layout>
     );
