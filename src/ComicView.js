@@ -193,7 +193,8 @@ class ComicView extends Component {
           let comicFrame = {
             "imageData": imageData,
             "png": canvas.toDataURL("image/png"),
-            "textData": text
+            "textData": text,
+            key: this.index
           }
 
           this.setState({
@@ -234,7 +235,7 @@ class ComicView extends Component {
         fontFamily: 'Bangers'
         //borderStyle: 'solid', //debug
         //borderColor: 'red'    //debug
-      }}>
+      }} key={frame.key}>
         <img alt="comic frame" src={frame.png}></img>
         <span>{frame.textData}</span>
       </div>

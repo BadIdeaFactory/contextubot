@@ -4,7 +4,7 @@ import ReactJson from 'react-json-view';
 import axios from 'axios';
 import isUrl from 'is-url-superb';
 
-import { Layout, BackTop, Input, Steps, Collapse, Spin, Switch } from 'antd';
+import { Layout, BackTop, Input, Steps, Collapse, Spin } from 'antd';
 import Button from 'antd/lib/button';
 
 import './App.css';
@@ -98,7 +98,14 @@ class SearchMedia extends Component {
             status: 'finish',
             step2: <a href={data.fingerprint}><Button type="dashed" icon="download" size="small" style={{marginTop: 10}}>Download</Button></a>
           });
+        }
 
+        // matches?
+        if (data.matches) {
+          this.setState({
+            step: 3,
+            status: 'finish',
+          });
         }
       })
       .catch(error => {
@@ -112,7 +119,7 @@ class SearchMedia extends Component {
 
   renderTitle() {
     if (!this.state.data.info) return null;
-    /* return (
+    return (
       <div style={{
         padding: 16,
         width: 480,
@@ -121,38 +128,35 @@ class SearchMedia extends Component {
       }}>
         <span>{this.state.data.info.title}</span>
       </div>
-    ); */
-    return null;
+    );
   }
 
   renderThumbnail() {
     if (!this.state.data.embed) return null;
-    /*return (
+    return (
       <div style={{
         padding: 16
       }}>
         <img alt="thumbnail" src={this.state.data.embed[0].thumbnail_url} />
       </div>
-    );*/
-    return null;
+    );
   }
 
   renderDescription() {
     if (!this.state.data.embed) return null;
-    /*return (
+    return (
       <div style={{
         padding: 16,
         width: 480
       }}>
         <span>{this.state.data.embed[0].description}</span>
       </div>
-    );*/
-    return null;
+    );
   }
 
   renderViewCount() {
     if (!this.state.data.info) return null;
-    /*return (
+    return (
       <div style={{
         padding: 16,
         width: 480,
@@ -160,8 +164,7 @@ class SearchMedia extends Component {
       }}>
         <span>Views : {new Intl.NumberFormat().format(this.state.data.info.view_count)}</span>
       </div>
-    );*/
-    return null;
+    );
   }
 
   renderHeaders() {
@@ -175,12 +178,11 @@ class SearchMedia extends Component {
 
   renderEmbed() {
     if (!this.state.data.embed) return null;
-    /*return (
+    return (
       <Panel header="Embed" key="2">
         <ReactJson name="embed" src={this.state.data.embed} />
       </Panel>
-    );*/
-    return null;
+    );
   }
 
   renderInfo() {
@@ -210,6 +212,15 @@ class SearchMedia extends Component {
     );
   }
 
+  renderMatches() {
+    if (!this.state.data.matches) return null;
+    return (
+      <Panel header="Matches" key="6">
+        <ReactJson name="matches" src={this.state.data.matches} />
+      </Panel>
+    );
+  }
+
   renderErrors() {
     if (!this.state.data.errors) return null;
     const filteredArr = this.state.data.errors.filter((err) => {
@@ -217,88 +228,65 @@ class SearchMedia extends Component {
     });
 
     return (
-      <Panel header={`Errors${filteredArr ? ': ' + filteredArr.length : ''}`} key="7">
+      <Panel header={`Errors${filteredArr ? ': ' + filteredArr.length : ''}`} key="X">
         <ReactJson name="errors" src={filteredArr} />
       </Panel>
     );
   }
 
-  renderResults() {
+  renderWrappedResults() {
+    if (!this.state.data.matches) return null;
+    return (
+      <Panel header="Results" key="7">
+        { this.renderResults() }
+      </Panel>
+    );
+  }
 
-    // Probably want to move all these consts into componentDidMount
+  renderResult(match) {
+    if (match.duration === 0) return null;
+
+    const uid = match.source.replace('.afpt', '').replace('_tva', '');
+    const clipStart = match.time;
+    const clipEnd = match.time + match.duration;
+    const mp4Url = `https://archive.org/download/${uid}/${uid}.mp4?t=${clipStart}/${clipEnd}`;
+    const comicUrl = `TranscriptView?${uid}/${clipStart}/${clipEnd}`;
+
+    return (
+      <div className="video-hldr" key={mp4Url}>
+        <span>{uid.replace(/_/g, ' ')} ({match.duration}s)</span>
+        <video className="video" width="300" height="254" controls>
+          <source src={mp4Url}/>
+        </video>
+        <span><Link to={comicUrl}>transcriptview </Link></span>
+      </div>
+    );
+  }
+
+  renderResults() {
     if (!this.state.data.fingerprint) return null;
-    const uid = 'MSNBCW_20171209_020000_The_Rachel_Maddow_Show';
-    const clipStart = 130;
-    const clipEnd = 190;
-    const mp4Url = "https://archive.org/download/"+uid+"/"+uid+".mp4?t="+clipStart+"/"+clipEnd;
-    const transcriptUrl = "transcriptview/?"+uid+"/"+clipStart+"/"+clipEnd;
 
     return (
       <div>
-        <div className="video-hldr">
-          <span>The Rachel Maddow Show <br/> MSNBC December 9, 2017 6:03pm-6:15pm PST</span>
-          <video className="video" width="300" height="254" controls>
-            <source src={mp4Url}/>
-          </video>
-          <span><Link to={transcriptUrl}>transcriptview </Link></span>
-        </div>
-
-        <div className="video-hldr">
-          <span>The O Reilly Factor <br/> FOX News February 6, 2017 8:03pm-8:18pm PST</span>
-          <video className="video" width="300" height="254" controls>
-            <source src="https://archive.org/download/FOXNEWSW_20170207_040300_The_OReilly_Factor/FOXNEWSW_20170207_040300_The_OReilly_Factor.mp4?t=10/70"/>
-          </video>
-          <span><Link to={"transcriptview?FOXNEWSW_20170207_040300_The_OReilly_Factor/10/70"}>transcriptview </Link></span>
-        </div>
-
-        <div className="video-hldr">
-          <span>President Trump Holds First Rally Following ... <br/> CSPAN  August 22, 2017 9:43pm-11:29pm EDT</span>
-          <video className="video" width="300" height="254" controls>
-            <source src="https://archive.org/download/CSPAN_20170823_014300_President_Trump_Holds_First_Rally_Following_Charlottesville_Remarks/CSPAN_20170823_014300_President_Trump_Holds_First_Rally_Following_Charlottesville_Remarks.mp4?t=80/140" />
-          </video>
-          <span><Link to={"transcriptview?CSPAN_20170823_014300_President_Trump_Holds_First_Rally_Following_Charlottesville_Remarks/80/140"}>transcriptview </Link></span>
-        </div>
-
-        <div className="video-hldr">
-          <span>President Trump Holds Rally in Melbourne Florida  <br/> CSPAN  February 18, 2017 9:32pm-10:29pm EST</span>
-          <video className="video" width="300" height="254" controls>
-            <source src="https://archive.org/download/CSPAN_20170219_023200_President_Trump_Holds_Rally_in_Melbourne_Florida/CSPAN_20170219_023200_President_Trump_Holds_Rally_in_Melbourne_Florida.mp4?t=30/90"/>
-          </video>
-          <span><Link to={"transcriptview?CSPAN_20170219_023200_President_Trump_Holds_Rally_in_Melbourne_Florida/30/90"}>transcriptview </Link></span>
-        </div>
-
-        <div className="video-hldr">
-          <span>President Trump Says There is Blame on Both Sides <br/> CSPAN   August 15, 2017 6:37pm-7:01pm EDT</span>
-          <video className="video" width="300" height="254" controls>
-            <source src="https://archive.org/download/CSPAN_20170815_223700_President_Trump_Says_There_is_Blame_on_Both_Sides_for_Violence_in.../CSPAN_20170815_223700_President_Trump_Says_There_is_Blame_on_Both_Sides_for_Violence_in....mp4?t=10/70"/>
-          </video>
-          <span><Link to={"transcriptview?CSPAN_20170815_223700_President_Trump_Says_There_is_Blame_on_Both_Sides_for_Violence_in.../10/70"}>transcriptview </Link></span>
-        </div>
-
-        <div className="video-hldr">
-          <span>President Trump Addresses Joint Session of Congress <br/> CSPAN   February 28, 2017 9:03pm-10:15pm EST</span>
-          <video className="video" width="300" height="254" controls>
-            <source src="https://archive.org/download/CSPAN2_20170301_020300_President_Trump_Addresses_Joint_Session_of_Congress/CSPAN2_20170301_020300_President_Trump_Addresses_Joint_Session_of_Congress.mp4?t=20/80"/>
-          </video>
-          <span><Link to={"transcriptview?CSPAN2_20170301_020300_President_Trump_Addresses_Joint_Session_of_Congress/20/80"}>transcriptview </Link></span>
-        </div>
+        {this.state.data.matches.map(this.renderResult)}
       </div>
     );
   }
 
   renderCollapse() {
     if (Object.keys(this.state.data).length === 0) return null;
-    /*return (
+    return (
       <Collapse style={{marginTop: 14}}>
         {this.renderHeaders()}
         {this.renderEmbed()}
         {this.renderInfo()}
         {this.renderFile()}
         {this.renderFingerprint()}
+        {this.renderMatches()}
         {this.renderErrors()}
+        {this.renderWrappedResults()}
       </Collapse>
-    );*/
-    return null;
+    );
   }
 
   render() {
@@ -310,14 +298,9 @@ class SearchMedia extends Component {
 
             <h1>The Glorious Contextubot</h1>
 
-            <div style={{ textAlign: 'right', paddingTop: 16, paddingBottom: 16 }}>
-              <Switch checkedChildren="Simple" unCheckedChildren="Detailed" />
-            </div>
-
             <Search
               placeholder="please enter link here"
               size="large"
-              value="https://www.youtube.com/watch?v=4F4qzPbcFiA"
               onChange={event => this.handleChange.bind(this)(event)}
               onSearch={value => this.handleSearch.bind(this)(value)}
             />
@@ -329,15 +312,10 @@ class SearchMedia extends Component {
               <Step title="Show Context" description={this.state.step3} />
             </Steps>
 
-            {this.renderTitle()}
-
-            {this.renderThumbnail()}
-
-            {this.renderDescription()}
-
-            {this.renderViewCount()}
-
-            {this.renderResults()}
+            { /* this.renderTitle() */}
+            { /* this.renderThumbnail() */}
+            { /* this.renderDescription() */}
+            { /* this.renderViewCount() */}
 
             {this.renderCollapse()}
 

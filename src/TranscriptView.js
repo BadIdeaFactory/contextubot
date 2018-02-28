@@ -223,7 +223,7 @@ class TranscriptView extends Component {
     const srtUrl = "https://api.contextubot.net/proxy?url=https%3A//archive.org/download/"+uid+"/"+uid+".cc5.srt%3Ft%3D"+clipCc5Start+"/"+clipCc5End;
 
     console.log(srtUrl);
-    const comicUrl = "/comicview/?"+uid+"/"+clipStart+"/"+clipEnd;
+    const comicUrl = "/ComicView/?"+uid+"/"+clipStart+"/"+clipEnd;
 
 
     this.setState({ comicUrl: comicUrl });
