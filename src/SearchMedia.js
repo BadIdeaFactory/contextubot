@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import ReactJson from 'react-json-view';
-import axios from 'axios';
-import isUrl from 'is-url-superb';
 
 import { Layout, BackTop, Input, Steps, Collapse, Spin } from 'antd';
 import Button from 'antd/lib/button';
@@ -14,129 +12,9 @@ const Search = Input.Search;
 const Step = Steps.Step;
 const Panel = Collapse.Panel;
 
-let API = 'https://api.contextubot.net';
-if (document.location.hostname === '127.0.0.1.xip.io')
-  API = 'http://localhost:8080';
-if (document.location.hostname === 'eb.127.0.0.1.xip.io')
-  API = 'http://contextubot-dev-api.us-east-1.elasticbeanstalk.com';
-
 class SearchMedia extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      step: 0,
-      status: 'wait',
-      step0: '',
-      step1: '',
-      step2: '',
-      step3: '',
-      data: {},
-      preview: false
-    };
-  }
-
-  handleChange(event) {
-    if (event.target.value === '') {
-      this.setState({
-        status: 'wait',
-        step0: '',
-        step1: '',
-        step2: '',
-        step3: '',
-        data: {},
-        step: 0
-      });
-    }
-  }
-
-  handleSearch(value) {
-    if (!isUrl(value)) {
-      this.setState({
-        status: 'error',
-        step0: 'invalid link'
-      });
-      return;
-    }
-
-    this.setState({
-      data: {},
-      step: 0,
-      step0: '',
-      step1: '',
-      step2: '',
-      step3: '',
-      status: 'process'
-    });
-
-    axios
-      .post(`${API}?url=${encodeURIComponent(value.trim())}`)
-      .then(({ data }) => {
-        console.log(data);
-        this.setState({
-          data,
-          status: 'finish'
-        });
-
-        if (data.headers) {
-          this.setState({
-            step0: data.headers['content-type']
-          });
-        }
-
-        // media?
-        if (data.info) {
-          this.setState({
-            step: 1,
-            status: 'finish',
-            step1: data.info.extractor
-          });
-        } else if (data.file) {
-          this.setState({
-            step: 1,
-            status: 'finish',
-            step1: `${data.file.streams.length} streams`
-          });
-        }
-
-        // fingerprint?
-        if (data.fingerprint) {
-          this.setState({
-            step: 2,
-            status: 'finish',
-            step2: (
-              <a href={data.fingerprint}>
-                <Button
-                  type="dashed"
-                  icon="download"
-                  size="small"
-                  style={{ marginTop: 10 }}
-                >
-                  Download
-                </Button>
-              </a>
-            )
-          });
-        }
-
-        // matches?
-        if (data.matches) {
-          this.setState({
-            step: 3,
-            status: 'finish'
-          });
-        }
-      })
-      .catch(error => {
-        console.log(error);
-        this.setState({
-          status: 'error',
-          step0: error.message
-        });
-      });
-  }
-
   renderTitle() {
-    if (!this.state.data.info) return null;
+    if (!this.props.main.state.data.info) return null;
     return (
       <div
         style={{
@@ -146,20 +24,23 @@ class SearchMedia extends Component {
           fontSize: 24
         }}
       >
-        <span>{this.state.data.info.title}</span>
+        <span>{this.props.main.state.data.info.title}</span>
       </div>
     );
   }
 
   renderThumbnail() {
-    if (!this.state.data.embed) return null;
+    if (!this.props.main.state.data.embed) return null;
     return (
       <div
         style={{
           padding: 16
         }}
       >
-        <img alt="thumbnail" src={this.state.data.embed[0].thumbnail_url} />
+        <img
+          alt="thumbnail"
+          src={this.props.main.state.data.embed[0].thumbnail_url}
+        />
       </div>
     );
   }
@@ -173,13 +54,13 @@ class SearchMedia extends Component {
           width: 480
         }}
       >
-        <span>{this.state.data.embed[0].description}</span>
+        <span>{this.props.main.state.data.embed[0].description}</span>
       </div>
     );
   }
 
   renderViewCount() {
-    if (!this.state.data.info) return null;
+    if (!this.props.main.state.data.info) return null;
     return (
       <div
         style={{
@@ -190,54 +71,56 @@ class SearchMedia extends Component {
       >
         <span>
           Views :{' '}
-          {new Intl.NumberFormat().format(this.state.data.info.view_count)}
+          {new Intl.NumberFormat().format(
+            this.props.main.state.data.info.view_count
+          )}
         </span>
       </div>
     );
   }
 
   renderHeaders() {
-    if (!this.state.data.headers) return null;
+    if (!this.props.main.state.data.headers) return null;
     return (
       <Panel header="HTTP Headers" key="1">
-        <ReactJson name="headers" src={this.state.data.headers} />
+        <ReactJson name="headers" src={this.props.main.state.data.headers} />
       </Panel>
     );
   }
 
   renderEmbed() {
-    if (!this.state.data.embed) return null;
+    if (!this.props.main.state.data.embed) return null;
     return (
       <Panel header="Embed" key="2">
-        <ReactJson name="embed" src={this.state.data.embed} />
+        <ReactJson name="embed" src={this.props.main.state.data.embed} />
       </Panel>
     );
   }
 
   renderInfo() {
-    if (!this.state.data.info) return null;
+    if (!this.props.main.state.data.info) return null;
     return (
       <Panel header="Media Options" key="3">
-        <ReactJson name="info" src={this.state.data.info} />
+        <ReactJson name="info" src={this.props.main.state.data.info} />
       </Panel>
     );
   }
 
   renderFile() {
-    if (!this.state.data.file) return null;
+    if (!this.props.main.state.data.file) return null;
     return (
       <Panel header="Media Info" key="4">
-        <ReactJson name="file" src={this.state.data.file} />
+        <ReactJson name="file" src={this.props.main.state.data.file} />
       </Panel>
     );
   }
 
   renderFingerprint() {
-    if (!this.state.data.fingerprint) return null;
+    if (!this.props.main.state.data.fingerprint) return null;
     return (
       <Panel header="Fingerprint" key="5">
-        {this.state.data.fingerprint ? (
-          <a href={this.state.data.fingerprint}>
+        {this.props.main.state.data.fingerprint ? (
+          <a href={this.props.main.state.data.fingerprint}>
             <Button type="primary" icon="download">
               Download
             </Button>
@@ -248,17 +131,17 @@ class SearchMedia extends Component {
   }
 
   renderMatches() {
-    if (!this.state.data.matches) return null;
+    if (!this.props.main.state.data.matches) return null;
     return (
       <Panel header="Matches" key="6">
-        <ReactJson name="matches" src={this.state.data.matches} />
+        <ReactJson name="matches" src={this.props.main.state.data.matches} />
       </Panel>
     );
   }
 
   renderErrors() {
-    if (!this.state.data.errors) return null;
-    const filteredArr = this.state.data.errors.filter(err => {
+    if (!this.props.main.state.data.errors) return null;
+    const filteredArr = this.props.main.state.data.errors.filter(err => {
       return Object.keys(err).length;
     });
 
@@ -273,7 +156,9 @@ class SearchMedia extends Component {
   }
 
   renderWrappedResults() {
-    if (!this.state.data.matches) return null;
+    console.log('In renderWrappedResults');
+    if (!this.props.main.state.data.matches) return null;
+    console.log('renderResults() being returned');
     return (
       <Panel header="Results" key="7">
         {this.renderResults()}
@@ -306,13 +191,21 @@ class SearchMedia extends Component {
   }
 
   renderResults() {
-    if (!this.state.data.fingerprint) return null;
-
-    return <div>{this.state.data.matches.map(this.renderResult)}</div>;
+    if (!this.props.main.state.data.fingerprint) return null;
+    console.log('================');
+    console.log(this.props.main.state.data.matches.map(this.renderResult));
+    // note this data will contain lots of nulls
+    return (
+      <div className="results">
+        {this.props.main.state.data.matches.map(this.renderResult)}
+      </div>
+    );
   }
 
   renderCollapse() {
-    if (Object.keys(this.state.data).length === 0) return null;
+    console.log('In renderCollapse()');
+    if (Object.keys(this.props.main.state.data).length === 0) return null;
+    console.log('Object.keys present...');
     return (
       <Collapse style={{ marginTop: 14 }}>
         {this.renderHeaders()}
@@ -338,20 +231,20 @@ class SearchMedia extends Component {
             <Search
               placeholder="please enter link here"
               size="large"
-              onChange={event => this.handleChange.bind(this)(event)}
-              onSearch={value => this.handleSearch.bind(this)(value)}
+              onChange={event => this.props.main.handleChange.bind(this)(event)}
+              onSearch={value => this.props.main.handleSearch.bind(this)(value)}
             />
 
             <Steps
-              current={this.state.step}
-              status={this.state.status}
+              current={this.props.main.state.step}
+              status={this.props.main.state.status}
               style={{ marginTop: 24 }}
             >
               <Step
                 title={
                   <span>
                     Analyze Link{' '}
-                    {this.state.status === 'process' ? (
+                    {this.props.main.state.status === 'process' ? (
                       <Spin
                         size="small"
                         style={{ marginTop: 3, marginLeft: 4 }}
@@ -359,11 +252,20 @@ class SearchMedia extends Component {
                     ) : null}
                   </span>
                 }
-                description={this.state.step0}
+                description={this.props.main.state.step0}
               />
-              <Step title="Detect Media" description={this.state.step1} />
-              <Step title="Fingerprint" description={this.state.step2} />
-              <Step title="Show Context" description={this.state.step3} />
+              <Step
+                title="Detect Media"
+                description={this.props.main.state.step1}
+              />
+              <Step
+                title="Fingerprint"
+                description={this.props.main.state.step2}
+              />
+              <Step
+                title="Show Context"
+                description={this.props.main.state.step3}
+              />
             </Steps>
 
             {/* this.renderTitle() */}
