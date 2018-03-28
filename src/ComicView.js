@@ -125,8 +125,9 @@ class ComicView extends Component {
         });
 
         console.log(output);
-
-        this.splitMedia(output);
+        if (output.length > 0) {
+          this.splitMedia(output);
+        }
       });
     });
   }

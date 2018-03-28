@@ -31,9 +31,13 @@ class TranscriptView extends Component {
         // This figure may or may not work on other clips.
         // I'm not sure how we get around this without aligning.
 
-        transData = this.srtToHypertranscript(data, 2800);
-        this.setState({ ht: transData });
-        window.hyperaudiolite.init('hypertranscript', 'video', false);
+        if (data) {
+          transData = this.srtToHypertranscript(data, 2800);
+          this.setState({ ht: transData });
+          window.hyperaudiolite.init('hypertranscript', 'video', false);
+        } else {
+          this.setState({ ht: 'no transcript associated with this video' });
+        }
       });
     });
   }
