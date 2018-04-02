@@ -85,7 +85,11 @@ class Main extends React.Component {
     });
 
     axios
-      .post(`${API}?url=${encodeURIComponent(value.trim())}`)
+      .post(
+        `${API}?url=${encodeURIComponent(value.trim())}`,
+        {},
+        { timeout: 3 * 60 * 1000 }
+      )
       .then(({ data }) => {
         console.log(data);
         main.setState({
