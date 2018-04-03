@@ -15,7 +15,7 @@ import isUrl from 'is-url-superb';
 
 // It is also responsible for holding state.
 
-let API = 'http://api.contextubot.com'; // because https sux
+let API = 'https://api.contextubot.net';
 if (document.location.hostname === '127.0.0.1.xip.io')
   API = 'http://localhost:8080';
 if (document.location.hostname === 'eb.127.0.0.1.xip.io')
