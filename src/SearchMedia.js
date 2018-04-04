@@ -6,7 +6,7 @@ import { BackTop, Input, Collapse, Spin } from 'antd';
 
 import Button from 'antd/lib/button';
 
-import { Container, SearchResults, SearchResult } from './ui/components';
+import { Container, SearchResults, SearchResult } from './ui';
 // import { dummyData } from './data';
 
 import './App.css';

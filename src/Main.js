@@ -6,7 +6,7 @@ import ComicView from './ComicView';
 import Button from 'antd/lib/button';
 import axios from 'axios';
 import isUrl from 'is-url-superb';
-import { Content, Footer, Header, Layout } from './ui/partials';
+import { Content, Footer, Header, Layout } from './ui';
 
 // The Main component renders one of the three provided
 // Routes (provided that one matches). Both the /roster
