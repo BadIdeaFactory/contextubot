@@ -2,20 +2,16 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import ReactJson from 'react-json-view';
 
-import { Layout, BackTop, Input, Steps, Collapse, Spin } from 'antd';
+import { BackTop, Input, Collapse, Spin } from 'antd';
 
 import Button from 'antd/lib/button';
 
-import { Container, SearchResults, SearchResult } from './components';
-import { Brandmark } from './partials';
-import { dummyData } from './data';
+import { Container, SearchResults, SearchResult } from './ui/components';
+// import { dummyData } from './data';
 
 import './App.css';
-import './App.css';
 
-const { Content } = Layout;
 const Search = Input.Search;
-const Step = Steps.Step;
 const Panel = Collapse.Panel;
 
 class SearchMedia extends Component {
@@ -226,64 +222,26 @@ class SearchMedia extends Component {
   }
 
   render() {
-    return [
-      <BackTop />,
-      <Search
-        placeholder="please enter link here"
-        size="large"
-        onChange={event => this.props.main.handleChange.bind(this)(event)}
-        onSearch={value => this.props.main.handleSearch.bind(this)(value)}
-      />,
-      this.renderCollapse()
-    ];
-
-    {
-      /* <Steps
-            current={this.props.main.state.step}
-            status={this.props.main.state.status}
-            style={{ marginTop: 24 }}
-          >
-            <Step
-              title={
-                <span>
-                  Analyze Link{' '}
-                  {this.props.main.state.status === 'process' ? (
-                    <Spin
-                      size="small"
-                      style={{ marginTop: 3, marginLeft: 4 }}
-                    />
-                  ) : null}
-                </span>
-              }
-              description={this.props.main.state.step0}
-            />
-            <Step
-              title="Detect Media"
-              description={this.props.main.state.step1}
-            />
-            <Step
-              title="Fingerprint"
-              description={this.props.main.state.step2}
-            />
-            <Step
-              title="Show Context"
-              description={this.props.main.state.step3}
-            />
-          </Steps> */
-    }
-
-    {
-      /* this.renderTitle() */
-    }
-    {
-      /* this.renderThumbnail() */
-    }
-    {
-      /* this.renderDescription() */
-    }
-    {
-      /* this.renderViewCount() */
-    }
+    /* this.renderTitle() */
+    /* this.renderThumbnail() */
+    /* this.renderDescription() */
+    /* this.renderViewCount() */
+    return (
+      <Container>
+        <BackTop />
+        <Search
+          placeholder="please enter link here"
+          size="large"
+          onChange={event => this.props.main.handleChange.bind(this)(event)}
+          onSearch={value => this.props.main.handleSearch.bind(this)(value)}
+        />
+        {this.props.main.state.status === 'process' ? (
+          <Spin size="large" />
+        ) : (
+          this.renderCollapse()
+        )}
+      </Container>
+    );
   }
 }
 
