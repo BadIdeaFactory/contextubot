@@ -2,14 +2,16 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import ReactJson from 'react-json-view';
 
-import { Layout, BackTop, Input, Steps, Collapse, Spin } from 'antd';
+import { BackTop, Input, Collapse, Spin } from 'antd';
+
 import Button from 'antd/lib/button';
+
+import { Container, SearchResults, SearchResult } from './ui';
+// import { dummyData } from './data';
 
 import './App.css';
 
-const { Content } = Layout;
 const Search = Input.Search;
-const Step = Steps.Step;
 const Panel = Collapse.Panel;
 
 class SearchMedia extends Component {
@@ -159,11 +161,7 @@ class SearchMedia extends Component {
     console.log('In renderWrappedResults');
     if (!this.props.main.state.data.matches) return null;
     console.log('renderResults() being returned');
-    return (
-      <Panel header="Results" key="7">
-        {this.renderResults()}
-      </Panel>
-    );
+    return <div key="7">{this.renderResults()}</div>;
   }
 
   renderResult(match) {
@@ -176,17 +174,19 @@ class SearchMedia extends Component {
     const comicUrl = `TranscriptView?${uid}/${clipStart}/${clipEnd}`;
 
     return (
-      <div className="video-hldr" key={mp4Url}>
-        <span>
-          {uid.replace(/_/g, ' ')} ({match.duration}s)
-        </span>
-        <video className="video" width="300" height="254" controls>
-          <source src={mp4Url} />
-        </video>
-        <span>
-          <Link to={comicUrl}>transcriptview </Link>
-        </span>
-      </div>
+      <SearchResult>
+        <div className="video-hldr" key={mp4Url}>
+          <span>
+            {uid.replace(/_/g, ' ')} ({match.duration}s)
+          </span>
+          <video className="video" width="300" height="254" controls>
+            <source src={mp4Url} />
+          </video>
+          <span>
+            <Link to={comicUrl}>transcriptview </Link>
+          </span>
+        </div>
+      </SearchResult>
     );
   }
 
@@ -196,9 +196,10 @@ class SearchMedia extends Component {
     console.log(this.props.main.state.data.matches.map(this.renderResult));
     // note this data will contain lots of nulls
     return (
-      <div className="results">
+      <SearchResults>
+        {/* {dummyData.map(this.renderResult)} */}
         {this.props.main.state.data.matches.map(this.renderResult)}
-      </div>
+      </SearchResults>
     );
   }
 
@@ -206,7 +207,8 @@ class SearchMedia extends Component {
     console.log('In renderCollapse()');
     if (Object.keys(this.props.main.state.data).length === 0) return null;
     console.log('Object.keys present...');
-    return (
+    return [
+      this.renderWrappedResults(),
       <Collapse style={{ marginTop: 14 }}>
         {this.renderHeaders()}
         {this.renderEmbed()}
@@ -215,68 +217,30 @@ class SearchMedia extends Component {
         {this.renderFingerprint()}
         {this.renderMatches()}
         {this.renderErrors()}
-        {this.renderWrappedResults()}
       </Collapse>
-    );
+    ];
   }
 
   render() {
+    /* this.renderTitle() */
+    /* this.renderThumbnail() */
+    /* this.renderDescription() */
+    /* this.renderViewCount() */
     return (
-      <Layout className="layout">
+      <Container>
         <BackTop />
-        <Content>
-          <div style={{ background: '#fff', padding: 24, minHeight: 280 }}>
-            <h1>The Glorious Contextubot</h1>
-
-            <Search
-              placeholder="please enter link here"
-              size="large"
-              onChange={event => this.props.main.handleChange.bind(this)(event)}
-              onSearch={value => this.props.main.handleSearch.bind(this)(value)}
-            />
-
-            <Steps
-              current={this.props.main.state.step}
-              status={this.props.main.state.status}
-              style={{ marginTop: 24 }}
-            >
-              <Step
-                title={
-                  <span>
-                    Analyze Link{' '}
-                    {this.props.main.state.status === 'process' ? (
-                      <Spin
-                        size="small"
-                        style={{ marginTop: 3, marginLeft: 4 }}
-                      />
-                    ) : null}
-                  </span>
-                }
-                description={this.props.main.state.step0}
-              />
-              <Step
-                title="Detect Media"
-                description={this.props.main.state.step1}
-              />
-              <Step
-                title="Fingerprint"
-                description={this.props.main.state.step2}
-              />
-              <Step
-                title="Show Context"
-                description={this.props.main.state.step3}
-              />
-            </Steps>
-
-            {/* this.renderTitle() */}
-            {/* this.renderThumbnail() */}
-            {/* this.renderDescription() */}
-            {/* this.renderViewCount() */}
-
-            {this.renderCollapse()}
-          </div>
-        </Content>
-      </Layout>
+        <Search
+          placeholder="please enter link here"
+          size="large"
+          onChange={event => this.props.main.handleChange.bind(this)(event)}
+          onSearch={value => this.props.main.handleSearch.bind(this)(value)}
+        />
+        {this.props.main.state.status === 'process' ? (
+          <Spin size="large" />
+        ) : (
+          this.renderCollapse()
+        )}
+      </Container>
     );
   }
 }

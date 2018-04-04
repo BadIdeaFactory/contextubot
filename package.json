@@ -35,6 +35,7 @@
     "is-url-superb": "^2.0.0",
     "jest": "20.0.4",
     "object-assign": "4.1.1",
+    "polished": "^1.9.2",
     "postcss-flexbugs-fixes": "3.2.0",
     "postcss-loader": "2.0.6",
     "prettier": "^1.11.0",
@@ -46,6 +47,7 @@
     "react-json-view": "^1.13.0",
     "react-router-dom": "^4.2.2",
     "style-loader": "0.18.2",
+    "styled-components": "^3.2.5",
     "sw-precache-webpack-plugin": "0.11.4",
     "url-loader": "0.5.9",
     "webpack": "3.5.1",
@@ -60,8 +62,12 @@
     "test": "node scripts/test.js --env=jsdom"
   },
   "jest": {
-    "collectCoverageFrom": ["src/**/*.{js,jsx}"],
-    "setupFiles": ["<rootDir>/config/polyfills.js"],
+    "collectCoverageFrom": [
+      "src/**/*.{js,jsx}"
+    ],
+    "setupFiles": [
+      "<rootDir>/config/polyfills.js"
+    ],
     "testMatch": [
       "<rootDir>/src/**/__tests__/**/*.js?(x)",
       "<rootDir>/src/**/?(*.)(spec|test).js?(x)"
@@ -73,19 +79,37 @@
       "^.+\\.css$": "<rootDir>/config/jest/cssTransform.js",
       "^(?!.*\\.(js|jsx|css|json)$)": "<rootDir>/config/jest/fileTransform.js"
     },
-    "transformIgnorePatterns": ["[/\\\\]node_modules[/\\\\].+\\.(js|jsx)$"],
+    "transformIgnorePatterns": [
+      "[/\\\\]node_modules[/\\\\].+\\.(js|jsx)$"
+    ],
     "moduleNameMapper": {
       "^react-native$": "react-native-web"
     },
-    "moduleFileExtensions": ["web.js", "js", "json", "web.jsx", "jsx", "node"]
+    "moduleFileExtensions": [
+      "web.js",
+      "js",
+      "json",
+      "web.jsx",
+      "jsx",
+      "node"
+    ]
   },
   "babel": {
-    "presets": ["react-app"],
-    "plugins": ["transform-async-generator-functions"]
+    "presets": [
+      "react-app"
+    ],
+    "plugins": [
+      "transform-async-generator-functions"
+    ]
   },
   "eslintConfig": {
-    "extends": ["react-app", "prettier/react"],
-    "plugins": ["prettier"],
+    "extends": [
+      "react-app",
+      "prettier/react"
+    ],
+    "plugins": [
+      "prettier"
+    ],
     "rules": {
       "prettier/prettier": [
         "error",
