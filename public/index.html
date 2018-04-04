@@ -26,7 +26,6 @@
     <script src="https://labs.hyperaud.io/temp/imagefilters.js"></script>
     <script src="https://hyperaudio.github.io/sharect/sharect.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/velocity/1.5.0/velocity.js"></script>
-    <link href="https://fonts.googleapis.com/css?family=Bangers" rel="stylesheet">
 
     <title>Contextubot</title>
     <script>
@@ -51,13 +50,15 @@
 
     <script>
     var sharect = new Sharect();
-      sharect.config({
-        /*facebook: true,*/
-        twitter: true,
-        twitterUsername: '%23hashtag', /*hashtag example*/
-        /*backgroundColor: '#ff4081',*/
-        iconColor: '#fff'
-      }).init();
-    </script>
+sharect
+  .config({
+    /*facebook: true,*/
+    twitter: true,
+    twitterUsername: '%23hashtag' /*hashtag example*/,
+    /*backgroundColor: '#ff4081',*/
+    iconColor: '#fff'
+  })
+  .init();
+</script>
   </body>
 </html>
