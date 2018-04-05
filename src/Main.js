@@ -6,7 +6,6 @@ import ComicView from './ComicView';
 import Button from 'antd/lib/button';
 import axios from 'axios';
 import isUrl from 'is-url-superb';
-import { Content, Footer, Header, Layout } from './ui';
 
 // The Main component renders one of the three provided
 // Routes (provided that one matches). Both the /roster
@@ -158,17 +157,11 @@ class Main extends React.Component {
 
   render() {
     return (
-      <Layout>
-        <Header />
-        <Content>
-          <Switch>
-            <Route exact path="/" render={() => <SearchMedia main={this} />} />
-            <Route path="/TranscriptView" component={TranscriptView} />
-            <Route path="/ComicView" component={ComicView} />
-          </Switch>
-        </Content>
-        <Footer />
-      </Layout>
+      <Switch>
+        <Route exact path="/" render={() => <SearchMedia main={this} />} />
+        <Route path="/TranscriptView" component={TranscriptView} />
+        <Route path="/ComicView" component={ComicView} />
+      </Switch>
     );
   }
 }

@@ -6,7 +6,16 @@ import { BackTop, Input, Collapse, Spin } from 'antd';
 
 import Button from 'antd/lib/button';
 
-import { Container, SearchResults, SearchResult } from './ui';
+import {
+  Container,
+  Content,
+  Footer,
+  Layout,
+  PageTitle,
+  SearchResult,
+  SearchResults,
+  Separator
+} from './ui';
 // import { dummyData } from './data';
 
 import './App.css';
@@ -227,20 +236,29 @@ class SearchMedia extends Component {
     /* this.renderDescription() */
     /* this.renderViewCount() */
     return (
-      <Container>
-        <BackTop />
-        <Search
-          placeholder="please enter link here"
-          size="large"
-          onChange={event => this.props.main.handleChange.bind(this)(event)}
-          onSearch={value => this.props.main.handleSearch.bind(this)(value)}
-        />
-        {this.props.main.state.status === 'process' ? (
-          <Spin size="large" />
-        ) : (
-          this.renderCollapse()
-        )}
-      </Container>
+      <Layout>
+        <Content fill="grey" dir="column" align="center">
+          <BackTop />
+          <PageTitle display="h1">
+            Source-check questionable media. Stand by reputable sources.
+          </PageTitle>
+          <Separator dir="h" silent size="m" />
+          <Container limit="s">
+            <Search
+              placeholder="please enter link here"
+              size="large"
+              onChange={event => this.props.main.handleChange.bind(this)(event)}
+              onSearch={value => this.props.main.handleSearch.bind(this)(value)}
+            />
+          </Container>
+          {this.props.main.state.status === 'process' ? (
+            <Spin size="large" />
+          ) : (
+            this.renderCollapse()
+          )}
+        </Content>
+        <Footer />
+      </Layout>
     );
   }
 }

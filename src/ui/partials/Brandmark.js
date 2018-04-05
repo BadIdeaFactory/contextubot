@@ -1,15 +1,16 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { color, setType } from '../utils';
+import { SVGLogo } from '../';
 
 const BrandmarkEl = styled.h1`
-  ${setType('m')};
-  color: ${color.redM};
   display: inline-block;
-  font-weight: bold;
 `;
 
-const Brandmark = () => <BrandmarkEl>Contextubot</BrandmarkEl>;
+const Brandmark = () => (
+  <BrandmarkEl>
+    <img src={SVGLogo} alt="Contextubot" height="20px" />
+  </BrandmarkEl>
+);
 
 export default Brandmark;
