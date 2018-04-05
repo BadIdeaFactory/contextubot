@@ -5,6 +5,11 @@ export { default as SearchResult } from './SearchResult';
 export { default as SearchResults } from './SearchResults';
 export { default as Separator } from './Separator';
 
+export { default as Form } from './forms/Form';
+export { default as FormItem } from './forms/FormItem';
+export { default as Label } from './forms/Label';
+export { default as TextInput } from './forms/TextInput';
+
 export { default as PageTitle } from './texts/PageTitle';
 export { default as PageSubtitle } from './texts/PageSubtitle';
 export { default as PageParagraph } from './texts/PageParagraph';
