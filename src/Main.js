@@ -86,12 +86,15 @@ class Main extends React.Component {
     });
 
     axios
-      .post(
+      /*.post(
         `${API}?url=${encodeURIComponent(value.trim())}`,
         {},
         { timeout: 3 * 60 * 1000 }
-      )
+      )*/
+      /* as well as uncommenting the above, comment the line below for live data */
+      .get(`../dummy.json`, {}, { timeout: 3 * 60 * 1000 })
       .then(({ data }) => {
+        console.log('the data');
         console.log(data);
         main.setState({
           data,
