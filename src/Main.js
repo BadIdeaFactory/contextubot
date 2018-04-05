@@ -85,6 +85,8 @@ class Main extends React.Component {
       status: 'process'
     });
 
+    console.log(API); // so that builds pass :/
+
     axios
       /*.post(
         `${API}?url=${encodeURIComponent(value.trim())}`,
