@@ -4,6 +4,7 @@ import { string } from 'prop-types';
 import { color, setType } from '../../utils';
 
 const Text = css.span`
+
   ${({ display }) =>
     display === 'h1'
       ? `
@@ -19,6 +20,7 @@ const Text = css.span`
     ${setType('l')};
   `
       : ``};
+
 `;
 
 Text.propTypes = {

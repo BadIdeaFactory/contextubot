@@ -22,7 +22,11 @@ const Footer = () => (
       </Action>
     </Container>
     <Container flex={[1, 1, '50%']} align="right">
-      <Action href="https://github.com/BadIdeaFactory/">
+      <Action
+        href="https://github.com/BadIdeaFactory/"
+        rel="noopener noreferrer"
+        target="_blank"
+      >
         Bad Idea Factory
         <Icon name="github" size="l" />
       </Action>

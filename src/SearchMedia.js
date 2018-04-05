@@ -2,25 +2,26 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import ReactJson from 'react-json-view';
 
-import { BackTop, Input, Collapse, Spin } from 'antd';
+import { BackTop, Collapse, Spin } from 'antd';
 
 import Button from 'antd/lib/button';
 
 import {
-  Container,
   Content,
   Footer,
+  Form,
+  FormItem,
   Layout,
   PageTitle,
   SearchResult,
   SearchResults,
-  Separator
+  Separator,
+  TextInput
 } from './ui';
 // import { dummyData } from './data';
 
 import './App.css';
 
-const Search = Input.Search;
 const Panel = Collapse.Panel;
 
 class SearchMedia extends Component {
@@ -230,27 +231,41 @@ class SearchMedia extends Component {
     ];
   }
 
+  handleChange(e) {
+    this.props.main.handleChange.bind(this)(e);
+    this.setState({ searchKey: e.target.value });
+    console.log('THIS PROPS', this.props);
+    console.log('THIS STATE', this.state);
+  }
+  handleSubmit(e) {
+    if (e) e.preventDefault();
+    this.props.main.handleSearch.bind(this)(this.state.searchKey);
+  }
+
   render() {
     /* this.renderTitle() */
     /* this.renderThumbnail() */
     /* this.renderDescription() */
     /* this.renderViewCount() */
+
+    console.log('SEARCH MEDIA PROPS: ', this.props);
+
     return (
       <Layout>
         <Content fill="grey" dir="column" align="center">
           <BackTop />
           <PageTitle display="h1">
-            Source-check questionable media. Stand by reputable sources.
+            Source-check questionable media. <br />Stand by reputable sources.
           </PageTitle>
-          <Separator dir="h" silent size="m" />
-          <Container limit="s">
-            <Search
-              placeholder="please enter link here"
-              size="large"
-              onChange={event => this.props.main.handleChange.bind(this)(event)}
-              onSearch={value => this.props.main.handleSearch.bind(this)(value)}
-            />
-          </Container>
+          <Separator dir="h" silent size="l" />
+          <Form onSubmit={e => this.handleSubmit.bind(this)(e)}>
+            <FormItem>
+              <TextInput
+                placeholder="Paste in a video link, i.e. https://www.youtube.com/watch?v=3g39ZaBIbwg"
+                onChange={e => this.handleChange.bind(this)(e)}
+              />
+            </FormItem>
+          </Form>
           {this.props.main.state.status === 'process' ? (
             <Spin size="large" />
           ) : (
