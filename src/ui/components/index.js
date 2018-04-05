@@ -1,3 +1,4 @@
+export { default as Action } from './Action';
 export { default as Container } from './Container';
 export { default as Icon } from './Icon';
 export { default as SearchResult } from './SearchResult';
