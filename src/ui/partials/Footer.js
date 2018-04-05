@@ -6,6 +6,7 @@ import { setSpace } from '../utils';
 
 const FooterEl = styled(Container.withComponent('footer'))`
   ${setSpace('pvh')};
+  ${setSpace('phm')};
   flex-shrink: 0;
 `;
 

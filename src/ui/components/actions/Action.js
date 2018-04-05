@@ -1,8 +1,8 @@
 import React from 'react';
 import { string } from 'prop-types';
 
-import Button from './actions/Button';
-import Link from './actions/Link';
+import Button from './Button';
+import Link from './Link';
 
 const Action = props =>
   props.href ? <Link {...props} /> : <Button {...props} />;

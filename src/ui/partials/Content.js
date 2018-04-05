@@ -7,6 +7,10 @@ const ContentEl = styled(Container.withComponent('main'))`
   flex: 1 0 auto;
 `;
 
-const Content = props => <ContentEl limit="l" padded {...props} />;
+const Content = props => (
+  <ContentEl padded {...props}>
+    <Container limit="l">{props.children}</Container>
+  </ContentEl>
+);
 
 export default Content;

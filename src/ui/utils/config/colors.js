@@ -1,7 +1,7 @@
 import { darken, lighten } from 'polished';
 
 export const colors = {
-  black: '#1C1C1C',
+  black: '#5c5c5c',
   white: '#fff',
 
   coffeeWt: lighten(0.22, '#a16927'),
