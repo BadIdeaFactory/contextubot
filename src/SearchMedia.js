@@ -14,7 +14,6 @@ import {
   SearchForm,
   Separator
 } from './ui';
-// import { dummyData } from './data';
 
 import './App.css';
 
