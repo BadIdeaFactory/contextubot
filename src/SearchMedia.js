@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import ReactJson from 'react-json-view';
 
-import { BackTop, Collapse, Spin } from 'antd';
+import { Collapse, Spin } from 'antd';
 
 import {
   Action,
@@ -242,9 +242,7 @@ class SearchMedia extends Component {
     /* this.renderDescription() */
     /* this.renderViewCount() */
 
-    console.log('SEARCH MEDIA PROPS: ', this.props);
-
-    const hasTriggeredSearch =
+    const hasFetchedResults =
       Object.keys(this.props.main.state.data).length > 0;
     const isStillSearching = this.props.main.state.status === 'process';
 
@@ -266,15 +264,13 @@ class SearchMedia extends Component {
       if (isStillSearching) {
         return <Spin size="large" />;
       }
-      return this.renderCollapse();
     };
 
-    return [
-      <BackTop key="kidA" />,
-      <Content dir="row" align="center" key="kidB">
-        {hasTriggeredSearch ? renderResults() : renderForm()}
+    return (
+      <Content dir="row" align="center">
+        {hasFetchedResults ? renderResults() : renderForm()}
       </Content>
-    ];
+    );
   }
 }
 
