@@ -244,9 +244,12 @@ class SearchMedia extends Component {
 
     console.log('SEARCH MEDIA PROPS: ', this.props);
 
-    return [
-      <BackTop key="kidA" />,
-      <Content dir="row" align="center" key="kidB">
+    const hasTriggeredSearch =
+      Object.keys(this.props.main.state.data).length > 0;
+    const isStillSearching = this.props.main.state.status === 'process';
+
+    const renderForm = () => {
+      return (
         <Container limit="m">
           <PageTitle display="h1">
             Source-check questionable media. <br />Stand by reputable sources.
@@ -255,12 +258,21 @@ class SearchMedia extends Component {
           <SearchForm
             handleSubmit={data => this.props.main.handleSearch.bind(this)(data)}
           />
-          {this.props.main.state.status === 'process' ? (
-            <Spin size="large" />
-          ) : (
-            this.renderCollapse()
-          )}
         </Container>
+      );
+    };
+
+    const renderResults = () => {
+      if (isStillSearching) {
+        return <Spin size="large" />;
+      }
+      return this.renderCollapse();
+    };
+
+    return [
+      <BackTop key="kidA" />,
+      <Content dir="row" align="center" key="kidB">
+        {hasTriggeredSearch ? renderResults() : renderForm()}
       </Content>
     ];
   }
