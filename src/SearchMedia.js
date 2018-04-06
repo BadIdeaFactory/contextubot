@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom';
 import React, { Component } from 'react';
 import ReactJson from 'react-json-view';
 import styled from 'styled-components';
@@ -10,15 +9,55 @@ import {
   Container,
   Content,
   PageTitle,
+  PageSubtitle,
+  PNGRationalizer,
   SearchForm,
   Separator
 } from './ui';
+import { setSpace } from './ui/utils';
 
 import './App.css';
 
 const Panel = Collapse.Panel;
 
+const SearchResults = styled(Container.withComponent('ul'))`
+  ${setSpace('man')};
+  ${setSpace('pan')};
+  display: flex;
+  flex-wrap: wrap;
+  height: 100%;
+  position: relative;
+  width: 100%;
+`;
+
+const SearchResult = styled(Container.withComponent('li'))`
+  ${setSpace('mbm')};
+  ${setSpace('phs')};
+  flex: 0 0 ${100 / 3}%;
+  & > div {
+    ${setSpace('mbs')};
+    position: relative;
+  }
+  & > div > img {
+    display: block;
+    width: 100%;
+  }
+  & > div > video {
+    height: 100%;
+    left: 0;
+    max-width: 100% !important;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    line-height: 0;
+  }
+`;
+
 class SearchMedia extends Component {
+  // constructor(props) {
+  //   super(props);
+  //   this.open = this.handleSubmit.bind(this);
+  // }
   renderTitle() {
     if (!this.props.main.state.data.info) return null;
     return (
@@ -159,29 +198,7 @@ class SearchMedia extends Component {
     );
   }
 
-  renderResult(match) {
-    if (match.duration === 0) return null;
-
-    const uid = match.source.replace('.afpt', '').replace('_tva', '');
-    const clipStart = match.time;
-    const clipEnd = match.time + match.duration;
-    const mp4Url = `https://archive.org/download/${uid}/${uid}.mp4?t=${clipStart}/${clipEnd}`;
-    const comicUrl = `TranscriptView?${uid}/${clipStart}/${clipEnd}`;
-
-    return (
-      <li key={mp4Url}>
-        <span>
-          {uid.replace(/_/g, ' ')} ({match.duration}s)
-        </span>
-        <video className="video" width="300" height="254" controls>
-          <source src={mp4Url} />
-        </video>
-        <span>
-          <Link to={comicUrl}>transcriptview </Link>
-        </span>
-      </li>
-    );
-  }
+  renderResult(match) {}
 
   // renderCollapse() {
   //   console.log('In renderCollapse()');
@@ -201,18 +218,14 @@ class SearchMedia extends Component {
   //   ];
   // }
 
-  handleChange(e) {
-    this.props.main.handleChange.bind(this)(e);
-    this.setState({ searchKey: e.target.value });
-    console.log('THIS PROPS', this.props);
-    console.log('THIS STATE', this.state);
-  }
   handleSubmit(e) {
     if (e) e.preventDefault();
     this.props.main.handleSearch.bind(this)(this.state.searchKey);
   }
 
   render() {
+    console.log('— SEARCH MEDIA PROPS: ', this.props);
+
     const { main } = this.props;
     /* this.renderTitle() */
     /* this.renderThumbnail() */
@@ -229,50 +242,82 @@ class SearchMedia extends Component {
     console.log('—— hasMatches: ', hasMatches);
     console.log('—— isStillSearching: ', isStillSearching);
 
-    const SearchResults = styled(Container.withComponent('ul'))`
-      display: flex;
-      & > li {
-        background: yellow;
-      }
-    `;
-
     const renderForm = () => {
       return (
-        <Container limit="m">
-          <PageTitle display="h1">
-            Source-check questionable media. <br />Stand by reputable sources.
-          </PageTitle>
-          <Separator dir="h" silent size="m" />
-          <SearchForm
-            handleSubmit={data => main.handleSearch.bind(this)(data)}
-          />
-        </Container>
+        <Content dir="row" align="center">
+          <Container limit="m">
+            <PageTitle display="h1">
+              Source-check questionable media. <br />Stand by reputable sources.
+            </PageTitle>
+            <Separator dir="h" silent size="m" />
+            <SearchForm
+              handleSubmit={data => main.handleSearch.bind(this)(data)}
+            />
+          </Container>
+        </Content>
       );
     };
 
     const renderResults = () => {
+      const renderResult = match => {
+        if (match.duration === 0) return null;
+
+        console.log('renderResult() —— ', this.props);
+
+        const uid = match.source.replace('.afpt', '').replace('_tva', '');
+        const clipStart = match.time;
+        const clipEnd = match.time + match.duration;
+        const mp4Url = `https://archive.org/download/${uid}/${uid}.mp4?t=${clipStart}/${clipEnd}`;
+        const comicUrl = `TranscriptView?${uid}/${clipStart}/${clipEnd}`;
+
+        return (
+          <SearchResult
+            key={mp4Url}
+            // onClick={() => console.log(this.props).bind(this)}
+            onClick={() => this.props.history.push(comicUrl)}
+          >
+            <div>
+              <img src={PNGRationalizer} alt="" />
+              <video
+                className="video"
+                controls
+                onClick={e => e.stopPropagation()}
+              >
+                <source src={mp4Url} />
+              </video>
+            </div>
+            <PageSubtitle display="h5">
+              {uid.replace(/_/g, ' ')} ({match.duration}s)
+            </PageSubtitle>
+          </SearchResult>
+        );
+      };
+
       if (isStillSearching) {
-        return <Spin size="large" />;
+        return (
+          <Content dir="row" align="center">
+            <Spin size="large" />
+          </Content>
+        );
       }
       return (
-        <Container>
-          <PageTitle display="h2">
-            Here the <strong>199 possible matches</strong> I found:
-          </PageTitle>
-          <SearchResults dir="row" limit="m">
-            {main.state.data.matches.map(this.renderResult)}
-          </SearchResults>
-        </Container>
+        <Content>
+          <Container limit="m">
+            <PageTitle display="h2">
+              Here the <strong>199 possible matches</strong> I found:
+            </PageTitle>
+            <Separator dir="h" silent size="m" />
+            <SearchResults>
+              {main.state.data.matches.map(renderResult)}
+            </SearchResults>
+          </Container>
+        </Content>
       );
     };
 
-    return (
-      <Content dir="row" align="center">
-        {hasFingerprint && hasFetchedResults && hasMatches
-          ? renderResults()
-          : renderForm()}
-      </Content>
-    );
+    return hasFingerprint && hasFetchedResults && hasMatches
+      ? renderResults()
+      : renderForm();
   }
 }
 
