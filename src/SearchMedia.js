@@ -20,6 +20,12 @@ import './App.css';
 
 const Panel = Collapse.Panel;
 
+const SearchResultsWrapper = styled(Container)`
+  ${breakpoint.onlytablet} {
+    max-width: none;
+  }
+`;
+
 const SearchResults = styled(Container.withComponent('ul'))`
   ${setSpace('man')};
   ${setSpace('pan')};
@@ -301,7 +307,7 @@ class SearchMedia extends Component {
       }
       return (
         <Content>
-          <Container limit="m">
+          <SearchResultsWrapper limit="m">
             <PageTitle display="h2">
               Here the{' '}
               <strong>{main.state.data.matches.length} possible matches</strong>{' '}
@@ -311,7 +317,7 @@ class SearchMedia extends Component {
             <SearchResults>
               {main.state.data.matches.map(renderResult)}
             </SearchResults>
-          </Container>
+          </SearchResultsWrapper>
         </Content>
       );
     };

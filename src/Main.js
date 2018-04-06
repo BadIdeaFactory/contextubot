@@ -159,9 +159,11 @@ class Main extends React.Component {
   }
 
   render() {
+    const { matches } = this.state.data;
+    const hasSearch = matches !== undefined && matches.length > 0;
     return (
       <Layout>
-        <Header {...this.props} />
+        <Header hasSearch={hasSearch} main={this} {...this.props} />
         <Switch>
           <Route
             exact
