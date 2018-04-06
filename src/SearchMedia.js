@@ -303,7 +303,9 @@ class SearchMedia extends Component {
         <Content>
           <Container limit="m">
             <PageTitle display="h2">
-              Here the <strong>199 possible matches</strong> I found:
+              Here the{' '}
+              <strong>{main.state.data.matches.length} possible matches</strong>{' '}
+              I found:
             </PageTitle>
             <Separator dir="h" silent size="m" />
             <SearchResults>
