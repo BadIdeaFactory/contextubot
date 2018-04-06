@@ -14,7 +14,7 @@ import {
   SearchForm,
   Separator
 } from './ui';
-import { setSpace } from './ui/utils';
+import { breakpoint, setSpace } from './ui/utils';
 
 import './App.css';
 
@@ -36,7 +36,12 @@ const SearchResult = styled(Container.withComponent('li'))`
   flex: 0 0 ${100 / 3}%;
   & > div {
     ${setSpace('mbs')};
+    padding-bottom: 34px;
     position: relative;
+  }
+  & > div > span {
+    display: block;
+    height: 34px;
   }
   & > div > img {
     display: block;
@@ -45,11 +50,15 @@ const SearchResult = styled(Container.withComponent('li'))`
   & > div > video {
     height: 100%;
     left: 0;
+    line-height: 0;
     max-width: 100% !important;
     position: absolute;
     top: 0;
     width: 100%;
-    line-height: 0;
+  }
+  ${breakpoint.onlyphone} {
+    flex: 0 0 ${100 / 2}%;
+    ${setSpace('mbs')};
   }
 `;
 
@@ -285,6 +294,7 @@ class SearchMedia extends Component {
               >
                 <source src={mp4Url} />
               </video>
+              <span />
             </div>
             <PageSubtitle display="h5">
               {uid.replace(/_/g, ' ')} ({match.duration}s)
