@@ -36,12 +36,9 @@ const SearchResult = styled(Container.withComponent('li'))`
   flex: 0 0 ${100 / 3}%;
   & > div {
     ${setSpace('mbs')};
-    padding-bottom: 34px;
+    margin-top: -34px;
+    padding-bottom: 64px;
     position: relative;
-  }
-  & > div > span {
-    display: block;
-    height: 34px;
   }
   & > div > img {
     display: block;
@@ -63,10 +60,6 @@ const SearchResult = styled(Container.withComponent('li'))`
 `;
 
 class SearchMedia extends Component {
-  // constructor(props) {
-  //   super(props);
-  //   this.open = this.handleSubmit.bind(this);
-  // }
   renderTitle() {
     if (!this.props.main.state.data.info) return null;
     return (
@@ -290,11 +283,12 @@ class SearchMedia extends Component {
               <video
                 className="video"
                 controls
+                height="254"
                 onClick={e => e.stopPropagation()}
+                width="300"
               >
                 <source src={mp4Url} />
               </video>
-              <span />
             </div>
             <PageSubtitle display="h5">
               {uid.replace(/_/g, ' ')} ({match.duration}s)
