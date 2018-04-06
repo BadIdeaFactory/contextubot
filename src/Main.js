@@ -1,11 +1,13 @@
 import React from 'react';
-import { Switch, Route } from 'react-router-dom';
+import { Switch, Route, withRouter } from 'react-router-dom';
 import SearchMedia from './SearchMedia';
 import TranscriptView from './TranscriptView';
 import ComicView from './ComicView';
 import Button from 'antd/lib/button';
 import axios from 'axios';
 import isUrl from 'is-url-superb';
+
+import { Footer, Header, Layout } from './ui';
 
 // The Main component renders one of the three provided
 // Routes (provided that one matches). Both the /roster
@@ -39,22 +41,23 @@ class Main extends React.Component {
     main = this;
   }
 
-  handleChange(event) {
-    console.log('handleChange event.target.value =' + event.target.value);
-
-    if (event.target.value === '') {
-      console.log('about to set state');
-      main.setState({
-        status: 'wait',
-        step0: '',
-        step1: '',
-        step2: '',
-        step3: '',
-        data: {},
-        step: 0
-      });
-    }
-  }
+  // I don’t think it’s used anywhere anymore
+  // handleChange(event) {
+  //   console.log('handleChange event.target.value =' + event.target.value);
+  //
+  //   if (event.target.value === '') {
+  //     console.log('about to set state');
+  //     main.setState({
+  //       status: 'wait',
+  //       step0: '',
+  //       step1: '',
+  //       step2: '',
+  //       step3: '',
+  //       data: {},
+  //       step: 0
+  //     });
+  //   }
+  // }
 
   handleSearch(value) {
     console.log('in search ... value = ' + value);
@@ -130,12 +133,7 @@ class Main extends React.Component {
             status: 'finish',
             step2: (
               <a href={data.fingerprint}>
-                <Button
-                  type="dashed"
-                  icon="download"
-                  size="small"
-                  style={{ marginTop: 10 }}
-                >
+                <Button type="dashed" size="small">
                   Download
                 </Button>
               </a>
@@ -161,14 +159,24 @@ class Main extends React.Component {
   }
 
   render() {
+    const { matches } = this.state.data;
+    const hasSearch = matches !== undefined && matches.length > 0;
     return (
-      <Switch>
-        <Route exact path="/" render={() => <SearchMedia main={this} />} />
-        <Route path="/TranscriptView" component={TranscriptView} />
-        <Route path="/ComicView" component={ComicView} />
-      </Switch>
+      <Layout>
+        <Header hasSearch={hasSearch} main={this} {...this.props} />
+        <Switch>
+          <Route
+            exact
+            path="/"
+            render={() => <SearchMedia main={this} {...this.props} />}
+          />
+          <Route path="/TranscriptView" component={TranscriptView} />
+          <Route path="/ComicView" component={ComicView} />
+        </Switch>
+        <Footer {...this.props} />
+      </Layout>
     );
   }
 }
 
-export default Main;
+export default withRouter(Main);

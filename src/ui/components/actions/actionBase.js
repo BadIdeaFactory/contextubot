@@ -3,7 +3,7 @@ import { color, radius, setSpace, setType, time } from '../../utils';
 const actionBase = {
   graphic: `
     ${setSpace('phs')};
-    ${setSpace('pvx')};
+    ${setSpace('pvs')};
     ${setType('x')};
     align-content: center;
     align-items: center;

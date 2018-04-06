@@ -4,14 +4,10 @@ import { Link } from 'react-router-dom';
 //import axios from 'axios';
 //import isUrl from 'is-url-superb';
 
-//import { Layout, BackTop, Input, Steps, Collapse, Spin, Switch } from 'antd';
-import { Layout, BackTop } from 'antd';
-//import Button from 'antd/lib/button';
-
 import './App.css';
 import './Hyperaudio.css';
 
-const { Content } = Layout;
+import { Container, Content } from './ui';
 
 class TranscriptView extends Component {
   constructor(props) {
@@ -265,47 +261,30 @@ class TranscriptView extends Component {
     // but it avoids a number of bizarre router errors.
 
     return (
-      <Layout className="layout">
-        <BackTop />
-        <Content>
-          <div style={{ background: '#fff', padding: 24, minHeight: 280 }}>
-            <h1>The Glorious Contextubot</h1>
-            <h2>Transcript View</h2>
+      <Content>
+        <Container limit="m">
+          <h1>The Glorious Contextubot</h1>
+          <h2>Transcript View</h2>
+          <video
+            id="video"
+            controls
+            crossOrigin="anonymous"
+            width="640"
+            src={this.state.mp4}
+          />
 
-            <div className="container">
-              <div className="span12">
-                <div>
-                  <video
-                    id="video"
-                    controls
-                    crossOrigin="anonymous"
-                    width="640"
-                    src={this.state.mp4}
-                  />
-                </div>
-              </div>
-
-              <div className="span12">
-                <h4>(click on words to navigate, select text to tweet)</h4>
-                <h3>
-                  <span>
-                    <Link to={comicUrl}>Jump to Comic View</Link>
-                  </span>
-                </h3>
-                <div className="row">
-                  <div
-                    id="hypertranscript"
-                    style={{ paddingLeft: 20 }}
-                    dangerouslySetInnerHTML={{ __html: this.state.ht }}
-                  />
-                </div>
-              </div>
-
-              <hr />
-            </div>
-          </div>
-        </Content>
-      </Layout>
+          <h4>(click on words to navigate, select text to tweet)</h4>
+          <h3>
+            <span>
+              <Link to={comicUrl}>Jump to Comic View</Link>
+            </span>
+          </h3>
+          <div
+            id="hypertranscript"
+            dangerouslySetInnerHTML={{ __html: this.state.ht }}
+          />
+        </Container>
+      </Content>
     );
   }
 }

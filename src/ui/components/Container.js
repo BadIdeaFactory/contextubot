@@ -59,6 +59,7 @@ const Container = css.div`
     align-items: center;
     display: flex;
     flex-direction: ${dir};
+    flex-wrap: wrap;
     justify-content: center;
   `
       : ``};
@@ -105,28 +106,16 @@ const Container = css.div`
         ${breakpoint.tablet} {
           margin-left: auto;
           margin-right: auto;
-          max-width: 500px;
+          max-width: 40%;
         }
-        ${breakpoint.desktop} {
-          max-width: 580px;
-        }
-        ${breakpoint.hdesktop} {
-          max-width: 660px;
-        }
-        `;
+      `;
     } else if (limit === 'm') {
       return `
         width: 100%;
         ${breakpoint.tablet} {
           margin-left: auto;
           margin-right: auto;
-          max-width: 600px;
-        }
-        ${breakpoint.desktop} {
-          max-width: 800px;
-        }
-        ${breakpoint.hdesktop} {
-          max-width: 1000px;
+          max-width: 60%;
         }
       `;
     } else if (limit === 'l') {
@@ -135,13 +124,7 @@ const Container = css.div`
         ${breakpoint.tablet} {
           margin-left: auto;
           margin-right: auto;
-          max-width: 768px;
-        }
-        ${breakpoint.desktop} {
-          max-width: 1024px;
-        }
-        ${breakpoint.hdesktop} {
-          max-width: 1200px;
+          max-width: 80%;
         }
       `;
     }

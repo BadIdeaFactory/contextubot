@@ -5,13 +5,12 @@ import React, { Component } from 'react';
 //import isUrl from 'is-url-superb';
 
 //import { Layout, BackTop, Input, Steps, Collapse, Spin, Switch } from 'antd';
-import { Layout, BackTop } from 'antd';
 //import Button from 'antd/lib/button';
+
+import { Container, Content } from './ui';
 
 import './App.css';
 import './Hyperaudio.css';
-
-const { Content } = Layout;
 
 class ComicView extends Component {
   constructor(props) {
@@ -274,34 +273,21 @@ class ComicView extends Component {
 
   render() {
     return (
-      <Layout className="layout">
-        <BackTop />
-        <Content>
-          <div className="container">
-            <div className="span12">
-              <div>
-                <video
-                  id="video"
-                  crossOrigin="anonymous"
-                  width="320"
-                  src={this.state.mp4}
-                  style={{ display: 'none' }}
-                />
-              </div>
-            </div>
+      <Content>
+        <Container limit="m">
+          <video
+            id="video"
+            crossOrigin="anonymous"
+            width="320"
+            src={this.state.mp4}
+            style={{ display: 'none' }}
+          />
 
-            <div className="span12">
-              <div>
-                <h2>Comic View</h2>
-              </div>
-            </div>
+          <h2>Comic View</h2>
 
-            <div className="row">
-              <div id="frames">{this.renderComicFrames()}</div>
-            </div>
-          </div>
-        </Content>
-      </Layout>
+          <div id="frames">{this.renderComicFrames()}</div>
+        </Container>
+      </Content>
     );
   }
 }

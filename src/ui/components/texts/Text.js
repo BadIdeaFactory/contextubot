@@ -18,8 +18,41 @@ const Text = css.span`
     display === 'h2'
       ? `
     ${setType('l')};
+    color: ${color.black};
+    font-weight: 300;
   `
       : ``};
+
+  ${({ display }) =>
+    display === 'h3'
+      ? `
+    ${setType('m')};
+    color: ${color.black};
+    font-weight: 400;
+  `
+      : ``};
+
+  ${({ display }) =>
+    display === 'h4'
+      ? `
+    ${setType('s')};
+    color: ${color.black};
+    font-weight: 600;
+  `
+      : ``};
+      
+  ${({ display }) =>
+    display === 'h5'
+      ? `
+    ${setType('x')};
+    color: ${color.black};
+    font-weight: 600;
+  `
+      : ``};
+
+  & strong {
+    font-weight: 600;
+  }
 
 `;
 
