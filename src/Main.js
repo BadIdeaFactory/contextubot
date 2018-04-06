@@ -7,6 +7,8 @@ import Button from 'antd/lib/button';
 import axios from 'axios';
 import isUrl from 'is-url-superb';
 
+import { Footer, Header, Layout } from './ui';
+
 // The Main component renders one of the three provided
 // Routes (provided that one matches). Both the /roster
 // and /schedule routes will match any pathname that starts
@@ -130,12 +132,7 @@ class Main extends React.Component {
             status: 'finish',
             step2: (
               <a href={data.fingerprint}>
-                <Button
-                  type="dashed"
-                  icon="download"
-                  size="small"
-                  style={{ marginTop: 10 }}
-                >
+                <Button type="dashed" size="small">
                   Download
                 </Button>
               </a>
@@ -162,11 +159,15 @@ class Main extends React.Component {
 
   render() {
     return (
-      <Switch>
-        <Route exact path="/" render={() => <SearchMedia main={this} />} />
-        <Route path="/TranscriptView" component={TranscriptView} />
-        <Route path="/ComicView" component={ComicView} />
-      </Switch>
+      <Layout>
+        <Header {...this.props} />
+        <Switch>
+          <Route exact path="/" render={() => <SearchMedia main={this} />} />
+          <Route path="/TranscriptView" component={TranscriptView} />
+          <Route path="/ComicView" component={ComicView} />
+        </Switch>
+        <Footer {...this.props} />
+      </Layout>
     );
   }
 }

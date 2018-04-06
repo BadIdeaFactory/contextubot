@@ -4,14 +4,12 @@ import ReactJson from 'react-json-view';
 
 import { BackTop, Collapse, Spin } from 'antd';
 
-import Button from 'antd/lib/button';
-
 import {
+  Action,
+  Container,
   Content,
-  Footer,
   Form,
   FormItem,
-  Layout,
   PageTitle,
   SearchResult,
   SearchResults,
@@ -19,8 +17,6 @@ import {
   TextInput
 } from './ui';
 // import { dummyData } from './data';
-
-import './App.css';
 
 const Panel = Collapse.Panel;
 
@@ -132,11 +128,9 @@ class SearchMedia extends Component {
     return (
       <Panel header="Fingerprint" key="5">
         {this.props.main.state.data.fingerprint ? (
-          <a href={this.props.main.state.data.fingerprint}>
-            <Button type="primary" icon="download">
-              Download
-            </Button>
-          </a>
+          <Action href={this.props.main.state.data.fingerprint}>
+            Download
+          </Action>
         ) : null}
       </Panel>
     );
@@ -250,20 +244,21 @@ class SearchMedia extends Component {
 
     console.log('SEARCH MEDIA PROPS: ', this.props);
 
-    return (
-      <Layout>
-        <Content fill="grey" dir="column" align="center">
-          <BackTop />
+    return [
+      <BackTop key="kidA" />,
+      <Content dir="row" align="center" key="kidB">
+        <Container limit="m">
           <PageTitle display="h1">
             Source-check questionable media. <br />Stand by reputable sources.
           </PageTitle>
-          <Separator dir="h" silent size="l" />
+          <Separator dir="h" silent size="m" />
           <Form onSubmit={e => this.handleSubmit.bind(this)(e)}>
             <FormItem>
               <TextInput
                 placeholder="Paste in a video link, i.e. https://www.youtube.com/watch?v=3g39ZaBIbwg"
                 onChange={e => this.handleChange.bind(this)(e)}
               />
+              <Action primary>Find source</Action>
             </FormItem>
           </Form>
           {this.props.main.state.status === 'process' ? (
@@ -271,10 +266,9 @@ class SearchMedia extends Component {
           ) : (
             this.renderCollapse()
           )}
-        </Content>
-        <Footer />
-      </Layout>
-    );
+        </Container>
+      </Content>
+    ];
   }
 }
 
