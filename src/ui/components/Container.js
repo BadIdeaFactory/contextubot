@@ -59,6 +59,7 @@ const Container = css.div`
     align-items: center;
     display: flex;
     flex-direction: ${dir};
+    flex-wrap: wrap;
     justify-content: center;
   `
       : ``};
