@@ -18,6 +18,8 @@ const Text = css.span`
     display === 'h2'
       ? `
     ${setType('l')};
+    color: ${color.black};
+    font-weight: 300;
   `
       : ``};
 
