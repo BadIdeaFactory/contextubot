@@ -226,8 +226,6 @@ class SearchMedia extends Component {
   }
 
   render() {
-    console.log('— SEARCH MEDIA PROPS: ', this.props);
-
     const { main } = this.props;
     /* this.renderTitle() */
     /* this.renderThumbnail() */
@@ -264,8 +262,6 @@ class SearchMedia extends Component {
       const renderResult = match => {
         if (match.duration === 0) return null;
 
-        console.log('renderResult() —— ', this.props);
-
         const uid = match.source.replace('.afpt', '').replace('_tva', '');
         const clipStart = match.time;
         const clipEnd = match.time + match.duration;
@@ -275,7 +271,6 @@ class SearchMedia extends Component {
         return (
           <SearchResult
             key={mp4Url}
-            // onClick={() => console.log(this.props).bind(this)}
             onClick={() => this.props.history.push(comicUrl)}
           >
             <div>
