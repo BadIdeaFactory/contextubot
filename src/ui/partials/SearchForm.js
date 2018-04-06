@@ -23,7 +23,7 @@ export default class SearchForm extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      searchKey: null
+      searchKey: ''
     };
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -37,6 +37,7 @@ export default class SearchForm extends Component {
     this.props.handleSubmit(this.state.searchKey);
   }
   render() {
+    const hasSearchKey = this.state.searchKey.length > 0;
     return (
       <SearchFormEl onSubmit={this.handleSubmit}>
         <FormItem>
@@ -45,7 +46,9 @@ export default class SearchForm extends Component {
             onChange={this.handleChange}
             name="searchKey"
           />
-          <Action primary>Find source</Action>
+          <Action primary onClick={hasSearchKey ? this.handleSubmit : null}>
+            Find source
+          </Action>
         </FormItem>
       </SearchFormEl>
     );
