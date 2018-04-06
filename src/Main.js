@@ -1,5 +1,5 @@
 import React from 'react';
-import { Switch, Route } from 'react-router-dom';
+import { Switch, Route, withRouter } from 'react-router-dom';
 import SearchMedia from './SearchMedia';
 import TranscriptView from './TranscriptView';
 import ComicView from './ComicView';
@@ -171,4 +171,4 @@ class Main extends React.Component {
   }
 }
 
-export default Main;
+export default withRouter(Main);
