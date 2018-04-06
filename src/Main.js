@@ -41,22 +41,23 @@ class Main extends React.Component {
     main = this;
   }
 
-  handleChange(event) {
-    console.log('handleChange event.target.value =' + event.target.value);
-
-    if (event.target.value === '') {
-      console.log('about to set state');
-      main.setState({
-        status: 'wait',
-        step0: '',
-        step1: '',
-        step2: '',
-        step3: '',
-        data: {},
-        step: 0
-      });
-    }
-  }
+  // I don’t think it’s used anywhere anymore
+  // handleChange(event) {
+  //   console.log('handleChange event.target.value =' + event.target.value);
+  //
+  //   if (event.target.value === '') {
+  //     console.log('about to set state');
+  //     main.setState({
+  //       status: 'wait',
+  //       step0: '',
+  //       step1: '',
+  //       step2: '',
+  //       step3: '',
+  //       data: {},
+  //       step: 0
+  //     });
+  //   }
+  // }
 
   handleSearch(value) {
     console.log('in search ... value = ' + value);
@@ -162,7 +163,11 @@ class Main extends React.Component {
       <Layout>
         <Header {...this.props} />
         <Switch>
-          <Route exact path="/" render={() => <SearchMedia main={this} />} />
+          <Route
+            exact
+            path="/"
+            render={() => <SearchMedia main={this} {...this.props} />}
+          />
           <Route path="/TranscriptView" component={TranscriptView} />
           <Route path="/ComicView" component={ComicView} />
         </Switch>
