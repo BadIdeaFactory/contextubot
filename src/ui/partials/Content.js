@@ -9,6 +9,8 @@ const ContentEl = styled(Container.withComponent('main'))`
   ${setSpace('pvh')};
   flex: 1 0 auto;
   & > div {
+    margin-left: auto;
+    margin-right: auto;
     max-width: 1400px;
     width: 100%;
   }
