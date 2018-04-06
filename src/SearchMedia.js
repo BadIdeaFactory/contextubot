@@ -38,7 +38,7 @@ const SearchResults = styled(Container.withComponent('ul'))`
 
 const SearchResult = styled(Container.withComponent('li'))`
   ${setSpace('mbm')};
-  ${setSpace('phs')};
+  ${setSpace('prm')};
   flex: 0 0 ${100 / 3}%;
   & > div {
     ${setSpace('mbs')};
