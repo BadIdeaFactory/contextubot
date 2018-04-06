@@ -1,6 +1,7 @@
-import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import React, { Component } from 'react';
 import ReactJson from 'react-json-view';
+import styled from 'styled-components';
 
 import { Collapse, Spin } from 'antd';
 
@@ -9,8 +10,6 @@ import {
   Container,
   Content,
   PageTitle,
-  SearchResult,
-  SearchResults,
   SearchForm,
   Separator
 } from './ui';
@@ -160,13 +159,6 @@ class SearchMedia extends Component {
     );
   }
 
-  renderWrappedResults() {
-    console.log('In renderWrappedResults');
-    if (!this.props.main.state.data.matches) return null;
-    console.log('renderResults() being returned');
-    return <div key="7">{this.renderResults()}</div>;
-  }
-
   renderResult(match) {
     if (match.duration === 0) return null;
 
@@ -177,32 +169,17 @@ class SearchMedia extends Component {
     const comicUrl = `TranscriptView?${uid}/${clipStart}/${clipEnd}`;
 
     return (
-      <SearchResult>
-        <div className="video-hldr" key={mp4Url}>
-          <span>
-            {uid.replace(/_/g, ' ')} ({match.duration}s)
-          </span>
-          <video className="video" width="300" height="254" controls>
-            <source src={mp4Url} />
-          </video>
-          <span>
-            <Link to={comicUrl}>transcriptview </Link>
-          </span>
-        </div>
-      </SearchResult>
-    );
-  }
-
-  renderResults() {
-    if (!this.props.main.state.data.fingerprint) return null;
-    console.log('================');
-    console.log(this.props.main.state.data.matches.map(this.renderResult));
-    // note this data will contain lots of nulls
-    return (
-      <SearchResults>
-        {/* {dummyData.map(this.renderResult)} */}
-        {this.props.main.state.data.matches.map(this.renderResult)}
-      </SearchResults>
+      <li key={mp4Url}>
+        <span>
+          {uid.replace(/_/g, ' ')} ({match.duration}s)
+        </span>
+        <video className="video" width="300" height="254" controls>
+          <source src={mp4Url} />
+        </video>
+        <span>
+          <Link to={comicUrl}>transcriptview </Link>
+        </span>
+      </li>
     );
   }
 
@@ -236,14 +213,28 @@ class SearchMedia extends Component {
   }
 
   render() {
+    const { main } = this.props;
     /* this.renderTitle() */
     /* this.renderThumbnail() */
     /* this.renderDescription() */
     /* this.renderViewCount() */
 
-    const hasFetchedResults =
-      Object.keys(this.props.main.state.data).length > 0;
-    const isStillSearching = this.props.main.state.status === 'process';
+    const hasFetchedResults = Object.keys(main.state.data).length > 0;
+    const hasFingerprint = this.props.main.state.data.fingerprint !== undefined;
+    const hasMatches = this.props.main.state.data.matches !== undefined;
+    const isStillSearching = main.state.status === 'process';
+
+    console.log('—— hasFetchedResults: ', hasFetchedResults);
+    console.log('—— hasFingerprint: ', hasFingerprint);
+    console.log('—— hasMatches: ', hasMatches);
+    console.log('—— isStillSearching: ', isStillSearching);
+
+    const SearchResults = styled(Container.withComponent('ul'))`
+      display: flex;
+      & > li {
+        background: yellow;
+      }
+    `;
 
     const renderForm = () => {
       return (
@@ -253,7 +244,7 @@ class SearchMedia extends Component {
           </PageTitle>
           <Separator dir="h" silent size="m" />
           <SearchForm
-            handleSubmit={data => this.props.main.handleSearch.bind(this)(data)}
+            handleSubmit={data => main.handleSearch.bind(this)(data)}
           />
         </Container>
       );
@@ -263,12 +254,23 @@ class SearchMedia extends Component {
       if (isStillSearching) {
         return <Spin size="large" />;
       }
-      return this.renderWrappedResults();
+      return (
+        <Container>
+          <PageTitle display="h2">
+            Here the <strong>199 possible matches</strong> I found:
+          </PageTitle>
+          <SearchResults dir="row" limit="m">
+            {main.state.data.matches.map(this.renderResult)}
+          </SearchResults>
+        </Container>
+      );
     };
 
     return (
       <Content dir="row" align="center">
-        {hasFetchedResults ? renderResults() : renderForm()}
+        {hasFingerprint && hasFetchedResults && hasMatches
+          ? renderResults()
+          : renderForm()}
       </Content>
     );
   }
