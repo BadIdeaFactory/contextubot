@@ -593,7 +593,7 @@
   "matches": [
     {
       "duration": 20.41034,
-      "start": 0.18576,
+      "start": 0.185476,
       "from":
         "/tmp/tmp-67AtEm1DNEZrsH/tmp/tmp-67AtEm1DNEZrsH/6f17c4ef-75f5-41b9-a2d5-3378bbe1647d.afpt",
       "time": 1987.442358,
@@ -608,8 +608,8 @@
       "thop": 0.02322
     },
     {
-      "duration": 20.41034,
-      "start": 0.18576,
+      "duration": 20.41032,
+      "start": 0.185377,
       "from":
         "/tmp/tmp-67AtEm1DNEZrsH/tmp/tmp-67AtEm1DNEZrsH/6f17c4ef-75f5-41b9-a2d5-3378bbe1647d.afpt",
       "time": 1987.442358,
@@ -624,8 +624,8 @@
       "thop": 0.02322
     },
     {
-      "duration": 20.41034,
-      "start": 0.18576,
+      "duration": 20.41044,
+      "start": 0.185536,
       "from":
         "/tmp/tmp-67AtEm1DNEZrsH/tmp/tmp-67AtEm1DNEZrsH/6f17c4ef-75f5-41b9-a2d5-3378bbe1647d.afpt",
       "time": 1987.442358,
@@ -640,8 +640,8 @@
       "thop": 0.02322
     },
     {
-      "duration": 20.41034,
-      "start": 0.18576,
+      "duration": 20.41054,
+      "start": 0.185186,
       "from":
         "/tmp/tmp-67AtEm1DNEZrsH/tmp/tmp-67AtEm1DNEZrsH/6f17c4ef-75f5-41b9-a2d5-3378bbe1647d.afpt",
       "time": 1987.442358,
@@ -656,19 +656,19 @@
       "thop": 0.02322
     },
     {
-      "duration": 9.729161,
-      "start": 1.996916,
+      "duration": 20.44044,
+      "start": 0.184901,
       "from":
         "/tmp/tmp-67AtEm1DNEZrsH/tmp/tmp-67AtEm1DNEZrsH/6f17c4ef-75f5-41b9-a2d5-3378bbe1647d.afpt",
-      "time": 1933.409524,
-      "source": "CNNW_20180216_050000_Anderson_Cooper_360_tva.afpt",
-      "sourceId": 1,
-      "nhashaligned": 11,
-      "aligntime": 83179,
-      "nhashraw": 62,
-      "rank": 0,
-      "mintime": 86,
-      "maxtime": 505,
+      "time": 1987.442358,
+      "source": "CNNW_20180216_010000_Anderson_Cooper_360_tva.afpt",
+      "sourceId": 2,
+      "nhashaligned": 12,
+      "aligntime": 85584,
+      "nhashraw": 317,
+      "rank": 1,
+      "mintime": 8,
+      "maxtime": 887,
       "thop": 0.02322
     }
   ]
