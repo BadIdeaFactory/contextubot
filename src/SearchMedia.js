@@ -207,23 +207,23 @@ class SearchMedia extends Component {
     );
   }
 
-  renderCollapse() {
-    console.log('In renderCollapse()');
-    if (Object.keys(this.props.main.state.data).length === 0) return null;
-    console.log('Object.keys present...');
-    return [
-      this.renderWrappedResults(),
-      <Collapse style={{ marginTop: 14 }}>
-        {this.renderHeaders()}
-        {this.renderEmbed()}
-        {this.renderInfo()}
-        {this.renderFile()}
-        {this.renderFingerprint()}
-        {this.renderMatches()}
-        {this.renderErrors()}
-      </Collapse>
-    ];
-  }
+  // renderCollapse() {
+  //   console.log('In renderCollapse()');
+  //   if (Object.keys(this.props.main.state.data).length === 0) return null;
+  //   console.log('Object.keys present...');
+  //   return [
+  //     this.renderWrappedResults(),
+  //     <Collapse style={{ marginTop: 14 }}>
+  //       {this.renderHeaders()}
+  //       {this.renderEmbed()}
+  //       {this.renderInfo()}
+  //       {this.renderFile()}
+  //       {this.renderFingerprint()}
+  //       {this.renderMatches()}
+  //       {this.renderErrors()}
+  //     </Collapse>
+  //   ];
+  // }
 
   handleChange(e) {
     this.props.main.handleChange.bind(this)(e);
@@ -264,6 +264,7 @@ class SearchMedia extends Component {
       if (isStillSearching) {
         return <Spin size="large" />;
       }
+      return this.renderWrappedResults();
     };
 
     return (
