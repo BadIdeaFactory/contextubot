@@ -8,37 +8,37 @@ const Button = css.button`
 
   /* primary */
 
-  ${({ primary, tone, theme }) =>
+  ${({ primary, alt }) =>
     primary
       ? `
         &, &:active {
           ${actionBase.graphic};
-          background: ${color.redM};
-          color: ${color.flareBlk};
+          background: ${alt ? color.blueM : color.redM};
+          color: ${color.white};
         }
       `
       : null}
 
   /* secondary */
 
-  ${({ secondary, theme, active }) =>
+  ${({ secondary, alt }) =>
     secondary
       ? `
         &, &:active {
           ${actionBase.graphic};
-          color: ${color.redM};
+          color: ${alt ? color.blueM : color.redM};
         }
       `
       : null}
 
   /* plain */
 
-  ${({ primary, secondary }) =>
+  ${({ primary, secondary, alt }) =>
     !primary && !secondary
       ? `
         &, &:active {
           ${actionBase.textual};
-          color: ${color.redM};
+          color: ${alt ? color.blueM : color.redM};
         }
     `
       : null}
@@ -53,11 +53,13 @@ const Button = css.button`
 `;
 
 Button.propTypes = {
+  alt: bool,
   primary: bool,
   secondary: bool
 };
 
 Button.defaultProps = {
+  alt: false,
   primary: false,
   secondary: false
 };
