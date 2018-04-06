@@ -18,6 +18,8 @@ import {
 } from './ui';
 // import { dummyData } from './data';
 
+import './App.css';
+
 const Panel = Collapse.Panel;
 
 class SearchMedia extends Component {
