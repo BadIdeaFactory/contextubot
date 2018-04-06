@@ -8,13 +8,11 @@ import {
   Action,
   Container,
   Content,
-  Form,
-  FormItem,
   PageTitle,
   SearchResult,
   SearchResults,
-  Separator,
-  TextInput
+  SearchForm,
+  Separator
 } from './ui';
 // import { dummyData } from './data';
 
@@ -254,15 +252,9 @@ class SearchMedia extends Component {
             Source-check questionable media. <br />Stand by reputable sources.
           </PageTitle>
           <Separator dir="h" silent size="m" />
-          <Form onSubmit={e => this.handleSubmit.bind(this)(e)}>
-            <FormItem>
-              <TextInput
-                placeholder="Paste in a video link, i.e. https://www.youtube.com/watch?v=3g39ZaBIbwg"
-                onChange={e => this.handleChange.bind(this)(e)}
-              />
-              <Action primary>Find source</Action>
-            </FormItem>
-          </Form>
+          <SearchForm
+            handleSubmit={data => this.props.main.handleSearch.bind(this)(data)}
+          />
           {this.props.main.state.status === 'process' ? (
             <Spin size="large" />
           ) : (
