@@ -1,11 +1,13 @@
-@import url('https://fonts.googleapis.com/css?family=Bangers|Open+Sans:400,700');
+@import url('https://fonts.googleapis.com/css?family=Bangers|Open+Sans:300,400,600,700');
 
-html, body {
+html,
+body {
+  background: white;
+  color: #1c1c1c;
+  font-family: 'Open Sans', Arial, Helvetica, sans-serif;
+  font-size: 16px;
   height: 100%;
 }
 #root {
   min-height: 100%;
-}
-body, h1, h2, h3, p {
-  color: #5c5c5c;
 }
