@@ -41,7 +41,7 @@ const Footer = props => (
     </Container>
     <Container flex={[1, 1, '50%']} align="right">
       <Action
-        alt
+        alternative
         href="https://github.com/BadIdeaFactory/"
         rel="noopener noreferrer"
         target="_blank"
