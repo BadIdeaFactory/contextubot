@@ -1,8 +1,6 @@
 export { default as Action } from './actions/Action';
 export { default as Container } from './Container';
 export { default as Icon } from './Icon';
-export { default as SearchResult } from './SearchResult';
-export { default as SearchResults } from './SearchResults';
 export { default as Separator } from './Separator';
 
 export { default as Form } from './forms/Form';
