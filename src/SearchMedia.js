@@ -38,7 +38,7 @@ const SearchResults = styled(Container.withComponent('ul'))`
 `;
 
 const SearchResult = styled(Container.withComponent('li'))`
-  ${setSpace('mbm')};
+  ${setSpace('mbl')};
   ${setSpace('prm')};
   flex: 0 0 ${100 / 3}%;
   & > div {
@@ -69,6 +69,12 @@ const SearchResult = styled(Container.withComponent('li'))`
     top: 50%;
     transform: translate(-50%, -50%);
     z-index: 0;
+  }
+  ${PageSubtitle} {
+    cursor: pointer;
+    &:hover {
+      text-decoration: underline;
+    }
   }
 `;
 
