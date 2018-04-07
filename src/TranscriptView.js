@@ -7,19 +7,25 @@ import React, { Component } from 'react';
 import './App.css';
 import './Hyperaudio.css';
 
-import { Container, Content, Icon, Separator, Tabs, Tab } from './ui';
-import {} from './ui/utils';
+import { Container, Content, Hint, Icon, Separator, Tabs, Tab } from './ui';
+import { color, font, radius } from './ui/utils';
 
 const ThisContent = styled(Content)`
   padding-top: 2px;
+  & video {
+    height: 100% !important;
+    width: 100% !important;
+  }
 `;
 
 class TranscriptView extends Component {
   constructor(props) {
     super(props);
-    this.state = { ht: null };
-    this.state = { mp4: null };
-    this.state = { comicUrl: '' };
+    this.state = {
+      comicUrl: '',
+      ht: null,
+      mp4: null
+    };
   }
 
   getTranscript(srtUrl) {
@@ -284,9 +290,12 @@ class TranscriptView extends Component {
               src={this.state.mp4}
               width="640"
             />
-            <Separator silent size="m" />
-            <h4>(click on words to navigate, select text to tweet)</h4>
-            <Separator silent size="m" />
+            <Separator silent size="x" />
+            <Hint>
+              <Icon name="info" size="x" /> Click on words to navigate, select
+              text to tweet
+            </Hint>
+            <Separator silent size="x" />
             <div
               id="hypertranscript"
               dangerouslySetInnerHTML={{ __html: this.state.ht }}

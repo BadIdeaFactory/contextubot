@@ -1,5 +1,6 @@
 export { default as Action } from './actions/Action';
 export { default as Container } from './Container';
+export { default as Hint } from './Hint';
 export { default as Icon } from './Icon';
 export { default as Preloader } from './Preloader';
 export { default as Separator } from './Separator';

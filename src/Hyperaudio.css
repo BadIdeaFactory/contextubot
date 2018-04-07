@@ -21,7 +21,7 @@
 
 #hypertranscript a {
   cursor: pointer;
-  color: #000;
+  color: #1c1c1c;
 }
 /*
 #hypertranscript .active ~ span {
@@ -34,7 +34,7 @@
 */
 
 #hypertranscript span.read {
-  color: #000 !important;
+  color: #1c1c1c !important;
 }
 
 #hypertranscript span.unread {
@@ -62,9 +62,9 @@
 }
 
 #hypertranscript {
-  font-family: 'Bangers', cursive;
-  line-height: 1.8;
-  font-size: 1.2em;
+  line-height: 1.5em;
+  /* font-family: 'Bangers', cursive;
+  font-size: 1.2em; */
 }
 
 [data-m] {
