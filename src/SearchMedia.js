@@ -285,12 +285,12 @@ class SearchMedia extends Component {
         const clipStart = match.time;
         const clipEnd = match.time + match.duration;
         const mp4Url = `https://archive.org/download/${uid}/${uid}.mp4?t=${clipStart}/${clipEnd}`;
-        const comicUrl = `TranscriptView?${uid}/${clipStart}/${clipEnd}`;
+        const transcriptURL = `TranscriptView?${uid}/${clipStart}/${clipEnd}`;
 
         return (
           <SearchResult
             key={mp4Url}
-            onClick={() => this.props.history.push(comicUrl)}
+            onClick={() => this.props.history.push(transcriptURL)}
           >
             <div>
               <img src={PNGRationalizer} alt="" />

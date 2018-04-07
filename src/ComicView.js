@@ -11,7 +11,7 @@ import React, { Component } from 'react';
 import './App.css';
 import './Hyperaudio.css';
 
-import { Container, Content, Icon, Separator, Tabs, Tab } from './ui';
+import { Container, Content, Icon, Tabs, Tab } from './ui';
 
 const ThisContent = styled(Content)`
   padding-top: 2px;
