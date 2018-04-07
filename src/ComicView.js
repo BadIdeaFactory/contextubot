@@ -1,3 +1,4 @@
+import styled from 'styled-components';
 import React, { Component } from 'react';
 // import { Link } from 'react-router-dom'
 //import ReactJson from 'react-json-view';
@@ -7,10 +8,33 @@ import React, { Component } from 'react';
 //import { Layout, BackTop, Input, Steps, Collapse, Spin, Switch } from 'antd';
 //import Button from 'antd/lib/button';
 
-import { Container, Content } from './ui';
-
 import './App.css';
 import './Hyperaudio.css';
+
+import { Container, Content, Icon, Tabs, Tab } from './ui';
+import { setSpace, setType } from './ui/utils';
+
+const ThisContent = styled(Content)`
+  padding-top: 2px;
+`;
+
+const Frames = styled(Container)`
+  width: 100%;
+  justify-content: flex-start;
+  align-items: flex-start;
+  align-content: flex-start;
+`;
+
+const Frame = styled(Container)`
+  ${setSpace('pax')};
+  flex: 0 0 ${100 / 3}%;
+  & img {
+    width: 100%;
+  }
+  & p {
+    ${setType('x')};
+  }
+`;
 
 class ComicView extends Component {
   constructor(props) {
@@ -245,49 +269,42 @@ class ComicView extends Component {
     if (frame.length === 0) return null;
 
     return (
-      <div
-        className="frame-hldr"
-        style={{
-          width: 300,
-          height: 240,
-          padding: 8,
-          marginBottom: 48,
-          float: 'left',
-          fontFamily: 'Bangers'
-          //borderStyle: 'solid', //debug
-          //borderColor: 'red'    //debug
-        }}
-        key={frame.key}
-      >
+      <Frame key={frame.key}>
         <img alt="comic frame" src={frame.png} />
-        <span>{frame.textData}</span>
-      </div>
+        <p>{frame.textData}</p>
+      </Frame>
     );
   }
 
   renderComicFrames() {
     if (!this.state.comicFrames) return null;
-
-    return <div>{this.state.comicFrames.map(this.renderComicFrame)}</div>;
+    return this.state.comicFrames.map(this.renderComicFrame);
   }
 
   render() {
     return (
-      <Content>
+      <ThisContent>
         <Container limit="m">
-          <video
-            id="video"
-            crossOrigin="anonymous"
-            width="320"
-            src={this.state.mp4}
-            style={{ display: 'none' }}
-          />
-
-          <h2>Comic View</h2>
-
-          <div id="frames">{this.renderComicFrames()}</div>
+          <Tabs>
+            <Tab onClick={() => this.props.history.push('/')}>
+              <Icon name="transcript" size="x" /> Interactive Transcript
+            </Tab>
+            <Tab active>
+              <Icon name="storyboard" size="x" /> Captioned Storyboard
+            </Tab>
+          </Tabs>
+          <Container fill="white" padded>
+            <video
+              crossOrigin="anonymous"
+              id="video"
+              src={this.state.mp4}
+              style={{ display: 'none' }}
+              width="320"
+            />
+            <Frames dir="row">{this.renderComicFrames()}</Frames>
+          </Container>
         </Container>
-      </Content>
+      </ThisContent>
     );
   }
 }

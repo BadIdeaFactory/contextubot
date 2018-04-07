@@ -12,9 +12,10 @@ import {
   PageSubtitle,
   PNGRationalizer,
   SearchForm,
+  Preloader,
   Separator
 } from './ui';
-import { breakpoint, setSpace } from './ui/utils';
+import { breakpoint, color, setSpace } from './ui/utils';
 
 import './App.css';
 
@@ -37,13 +38,12 @@ const SearchResults = styled(Container.withComponent('ul'))`
 `;
 
 const SearchResult = styled(Container.withComponent('li'))`
-  ${setSpace('mbm')};
-  ${setSpace('phs')};
+  ${setSpace('mbl')};
+  ${setSpace('prm')};
   flex: 0 0 ${100 / 3}%;
   & > div {
     ${setSpace('mbs')};
-    margin-top: -34px;
-    padding-bottom: 64px;
+    background: ${color.white};
     position: relative;
   }
   & > div > img {
@@ -51,17 +51,30 @@ const SearchResult = styled(Container.withComponent('li'))`
     width: 100%;
   }
   & > div > video {
-    height: 100%;
+    bottom: 0;
+    height: 100% !important;
     left: 0;
-    line-height: 0;
-    max-width: 100% !important;
     position: absolute;
     top: 0;
-    width: 100%;
+    width: 100% !important;
+    z-index: 2;
   }
   ${breakpoint.onlyphone} {
     flex: 0 0 ${100 / 2}%;
     ${setSpace('mbs')};
+  }
+  & .ctxb-preloader {
+    left: 50%;
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 0;
+  }
+  ${PageSubtitle} {
+    cursor: pointer;
+    &:hover {
+      text-decoration: underline;
+    }
   }
 `;
 
@@ -272,17 +285,16 @@ class SearchMedia extends Component {
         const clipStart = match.time;
         const clipEnd = match.time + match.duration;
         const mp4Url = `https://archive.org/download/${uid}/${uid}.mp4?t=${clipStart}/${clipEnd}`;
-        const comicUrl = `TranscriptView?${uid}/${clipStart}/${clipEnd}`;
+        const transcriptURL = `TranscriptView?${uid}/${clipStart}/${clipEnd}`;
 
         return (
           <SearchResult
             key={mp4Url}
-            onClick={() => this.props.history.push(comicUrl)}
+            onClick={() => this.props.history.push(transcriptURL)}
           >
             <div>
               <img src={PNGRationalizer} alt="" />
               <video
-                className="video"
                 controls
                 height="254"
                 onClick={e => e.stopPropagation()}
@@ -290,9 +302,11 @@ class SearchMedia extends Component {
               >
                 <source src={mp4Url} />
               </video>
+              <Preloader />
             </div>
             <PageSubtitle display="h5">
-              {uid.replace(/_/g, ' ')} ({match.duration}s)
+              {uid.replace(/_/g, ' ')}
+              {/* ({match.duration}s) */}
             </PageSubtitle>
           </SearchResult>
         );

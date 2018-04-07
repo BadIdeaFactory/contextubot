@@ -1,5 +1,5 @@
+import styled from 'styled-components';
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
 //import ReactJson from 'react-json-view';
 //import axios from 'axios';
 //import isUrl from 'is-url-superb';
@@ -7,14 +7,25 @@ import { Link } from 'react-router-dom';
 import './App.css';
 import './Hyperaudio.css';
 
-import { Container, Content } from './ui';
+import { Container, Content, Hint, Icon, Separator, Tabs, Tab } from './ui';
+import {} from './ui/utils';
+
+const ThisContent = styled(Content)`
+  padding-top: 2px;
+  & video {
+    height: 100% !important;
+    width: 100% !important;
+  }
+`;
 
 class TranscriptView extends Component {
   constructor(props) {
     super(props);
-    this.state = { ht: null };
-    this.state = { mp4: null };
-    this.state = { comicUrl: '' };
+    this.state = {
+      comicUrl: '',
+      ht: null,
+      mp4: null
+    };
   }
 
   getTranscript(srtUrl) {
@@ -261,30 +272,37 @@ class TranscriptView extends Component {
     // but it avoids a number of bizarre router errors.
 
     return (
-      <Content>
+      <ThisContent>
         <Container limit="m">
-          <h1>The Glorious Contextubot</h1>
-          <h2>Transcript View</h2>
-          <video
-            id="video"
-            controls
-            crossOrigin="anonymous"
-            width="640"
-            src={this.state.mp4}
-          />
-
-          <h4>(click on words to navigate, select text to tweet)</h4>
-          <h3>
-            <span>
-              <Link to={comicUrl}>Jump to Comic View</Link>
-            </span>
-          </h3>
-          <div
-            id="hypertranscript"
-            dangerouslySetInnerHTML={{ __html: this.state.ht }}
-          />
+          <Tabs>
+            <Tab active>
+              <Icon name="transcript" size="x" /> Interactive Transcript
+            </Tab>
+            <Tab onClick={() => this.props.history.push(comicUrl)}>
+              <Icon name="storyboard" size="x" /> Captioned Storyboard
+            </Tab>
+          </Tabs>
+          <Container fill="white" padded>
+            <video
+              controls
+              crossOrigin="anonymous"
+              id="video"
+              src={this.state.mp4}
+              width="640"
+            />
+            <Separator silent size="x" />
+            <Hint>
+              <Icon name="info" size="x" /> Click on words to navigate, select
+              text to tweet
+            </Hint>
+            <Separator silent size="x" />
+            <div
+              id="hypertranscript"
+              dangerouslySetInnerHTML={{ __html: this.state.ht }}
+            />
+          </Container>
         </Container>
-      </Content>
+      </ThisContent>
     );
   }
 }

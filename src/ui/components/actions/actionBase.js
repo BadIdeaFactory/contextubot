@@ -8,7 +8,7 @@ const actionBase = {
     align-content: center;
     align-items: center;
     border-color: transparent;
-    border-radius: ${radius.x};
+    border-radius: ${radius.s};
     border-style: solid;
     border-width: 1px;
     box-shadow: 0 2px 4px ${color.shadowLt};

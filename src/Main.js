@@ -160,10 +160,21 @@ class Main extends React.Component {
 
   render() {
     const { matches } = this.state.data;
-    const hasSearch = matches !== undefined && matches.length > 0;
+    const { pathname } = this.props.location;
+
+    const establishExtra = () => {
+      const hasSearch = matches !== undefined && matches.length > 0;
+      const isSingleView =
+        pathname.includes('TranscriptView') || pathname.includes('ComicView');
+      if (isSingleView) {
+        return 'title'; // render title
+      }
+      return hasSearch ? 'search' : null; // render search form
+    };
+
     return (
       <Layout>
-        <Header hasSearch={hasSearch} main={this} {...this.props} />
+        <Header hasExtra={establishExtra()} main={this} {...this.props} />
         <Switch>
           <Route
             exact
