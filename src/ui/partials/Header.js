@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { Action, Brandmark, Container, SearchForm } from '../';
+import { Action, Brandmark, Container, Icon, PageTitle, SearchForm } from '../';
 import { breakpoint, setSpace } from '../utils';
 
 const HeaderEl = styled(Container.withComponent('header'))`
@@ -21,24 +21,48 @@ const HeaderEl = styled(Container.withComponent('header'))`
       width: 100%;
     }
   }
+  ${PageTitle} {
+    text-align: center;
+  }
 `;
 
-const Header = props => (
-  <HeaderEl limit="l">
-    <Container flex={[1, 1, '20%']}>
-      <Action onClick={() => props.history.push('/')}>
-        <Brandmark />
-      </Action>
-    </Container>
-    <Container flex={[1, 1, '60%']}>
-      {props.hasSearch ? (
+const Header = props => {
+  const params = window.location.search.split('/');
+  const uid = params[0].slice(1);
+
+  const renderExtra = () => {
+    if (props.hasExtra === 'search') {
+      return (
         <SearchForm
           handleSubmit={data => props.main.handleSearch.bind(this)(data)}
         />
-      ) : null}
-    </Container>
-    <Container flex={[1, 1, '20%']}> </Container>
-  </HeaderEl>
-);
+      );
+    }
+    return props.hasExtra === 'title' ? (
+      <PageTitle display="h4">{uid}</PageTitle>
+    ) : (
+      ' '
+    );
+  };
+  return (
+    <HeaderEl limit="l">
+      <Container flex={[1, 1, '20%']}>
+        <Action onClick={() => props.history.push('/')}>
+          <Brandmark />
+        </Action>
+      </Container>
+      <Container flex={[1, 1, '60%']}>{renderExtra()}</Container>
+      <Container flex={[1, 1, '20%']} align="right">
+        {props.hasExtra === 'title' ? (
+          <Action primary onClick={() => alert('Post to social!')}>
+            <Icon name="share" size="x" /> Share This
+          </Action>
+        ) : (
+          ' '
+        )}
+      </Container>
+    </HeaderEl>
+  );
+};
 
 export default Header;
