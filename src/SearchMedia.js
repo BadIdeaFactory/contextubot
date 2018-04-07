@@ -167,9 +167,12 @@ class SearchMedia extends Component {
   }
 
   renderResult(match) {
-    if (match.duration === 0) return null;
+    if (!match.duration || match.duration === 0) return null;
 
-    const uid = match.source.replace('.afpt', '').replace('_tva', '');
+    const uid = match.source
+      .replace('.afpt', '')
+      .replace('_tva', '')
+      .replace('/data/archive/week/selected/', '');
     const clipStart = match.time;
     const clipEnd = match.time + match.duration;
     const mp4Url = `https://archive.org/download/${uid}/${uid}.mp4?t=${clipStart}/${clipEnd}`;
