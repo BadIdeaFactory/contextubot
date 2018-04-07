@@ -12,9 +12,10 @@ import {
   PageSubtitle,
   PNGRationalizer,
   SearchForm,
+  Preloader,
   Separator
 } from './ui';
-import { breakpoint, setSpace } from './ui/utils';
+import { breakpoint, color, setSpace } from './ui/utils';
 
 import './App.css';
 
@@ -42,8 +43,7 @@ const SearchResult = styled(Container.withComponent('li'))`
   flex: 0 0 ${100 / 3}%;
   & > div {
     ${setSpace('mbs')};
-    margin-top: -34px;
-    padding-bottom: 64px;
+    background: ${color.white};
     position: relative;
   }
   & > div > img {
@@ -51,17 +51,24 @@ const SearchResult = styled(Container.withComponent('li'))`
     width: 100%;
   }
   & > div > video {
-    height: 100%;
+    bottom: 0;
+    height: 100% !important;
     left: 0;
-    line-height: 0;
-    max-width: 100% !important;
     position: absolute;
     top: 0;
-    width: 100%;
+    width: 100% !important;
+    z-index: 2;
   }
   ${breakpoint.onlyphone} {
     flex: 0 0 ${100 / 2}%;
     ${setSpace('mbs')};
+  }
+  & .ctxb-preloader {
+    left: 50%;
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 0;
   }
 `;
 
@@ -282,7 +289,6 @@ class SearchMedia extends Component {
             <div>
               <img src={PNGRationalizer} alt="" />
               <video
-                className="video"
                 controls
                 height="254"
                 onClick={e => e.stopPropagation()}
@@ -290,6 +296,7 @@ class SearchMedia extends Component {
               >
                 <source src={mp4Url} />
               </video>
+              <Preloader />
             </div>
             <PageSubtitle display="h5">
               {uid.replace(/_/g, ' ')} ({match.duration}s)
