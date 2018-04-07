@@ -305,7 +305,8 @@ class SearchMedia extends Component {
               <Preloader />
             </div>
             <PageSubtitle display="h5">
-              {uid.replace(/_/g, ' ')} ({match.duration}s)
+              {uid.replace(/_/g, ' ')}
+              {/* ({match.duration}s) */}
             </PageSubtitle>
           </SearchResult>
         );
