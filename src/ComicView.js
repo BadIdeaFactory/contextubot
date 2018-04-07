@@ -1,3 +1,4 @@
+import styled from 'styled-components';
 import React, { Component } from 'react';
 // import { Link } from 'react-router-dom'
 //import ReactJson from 'react-json-view';
@@ -7,10 +8,14 @@ import React, { Component } from 'react';
 //import { Layout, BackTop, Input, Steps, Collapse, Spin, Switch } from 'antd';
 //import Button from 'antd/lib/button';
 
-import { Container, Content } from './ui';
-
 import './App.css';
 import './Hyperaudio.css';
+
+import { Container, Content, Icon, Separator, Tabs, Tab } from './ui';
+
+const ThisContent = styled(Content)`
+  padding-top: 2px;
+`;
 
 class ComicView extends Component {
   constructor(props) {
@@ -273,21 +278,28 @@ class ComicView extends Component {
 
   render() {
     return (
-      <Content>
+      <ThisContent>
         <Container limit="m">
-          <video
-            id="video"
-            crossOrigin="anonymous"
-            width="320"
-            src={this.state.mp4}
-            style={{ display: 'none' }}
-          />
-
-          <h2>Comic View</h2>
-
-          <div id="frames">{this.renderComicFrames()}</div>
+          <Tabs>
+            <Tab onClick={() => this.props.history.push('/')}>
+              <Icon name="transcript" size="x" /> Interactive Transcript
+            </Tab>
+            <Tab active>
+              <Icon name="storyboard" size="x" /> Captioned Storyboard
+            </Tab>
+          </Tabs>
+          <Container fill="white" padded>
+            <video
+              crossOrigin="anonymous"
+              id="video"
+              src={this.state.mp4}
+              style={{ display: 'none' }}
+              width="320"
+            />
+            <div id="frames">{this.renderComicFrames()}</div>
+          </Container>
         </Container>
-      </Content>
+      </ThisContent>
     );
   }
 }

@@ -2,7 +2,8 @@
   text-decoration: line-through;
 }
 
-#hypertranscript .annotation, #hypertranscript .parannotation{
+#hypertranscript .annotation,
+#hypertranscript .parannotation {
   opacity: 0.7;
 }
 
@@ -14,7 +15,7 @@
   background-color: lightGreen !important;
 }
 
-#hypertranscript  header {
+#hypertranscript header {
   font-size: 200%;
 }
 
@@ -64,9 +65,7 @@
   font-family: 'Bangers', cursive;
   line-height: 1.8;
   font-size: 1.2em;
-  padding: 50px;
 }
-
 
 [data-m] {
   cursor: pointer;

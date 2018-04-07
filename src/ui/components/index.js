@@ -14,3 +14,6 @@ export { default as PageSubtitle } from './texts/PageSubtitle';
 export { default as PageParagraph } from './texts/PageParagraph';
 export { default as Text } from './texts/Text';
 export { default as TextBlock } from './texts/TextBlock';
+
+export { default as Tab } from './tabs/Tab';
+export { default as Tabs } from './tabs/Tabs';
