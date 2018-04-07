@@ -23,12 +23,18 @@ const TabEl = css.li`
     text-align: center;
     transition: color ${time.m};
     width: 100%;
+    outline: none;
+  }
+  & > button:focus {
+    outline: none;
   }
   ${({ active }) =>
     active
       ? `
       background: ${color.white};
-      button { color: ${color.black}; }
+      button {
+        color: ${color.black};
+      }
         `
       : ``}
 `;

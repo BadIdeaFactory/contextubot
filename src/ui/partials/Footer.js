@@ -34,7 +34,7 @@ const Footer = props => (
     <Container flex={[1, 1, '50%']}>
       <FooterTagline>
         <Action onClick={() => props.history.push('/')}>
-          <Icon name="contextubot" size="l" />
+          <Icon name="contextubot" size="m" />
         </Action>{' '}
         Legit media from legit sources.
       </FooterTagline>

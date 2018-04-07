@@ -1,6 +1,6 @@
 import css from 'styled-components';
 
-import { color, radius, setSpace, setType } from '../utils';
+import { color, setSpace, setType } from '../utils';
 
 const Hint = css.p`
   ${setSpace('pvx')};

@@ -12,9 +12,28 @@ import './App.css';
 import './Hyperaudio.css';
 
 import { Container, Content, Icon, Tabs, Tab } from './ui';
+import { setSpace, setType } from './ui/utils';
 
 const ThisContent = styled(Content)`
   padding-top: 2px;
+`;
+
+const Frames = styled(Container)`
+  width: 100%;
+  justify-content: flex-start;
+  align-items: flex-start;
+  align-content: flex-start;
+`;
+
+const Frame = styled(Container)`
+  ${setSpace('pax')};
+  flex: 0 0 ${100 / 3}%;
+  & img {
+    width: 100%;
+  }
+  & p {
+    ${setType('x')};
+  }
 `;
 
 class ComicView extends Component {
@@ -250,30 +269,16 @@ class ComicView extends Component {
     if (frame.length === 0) return null;
 
     return (
-      <div
-        className="frame-hldr"
-        style={{
-          width: 300,
-          height: 240,
-          padding: 8,
-          marginBottom: 48,
-          float: 'left',
-          fontFamily: 'Bangers'
-          //borderStyle: 'solid', //debug
-          //borderColor: 'red'    //debug
-        }}
-        key={frame.key}
-      >
+      <Frame key={frame.key}>
         <img alt="comic frame" src={frame.png} />
-        <span>{frame.textData}</span>
-      </div>
+        <p>{frame.textData}</p>
+      </Frame>
     );
   }
 
   renderComicFrames() {
     if (!this.state.comicFrames) return null;
-
-    return <div>{this.state.comicFrames.map(this.renderComicFrame)}</div>;
+    return this.state.comicFrames.map(this.renderComicFrame);
   }
 
   render() {
@@ -296,7 +301,7 @@ class ComicView extends Component {
               style={{ display: 'none' }}
               width="320"
             />
-            <div id="frames">{this.renderComicFrames()}</div>
+            <Frames dir="row">{this.renderComicFrames()}</Frames>
           </Container>
         </Container>
       </ThisContent>
