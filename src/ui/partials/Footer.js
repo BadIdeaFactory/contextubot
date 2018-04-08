@@ -47,7 +47,7 @@ const Footer = props => (
         target="_blank"
       >
         Bad Idea Factory
-        <Icon name="github" size="l" />
+        <Icon name="github" size="m" />
       </Action>
     </Container>
   </FooterEl>
