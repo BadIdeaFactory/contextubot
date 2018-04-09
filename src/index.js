@@ -4,7 +4,10 @@ import ReactDOM from 'react-dom';
 import { LocaleProvider } from 'antd';
 import enUS from 'antd/lib/locale-provider/en_US';
 
-import './index.css';
+// Load Global Styles
+import './ui/styles/reset.css';
+import './ui/styles/global.css';
+
 import App from './App';
 import registerServiceWorker from './registerServiceWorker';
 

@@ -1,16 +1,82 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
 import ReactJson from 'react-json-view';
+import styled from 'styled-components';
 
-import { Layout, BackTop, Input, Steps, Collapse, Spin } from 'antd';
-import Button from 'antd/lib/button';
+import { Collapse } from 'antd';
+
+import {
+  Action,
+  Container,
+  Content,
+  PageTitle,
+  PageSubtitle,
+  PNGRationalizer,
+  SearchForm,
+  Preloader,
+  Separator
+} from './ui';
+import { breakpoint, color, setSpace } from './ui/utils';
 
 import './App.css';
 
-const { Content } = Layout;
-const Search = Input.Search;
-const Step = Steps.Step;
 const Panel = Collapse.Panel;
+
+const SearchResultsWrapper = styled(Container)`
+  ${breakpoint.onlytablet} {
+    max-width: none;
+  }
+`;
+
+const SearchResults = styled(Container.withComponent('ul'))`
+  ${setSpace('man')};
+  ${setSpace('pan')};
+  display: flex;
+  flex-wrap: wrap;
+  height: 100%;
+  position: relative;
+  width: 100%;
+`;
+
+const SearchResult = styled(Container.withComponent('li'))`
+  ${setSpace('mbl')};
+  ${setSpace('prm')};
+  flex: 0 0 ${100 / 3}%;
+  & > div {
+    ${setSpace('mbs')};
+    background: ${color.white};
+    position: relative;
+  }
+  & > div > img {
+    display: block;
+    width: 100%;
+  }
+  & > div > video {
+    bottom: 0;
+    height: 100% !important;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 100% !important;
+    z-index: 2;
+  }
+  ${breakpoint.onlyphone} {
+    flex: 0 0 ${100 / 2}%;
+    ${setSpace('mbs')};
+  }
+  & .ctxb-preloader {
+    left: 50%;
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 0;
+  }
+  ${PageSubtitle} {
+    cursor: pointer;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+`;
 
 class SearchMedia extends Component {
   renderTitle() {
@@ -120,11 +186,9 @@ class SearchMedia extends Component {
     return (
       <Panel header="Fingerprint" key="5">
         {this.props.main.state.data.fingerprint ? (
-          <a href={this.props.main.state.data.fingerprint}>
-            <Button type="primary" icon="download">
-              Download
-            </Button>
-          </a>
+          <Action href={this.props.main.state.data.fingerprint}>
+            Download
+          </Action>
         ) : null}
       </Panel>
     );
@@ -155,132 +219,141 @@ class SearchMedia extends Component {
     );
   }
 
-  renderWrappedResults() {
-    console.log('In renderWrappedResults');
-    if (!this.props.main.state.data.matches) return null;
-    console.log('renderResults() being returned');
-    return (
-      <Panel header="Results" key="7">
-        {this.renderResults()}
-      </Panel>
-    );
-  }
+  renderResult(match) {}
 
-  renderResult(match) {
-    if (!match.duration || match.duration === 0) return null;
+  // renderCollapse() {
+  //   console.log('In renderCollapse()');
+  //   if (Object.keys(this.props.main.state.data).length === 0) return null;
+  //   console.log('Object.keys present...');
+  //   return (
+  //     <Collapse style={{ marginTop: 14 }}>
+  //       {this.renderHeaders()}
+  //       {this.renderEmbed()}
+  //       {this.renderInfo()}
+  //       {this.renderFile()}
+  //       {this.renderFingerprint()}
+  //       {this.renderMatches()}
+  //       {this.renderErrors()}
+  //     </Collapse>
+  //   );
+  // }
 
-    const uid = match.source
-      .replace('.afpt', '')
-      .replace('_tva', '')
-      .replace('/data/archive/week/selected/', '');
-    const clipStart = match.time;
-    const clipEnd = match.time + match.duration;
-    const mp4Url = `https://archive.org/download/${uid}/${uid}.mp4?t=${clipStart}/${clipEnd}`;
-    const comicUrl = `TranscriptView?${uid}/${clipStart}/${clipEnd}`;
-
-    return (
-      <div className="video-hldr" key={mp4Url}>
-        <span>
-          {uid.replace(/_/g, ' ')} ({match.duration}s)
-        </span>
-        <video className="video" width="300" height="254" controls>
-          <source src={mp4Url} />
-        </video>
-        <span>
-          <Link to={comicUrl}>transcriptview </Link>
-        </span>
-      </div>
-    );
-  }
-
-  renderResults() {
-    if (!this.props.main.state.data.fingerprint) return null;
-    console.log('================');
-    console.log(this.props.main.state.data.matches.map(this.renderResult));
-    // note this data will contain lots of nulls
-    return (
-      <div className="results">
-        {this.props.main.state.data.matches.map(this.renderResult)}
-      </div>
-    );
-  }
-
-  renderCollapse() {
-    console.log('In renderCollapse()');
-    if (Object.keys(this.props.main.state.data).length === 0) return null;
-    console.log('Object.keys present...');
-    return (
-      <Collapse style={{ marginTop: 14 }}>
-        {this.renderHeaders()}
-        {this.renderEmbed()}
-        {this.renderInfo()}
-        {this.renderFile()}
-        {this.renderFingerprint()}
-        {this.renderMatches()}
-        {this.renderErrors()}
-        {this.renderWrappedResults()}
-      </Collapse>
-    );
+  handleSubmit(e) {
+    if (e) e.preventDefault();
+    this.props.main.handleSearch.bind(this)(this.state.searchKey);
   }
 
   render() {
-    return (
-      <Layout className="layout">
-        <BackTop />
-        <Content>
-          <div style={{ background: '#fff', padding: 24, minHeight: 280 }}>
-            <h1>The Glorious Contextubot</h1>
+    const { main } = this.props;
+    /* this.renderTitle() */
+    /* this.renderThumbnail() */
+    /* this.renderDescription() */
+    /* this.renderViewCount() */
 
-            <Search
-              placeholder="please enter link here"
-              size="large"
-              onChange={event => this.props.main.handleChange.bind(this)(event)}
-              onSearch={value => this.props.main.handleSearch.bind(this)(value)}
+    const hasFetchedResults = Object.keys(main.state.data).length > 0;
+    const hasFingerprint = main.state.data.fingerprint !== undefined;
+    const hasMatches =
+      main.state.data.matches !== undefined &&
+      main.state.data.matches.length > 0;
+    const isStillSearching = main.state.status === 'process';
+
+    console.log('—— hasFetchedResults: ', hasFetchedResults);
+    console.log('—— hasFingerprint: ', hasFingerprint);
+    console.log('—— hasMatches: ', hasMatches);
+    console.log('—— isStillSearching: ', isStillSearching);
+    console.log('——— this.props: ———', this.props);
+
+    const renderForm = () => {
+      return (
+        <Content dir="row" align="center">
+          <Container limit="m">
+            <PageTitle display="h1">
+              Source-check questionable media. <br />Stand by reputable sources.
+            </PageTitle>
+            <Separator dir="h" silent size="m" />
+            <SearchForm
+              handleSubmit={data => main.handleSearch.bind(this)(data)}
             />
-
-            <Steps
-              current={this.props.main.state.step}
-              status={this.props.main.state.status}
-              style={{ marginTop: 24 }}
-            >
-              <Step
-                title={
-                  <span>
-                    Analyze Link{' '}
-                    {this.props.main.state.status === 'process' ? (
-                      <Spin
-                        size="small"
-                        style={{ marginTop: 3, marginLeft: 4 }}
-                      />
-                    ) : null}
-                  </span>
-                }
-                description={this.props.main.state.step0}
-              />
-              <Step
-                title="Detect Media"
-                description={this.props.main.state.step1}
-              />
-              <Step
-                title="Fingerprint"
-                description={this.props.main.state.step2}
-              />
-              <Step
-                title="Show Context"
-                description={this.props.main.state.step3}
-              />
-            </Steps>
-
-            {/* this.renderTitle() */}
-            {/* this.renderThumbnail() */}
-            {/* this.renderDescription() */}
-            {/* this.renderViewCount() */}
-
-            {this.renderCollapse()}
-          </div>
+          </Container>
         </Content>
-      </Layout>
-    );
+      );
+    };
+
+    const renderResults = () => {
+      const renderResult = match => {
+        if (!match.duration || match.duration === 0) return null;
+
+        const uid = match.source
+          .replace('.afpt', '')
+          .replace('_tva', '')
+          .replace('/data/archive/week/selected/', '');
+        const clipStart = match.time;
+        const clipEnd = match.time + match.duration;
+        const mp4Url = `https://archive.org/download/${uid}/${uid}.mp4?t=${clipStart}/${clipEnd}`;
+        const transcriptURL = `TranscriptView?${uid}/${clipStart}/${clipEnd}`;
+
+        return (
+          <SearchResult
+            key={mp4Url}
+            onClick={() => this.props.history.push(transcriptURL)}
+          >
+            <div>
+              <img src={PNGRationalizer} alt="" />
+              <video
+                controls
+                height="254"
+                onClick={e => e.stopPropagation()}
+                width="300"
+              >
+                <source src={mp4Url} />
+              </video>
+              <Preloader />
+            </div>
+            <PageSubtitle display="h5">
+              {uid.replace(/_/g, ' ')}
+              {/* ({match.duration}s) */}
+            </PageSubtitle>
+          </SearchResult>
+        );
+      };
+
+      return hasMatches ? (
+        <Content>
+          <SearchResultsWrapper limit="m">
+            <PageTitle display="h2">
+              Here are the{' '}
+              <strong>{main.state.data.matches.length} possible matches</strong>{' '}
+              I found:
+            </PageTitle>
+            <Separator dir="h" silent size="m" />
+            <SearchResults>
+              {main.state.data.matches.map(renderResult)}
+            </SearchResults>
+          </SearchResultsWrapper>
+        </Content>
+      ) : (
+        <Content dir="row" align="center">
+          <PageTitle display="h3">
+            <span style={{ color: color.redM }}>
+              I couldn’t find any matching video. Try another clip.
+            </span>
+          </PageTitle>
+          <Separator silent size="s" />
+          ¯\_(ツ)_/¯
+        </Content>
+      );
+    };
+
+    if (isStillSearching) {
+      return (
+        <Content dir="row" align="center">
+          <Preloader />
+        </Content>
+      );
+    } else if (hasFingerprint && hasFetchedResults) {
+      return renderResults();
+    }
+    return renderForm();
   }
 }
 
