@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import ReactJson from 'react-json-view';
 import styled from 'styled-components';
 
-import { Collapse, Spin } from 'antd';
+import { Collapse } from 'antd';
 
 import {
   Action,
