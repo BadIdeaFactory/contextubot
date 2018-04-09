@@ -225,8 +225,7 @@ class SearchMedia extends Component {
   //   console.log('In renderCollapse()');
   //   if (Object.keys(this.props.main.state.data).length === 0) return null;
   //   console.log('Object.keys present...');
-  //   return [
-  //     this.renderWrappedResults(),
+  //   return (
   //     <Collapse style={{ marginTop: 14 }}>
   //       {this.renderHeaders()}
   //       {this.renderEmbed()}
@@ -236,7 +235,7 @@ class SearchMedia extends Component {
   //       {this.renderMatches()}
   //       {this.renderErrors()}
   //     </Collapse>
-  //   ];
+  //   );
   // }
 
   handleSubmit(e) {
@@ -252,14 +251,17 @@ class SearchMedia extends Component {
     /* this.renderViewCount() */
 
     const hasFetchedResults = Object.keys(main.state.data).length > 0;
-    const hasFingerprint = this.props.main.state.data.fingerprint !== undefined;
-    const hasMatches = this.props.main.state.data.matches !== undefined;
+    const hasFingerprint = main.state.data.fingerprint !== undefined;
+    const hasMatches =
+      main.state.data.matches !== undefined &&
+      main.state.data.matches.length > 0;
     const isStillSearching = main.state.status === 'process';
 
     console.log('—— hasFetchedResults: ', hasFetchedResults);
     console.log('—— hasFingerprint: ', hasFingerprint);
     console.log('—— hasMatches: ', hasMatches);
     console.log('—— isStillSearching: ', isStillSearching);
+    console.log('——— this.props: ———', this.props);
 
     const renderForm = () => {
       return (
@@ -312,14 +314,7 @@ class SearchMedia extends Component {
         );
       };
 
-      if (isStillSearching) {
-        return (
-          <Content dir="row" align="center">
-            <Spin size="large" />
-          </Content>
-        );
-      }
-      return (
+      return hasMatches ? (
         <Content>
           <SearchResultsWrapper limit="m">
             <PageTitle display="h2">
@@ -333,12 +328,29 @@ class SearchMedia extends Component {
             </SearchResults>
           </SearchResultsWrapper>
         </Content>
+      ) : (
+        <Content dir="row" align="center">
+          <PageTitle display="h3">
+            <span style={{ color: color.redM }}>
+              I couldn’t find any matching video. Try another clip.
+            </span>
+          </PageTitle>
+          <Separator silent size="s" />
+          ¯\_(ツ)_/¯
+        </Content>
       );
     };
 
-    return hasFingerprint && hasFetchedResults && hasMatches
-      ? renderResults()
-      : renderForm();
+    if (isStillSearching) {
+      return (
+        <Content dir="row" align="center">
+          <Preloader />
+        </Content>
+      );
+    } else if (hasFingerprint && hasFetchedResults) {
+      return renderResults();
+    }
+    return renderForm();
   }
 }
 
