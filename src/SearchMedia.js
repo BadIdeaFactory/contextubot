@@ -321,7 +321,7 @@ class SearchMedia extends Component {
         <Content>
           <SearchResultsWrapper limit="m">
             <PageTitle display="h2">
-              Here the{' '}
+              Here are the{' '}
               <strong>{main.state.data.matches.length} possible matches</strong>{' '}
               I found:
             </PageTitle>
