@@ -90,13 +90,13 @@ class Main extends React.Component {
     console.log(API); // so that builds pass :/
 
     axios
-      .post(
-        `${API}?url=${encodeURIComponent(value.trim())}`,
-        {},
-        { timeout: 3 * 60 * 1000 }
-      )
+      // .post(
+      //   `${API}?url=${encodeURIComponent(value.trim())}`,
+      //   {},
+      //   { timeout: 3 * 60 * 1000 }
+      // )
       /* as well as uncommenting the above, comment the line below for live data */
-      // .get(`../dummy.json`, {}, { timeout: 3 * 60 * 1000 })
+      .get(`../dummy.json`, {}, { timeout: 3 * 60 * 1000 })
       .then(({ data }) => {
         console.log('the data');
         console.log(data);
