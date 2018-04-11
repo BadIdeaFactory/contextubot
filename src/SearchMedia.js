@@ -288,7 +288,10 @@ class SearchMedia extends Component {
           .replace('_tva', '')
           .replace('/data/archive/week/selected/', '');
         const clipStart = match.time;
-        const clipEnd = match.time + match.duration;
+
+        let duration = 180;
+        if (match.duration < 180) duration = match.duration;
+        const clipEnd = match.time + duration;
         const mp4Url = `https://archive.org/download/${uid}/${uid}.mp4?t=${clipStart}/${clipEnd}`;
         const transcriptURL = `TranscriptView?${uid}/${clipStart}/${clipEnd}`;
 
