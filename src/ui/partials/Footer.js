@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 import { Action, Container, Icon, KFLogo } from '../';
-import { breakpoint, color, setSpace, setType, setHeight } from '../utils';
+import { breakpoint, color, setSpace, setType } from '../utils';
 
 const FooterEl = styled(Container.withComponent('footer'))`
   ${setSpace('phm')};
