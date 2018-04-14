@@ -47,7 +47,12 @@ const Footer = props => (
       </FooterTagline>
     </Container>
     <Container flex={[1, 1, '50%']} align="right">
-      <Action>
+      <Action
+        href="https://knightfoundation.org/"
+        noopener
+        noreferrer
+        target="_blank"
+      >
         <KFLink src={KFLogo} alt="Knight Foundation" />
       </Action>
       <Action
