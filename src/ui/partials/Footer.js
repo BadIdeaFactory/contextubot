@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { Action, Container, Icon } from '../';
+import { Action, Container, Icon, KFLogo } from '../';
 import { breakpoint, color, setSpace, setType } from '../utils';
 
 const FooterEl = styled(Container.withComponent('footer'))`
@@ -29,6 +29,13 @@ const FooterTagline = styled.p`
   }
 `;
 
+const KFLink = styled.img`
+  ${setSpace('mrl')};
+  height: 24px;
+  position: relative;
+  top: 5px;
+`;
+
 const Footer = props => (
   <FooterEl limit="l">
     <Container flex={[1, 1, '50%']}>
@@ -40,6 +47,14 @@ const Footer = props => (
       </FooterTagline>
     </Container>
     <Container flex={[1, 1, '50%']} align="right">
+      <Action
+        href="https://knightfoundation.org/"
+        noopener
+        noreferrer
+        target="_blank"
+      >
+        <KFLink src={KFLogo} alt="Knight Foundation" />
+      </Action>
       <Action
         alternative
         href="https://github.com/BadIdeaFactory/"
