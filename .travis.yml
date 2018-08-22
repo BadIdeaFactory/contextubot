@@ -11,20 +11,16 @@ script:
 deploy:
 - provider: s3
   skip_cleanup: true
-  # access_key_id: "$AWS_ACCESS_KEY_ID"
-  # secret_access_key: "$AWS_SECRET_ACCESS_KEY"
   bucket: contextubot.net
-  region: us-east-2
+  region: us-east-1
   acl: public_read
   local_dir: build
   on:
     branch: develop
 - provider: s3
   skip_cleanup: true
-  # access_key_id: "$AWS_ACCESS_KEY_ID"
-  # secret_access_key: "$AWS_SECRET_ACCESS_KEY"
   bucket: contextubot.com
-  region: us-east-2
+  region: us-east-1
   acl: public_read
   local_dir: build
   on:
