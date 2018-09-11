@@ -268,7 +268,8 @@ class SearchMedia extends Component {
         <Content dir="row" align="center">
           <Container limit="m">
             <PageTitle display="h1">
-              Source-check questionable media. <br />Stand by reputable sources.
+              Source-check questionable media. <br />
+              Stand by reputable sources.
             </PageTitle>
             <Separator dir="h" silent size="m" />
             <SearchForm
