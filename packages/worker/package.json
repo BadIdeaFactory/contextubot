@@ -1,0 +1,10 @@
+{
+  "name": "contextubot-api",
+  "description": "",
+  "version": "0.1.0",
+  "dependencies": {},
+  "devDependencies": {
+    "serverless-plugin-log-retention": "^1.0.3",
+    "serverless-python-requirements": "^4.2.4"
+  }
+}
