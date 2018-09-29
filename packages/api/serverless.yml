@@ -1,0 +1,61 @@
+service:
+  name: contextubot-api
+
+provider:
+  name: aws
+  runtime: nodejs8.10
+  tags:
+    project: contextubot
+  timeout: 300
+
+  iamRoleStatements:
+    - Effect: 'Allow'
+      Action:
+        - 's3:*'
+      Resource:
+        Fn::Join:
+          - ''
+          - - 'arn:aws:s3:::data.contextubot.net'
+
+  environment:
+    BUCKET_NAME: 'data.contextubot.net'
+
+package:
+  individually: true
+  include:
+    - 'ffmpeg/*'
+  # exclude:
+  #   - ./**
+  #   - '!node_modules/**'
+
+functions:
+  extract:
+    handler: extract.hello
+    timeout: 30
+    events:
+      - http:
+          method: get
+          path: extract-audio
+
+plugins:
+  - serverless-plugin-scripts
+  - serverless-webpack
+  - serverless-tag-api-gateway
+  - serverless-offline
+
+custom:
+  webpack:
+    includeModules:
+      forceExclude:
+        - aws-sdk
+    packager: 'yarn'
+    # packager: 'npm'
+    # packagerOptions:
+    #   scripts:
+    #     - npm rebuild ffmpeg-static --target=8.10.0 --target_arch=x64 --target_platform=linux
+  apiGatewayTags:
+    project: contextubot
+  scripts:
+    hooks:
+      # 'package:createDeploymentArtifacts': zip -d .serverless/extract.zip "*win32*" "*darwin*"
+      'package:createDeploymentArtifacts': zip .serverless/extract.zip ffmpeg/*

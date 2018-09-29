@@ -1,22 +1,14 @@
-custom:
-  logRetentionInDays: 5
-  pythonRequirements:
-    dockerizePip: true
-    slim: true
-    zip: true
-    useDownloadCache: true
-    useStaticCache: true
-
-service: contextubot
+service:
+  name: contextubot-worker
 
 provider:
   name: aws
   tags:
     project: contextubot
-  
+
   runtime: python3.6
   timeout: 300
-  
+
   iamRoleStatements:
     - Effect: 'Allow'
       Action:
@@ -25,7 +17,7 @@ provider:
         Fn::Join:
           - ''
           - - 'arn:aws:s3:::data.contextubot.net'
-        
+
   environment:
     BUCKET_NAME: 'data.contextubot.net'
 
@@ -36,14 +28,14 @@ package:
     - '*/**'
 
 functions:
-  extract:
-    handler: extract-audio/handler.extract
-    module: extract-audio
-    package:
-      include:
-        - 'extract-audio/*.py'
-        - 'extract-audio/.requirements.zip'    
-        - 'extract-audio/ffmpeg/*'
+  # extract:
+  #   handler: extract-audio/handler.extract
+  #   module: extract-audio
+  #   package:
+  #     include:
+  #       - 'extract-audio/*.py'
+  #       - 'extract-audio/.requirements.zip'
+  #       - 'extract-audio/ffmpeg/*'
   create:
     handler: handler.create
     module: audfprint
@@ -62,3 +54,12 @@ functions:
 plugins:
   - serverless-python-requirements
   - serverless-plugin-log-retention
+
+custom:
+  logRetentionInDays: 5
+  pythonRequirements:
+    dockerizePip: true
+    slim: true
+    zip: true
+    useDownloadCache: true
+    useStaticCache: true
