@@ -3,22 +3,42 @@ service:
 
 provider:
   name: aws
+  region: us-east-1
+
   runtime: nodejs8.10
+  timeout: 300
+  stage: dev
+  tracing: true
+
   tags:
     project: contextubot
-  timeout: 300
 
   iamRoleStatements:
+    - Effect: 'Allow'
+      Action:
+        - 's3:*'
+        # - 's3:PutBucketNotification'
+      Resource:
+        Fn::Join:
+          - ''
+          - - 'arn:aws:s3:::data.contextubot.net'
     - Effect: 'Allow'
       Action:
         - 's3:*'
       Resource:
         Fn::Join:
           - ''
-          - - 'arn:aws:s3:::data.contextubot.net'
+          - - 'arn:aws:s3:::data.contextubot.net/*'
+    - Effect: 'Allow'
+      Action:
+        - 'xray:PutTraceSegments'
+        - 'xray:PutTelemetryRecords'
+      Resource:
+        - "*"
 
   environment:
     BUCKET_NAME: 'data.contextubot.net'
+    EMBEDLY_KEY: ${ssm:/contextubot/embedlyKey}
 
 package:
   individually: true
@@ -29,21 +49,57 @@ package:
   #   - '!node_modules/**'
 
 functions:
-  extract:
-    handler: extract.hello
+  query:
+    handler: inspect.query
     timeout: 30
     events:
       - http:
-          method: get
-          path: extract-audio
+          method: post
+          path: query
+          request:
+            parameters:
+              querystrings:
+                url: true
+          cors: true
+  extract:
+    handler: extract.audio
+    timeout: 300
+    events:
+      - existingS3:
+          bucket: 'data.contextubot.net'
+          events:
+            - s3:ObjectCreated:*
+          rules:
+            - prefix: query/
+            - suffix: .json
 
 plugins:
   - serverless-plugin-scripts
   - serverless-webpack
   - serverless-tag-api-gateway
   - serverless-offline
+  - serverless-plugin-log-retention
+  - serverless-stage-manager
+  - serverless-domain-manager
+  - serverless-plugin-existing-s3
+  - serverless-plugin-tracing
 
 custom:
+  stages:
+    - dev
+    - staging
+    - prod
+  customDomain:
+    domainName: api.contextubot.net
+    stage: dev
+    # basePath: api
+    # certificateName: '*.contextubot.net'
+    certificateArn: arn:aws:acm:us-east-1:195195539908:certificate/cb24598f-e14c-4856-a2d3-58ce80beef23
+    createRoute53Record: true
+    endpointType: 'regional'
+  apiGatewayTags:
+    project: contextubot
+  logRetentionInDays: 5
   webpack:
     includeModules:
       forceExclude:
@@ -53,9 +109,8 @@ custom:
     # packagerOptions:
     #   scripts:
     #     - npm rebuild ffmpeg-static --target=8.10.0 --target_arch=x64 --target_platform=linux
-  apiGatewayTags:
-    project: contextubot
   scripts:
     hooks:
       # 'package:createDeploymentArtifacts': zip -d .serverless/extract.zip "*win32*" "*darwin*"
-      'package:createDeploymentArtifacts': zip .serverless/extract.zip ffmpeg/*
+      'package:createDeploymentArtifacts': zip .serverless/extract.zip ffmpeg/ffmpeg ffmpeg/ffprobe ; zip .serverless/query.zip ffmpeg/ffprobe
+      'deploy:finalize': serverless s3deploy

@@ -2,7 +2,9 @@
   "name": "contextubot-worker",
   "description": "",
   "version": "0.3.0",
-  "dependencies": {},
+  "dependencies": {
+    "serverless-stage-manager": "^1.0.5"
+  },
   "devDependencies": {
     "serverless-plugin-log-retention": "^1.0.3",
     "serverless-python-requirements": "^4.2.4"

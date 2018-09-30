@@ -1,39 +1,52 @@
 import fs from 'fs';
 import { promisify } from 'util';
 // import Promise from 'promise';
-import AWS from 'aws-sdk';
 import youtubedl from 'youtube-dl';
+import AwsSdk from 'aws-sdk';
+import awsXRay from 'aws-xray-sdk';
 
+const AWS = awsXRay.captureAWS(AwsSdk);
 
 const s3 = new AWS.S3();
 
 
-export const hello = async (event, context, cb) => {
-  const output = await promisify(youtubedl.exec)('http://www.youtube.com/watch?v=90AiXO1pAiA', [
-    '--verbose',
+export const audio = async (event, context, cb) => {
+  const input = JSON.parse((await s3.getObject({
+    Bucket: process.env.BUCKET_NAME,
+    Key: event.Records[0].s3.object.key
+  }).promise()).Body);
+
+  const id = input.data[0].event.requestContext.requestId;
+
+  const output = await promisify(youtubedl.exec)(input.data[0].event.queryStringParameters.url, [
+    // '--verbose',
     '--no-check-certificate',
+    '--no-cache-dir',
     '--format=bestaudio/best',
     '--extract-audio',
     '--prefer-ffmpeg',
     `--ffmpeg-location=${process.cwd()}/ffmpeg`,
     '--audio-format=wav',
-    '--output=/tmp/%(id)s.%(ext)s',
+    // '--output=/tmp/%(id)s.%(ext)s',
+    `--output=/tmp/${id}.%(ext)s`,
   ], {
     cwd: '/tmp',
   });
 
-  /*, (err, output) => {
-    if (output) console.log(output.join('\n'));
-    if (err) console.log(err);
+  await s3.putObject({
+    Body: JSON.stringify({ input, event, output }),
+    ACL: 'public-read',
+    Bucket: process.env.BUCKET_NAME,
+    Key: `wave/${id}/info.json`,
+  }).promise();
 
-    cb(err, {
-      statusCode: 200,
-      body: JSON.stringify({
-        message: output,
-        input: event,
-      }),
-    });
-  }*/
+  const fileStream = fs.createReadStream(`/tmp/${id}.wav`);
+  await s3.putObject({
+    Body: fileStream,
+    ACL: 'public-read',
+    Bucket: process.env.BUCKET_NAME,
+    Key: `wave/${id}/audio.wav`,
+  }).promise();
 
   cb(null, {
     statusCode: 200,

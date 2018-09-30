@@ -9,7 +9,9 @@
     "babel-polyfill": "^6.26.0",
     "babel-preset-env": "^1.7.0",
     "serverless-offline": "^3.25.17",
+    "serverless-plugin-log-retention": "^1.0.3",
     "serverless-plugin-scripts": "^1.0.2",
+    "serverless-plugin-tracing": "^2.0.0",
     "serverless-tag-api-gateway": "^1.0.0",
     "serverless-webpack": "^5.2.0",
     "webpack": "^4.20.2",
@@ -17,7 +19,14 @@
   },
   "license": "MIT",
   "dependencies": {
+    "aws-xray-sdk": "^2.0.0",
     "aws-sdk": "^2.325.0",
+    "embedly": "^2.1.0",
+    "ffprobe": "^1.1.0",
+    "requisition": "^1.7.0",
+    "serverless-domain-manager": "^2.6.5",
+    "serverless-plugin-existing-s3": "^2.2.2",
+    "serverless-stage-manager": "^1.0.5",
     "youtube-dl": "^1.12.2"
   }
 }
