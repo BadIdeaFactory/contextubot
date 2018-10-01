@@ -3,14 +3,20 @@ import { promisify } from 'util';
 // import Promise from 'promise';
 import youtubedl from 'youtube-dl';
 import AwsSdk from 'aws-sdk';
-import awsXRay from 'aws-xray-sdk';
+import AWSXRay from 'aws-xray-sdk';
+import https from 'https';
 
-const AWS = awsXRay.captureAWS(AwsSdk);
+AWSXRay.captureHTTPsGlobal(https);
+AWSXRay.capturePromise();
+const AWS = AWSXRay.captureAWS(AwsSdk);
 
 const s3 = new AWS.S3();
 
 
 export const audio = async (event, context, cb) => {
+  console.log(JSON.stringify(event));
+  if (!event.Records[0].s3) return cb(null, { event });
+
   const input = JSON.parse((await s3.getObject({
     Bucket: process.env.BUCKET_NAME,
     Key: event.Records[0].s3.object.key
@@ -19,7 +25,6 @@ export const audio = async (event, context, cb) => {
   const id = input.data[0].event.requestContext.requestId;
 
   const output = await promisify(youtubedl.exec)(input.data[0].event.queryStringParameters.url, [
-    // '--verbose',
     '--no-check-certificate',
     '--no-cache-dir',
     '--format=bestaudio/best',
@@ -27,7 +32,6 @@ export const audio = async (event, context, cb) => {
     '--prefer-ffmpeg',
     `--ffmpeg-location=${process.cwd()}/ffmpeg`,
     '--audio-format=wav',
-    // '--output=/tmp/%(id)s.%(ext)s',
     `--output=/tmp/${id}.%(ext)s`,
   ], {
     cwd: '/tmp',

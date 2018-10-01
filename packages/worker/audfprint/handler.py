@@ -6,8 +6,12 @@ except ImportError:
 import os
 import sys
 import json
+
 import boto3
 import botocore
+from aws_xray_sdk.core import xray_recorder
+# from aws_xray_sdk.core import patch
+from aws_xray_sdk.core import patch_all
 
 import numpy as np
 
@@ -15,11 +19,18 @@ import audfprint_match
 import audfprint_analyze
 import hash_table
 
+# patch(['boto3'])
+patch_all()
+
 s3 = boto3.resource('s3')
 BUCKET_NAME = os.environ['BUCKET_NAME']
 
 
 def create(event, context):
+    key = event.Records[0].s3.object.key
+
+def create(event, context):
+    # key = event.Records[0].s3.object.key
     s3.Bucket(BUCKET_NAME).download_file('_test-fprint.afpt', '/tmp/_test-fprint.afpt')
 
     analyzer = audfprint_analyze.Analyzer()
@@ -39,14 +50,13 @@ def create(event, context):
     hash_tab.params['samplerate'] = analyzer.target_sr
 
     analyzer.ingest(hash_tab, '/tmp/_test-fprint.afpt')
-            
+
     if hash_tab and hash_tab.dirty:
         hash_tab.save('/tmp/_test-db.pklz')
 
     s3.Bucket(BUCKET_NAME).upload_file('/tmp/_test-db.pklz', '_test-db.pklz')
 
     body = {
-        "message": "Go Serverless v1.0! Your function executed successfully!",
         "input": event
     }
 

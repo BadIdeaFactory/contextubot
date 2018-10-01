@@ -8,6 +8,7 @@ provider:
   runtime: python3.6
   timeout: 300
   stage: dev
+  tracing: true
 
   tags:
     project: contextubot
@@ -16,10 +17,24 @@ provider:
     - Effect: 'Allow'
       Action:
         - 's3:*'
+        # - 's3:PutBucketNotification'
+      Resource:
+        Fn::Join:
+          - ''
+          - - 'arn:aws:s3:::data.contextubot.net'
+    - Effect: 'Allow'
+      Action:
+        - 's3:*'
       Resource:
         Fn::Join:
           - ''
           - - 'arn:aws:s3:::data.contextubot.net/*'
+    - Effect: 'Allow'
+      Action:
+        - 'xray:PutTraceSegments'
+        - 'xray:PutTelemetryRecords'
+      Resource:
+        - "*"
 
   environment:
     BUCKET_NAME: 'data.contextubot.net'
@@ -34,17 +49,17 @@ package:
     - '*/**'
 
 functions:
-  # extract:
-  #   handler: extract-audio/handler.extract
-  #   module: extract-audio
-  #   package:
-  #     include:
-  #       - 'extract-audio/*.py'
-  #       - 'extract-audio/.requirements.zip'
-  #       - 'extract-audio/ffmpeg/*'
   create:
-    handler: handler.create
+    handler: handler.fingerprint
     module: audfprint
+    events:
+      - existingS3:
+          bucket: 'data.contextubot.net'
+          events:
+            - s3:ObjectCreated:*
+          rules:
+            - prefix: wave/
+            - suffix: .wav
     package:
       include:
         - 'audfprint/*.py'
@@ -61,6 +76,8 @@ plugins:
   - serverless-python-requirements
   - serverless-plugin-log-retention
   - serverless-stage-manager
+  - serverless-plugin-existing-s3
+  - serverless-plugin-tracing
 
 custom:
   stages:

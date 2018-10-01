@@ -4,14 +4,17 @@ service:
 provider:
   name: aws
   region: us-east-1
+  tags:
+    project: contextubot
 
   runtime: nodejs8.10
   timeout: 300
   stage: dev
   tracing: true
 
-  tags:
-    project: contextubot
+  environment:
+    BUCKET_NAME: 'data.contextubot.net'
+    EMBEDLY_KEY: ${ssm:/contextubot/embedlyKey}
 
   iamRoleStatements:
     - Effect: 'Allow'
@@ -35,20 +38,53 @@ provider:
         - 'xray:PutTelemetryRecords'
       Resource:
         - "*"
+    - Effect: Allow
+      Action:
+        - sqs:*
+      Resource: arn:aws:sqs:*:*:${self:custom.sqs}-export
+    - Effect: Allow
+      Action:
+        - sqs:*
+      Resource: arn:aws:sqs:*:*:${self:custom.sqs}-export-dl
+    - Effect: Allow
+      Action:
+        - sqs:*
+      Resource: arn:aws:sqs:*:*:${self:custom.sqs}-tva
+    - Effect: Allow
+      Action:
+        - sqs:*
+      Resource: arn:aws:sqs:*:*:${self:custom.sqs}-tva-dl
 
-  environment:
-    BUCKET_NAME: 'data.contextubot.net'
-    EMBEDLY_KEY: ${ssm:/contextubot/embedlyKey}
 
 package:
   individually: true
   include:
     - 'ffmpeg/*'
-  # exclude:
-  #   - ./**
-  #   - '!node_modules/**'
+
 
 functions:
+  tvaFeed:
+    handler: tva.feed
+    events:
+      - schedule: rate(2 hours)
+    environment:
+      TVA_QUEUE: https://sqs.us-east-1.amazonaws.com/195195539908/${self:custom.sqs}-tva
+
+  tvaFingerprint:
+    handler: tva.fingerprint
+    reservedConcurrency: 10
+    timeout: 300
+    events:
+      - sqs:
+          arn:
+            Fn::GetAtt:
+              - TVAQueue
+              - Arn
+          batchSize: 1
+    deadLetter:
+      targetArn:
+        GetResourceArn: TVADeadLetterQueue
+
   query:
     handler: inspect.query
     timeout: 30
@@ -61,8 +97,12 @@ functions:
               querystrings:
                 url: true
           cors: true
+    environment:
+      EXPORT_QUEUE: https://sqs.us-east-1.amazonaws.com/195195539908/${self:custom.sqs}-export
+
   extract:
     handler: extract.audio
+    reservedConcurrency: 10
     timeout: 300
     events:
       - existingS3:
@@ -72,23 +112,80 @@ functions:
           rules:
             - prefix: query/
             - suffix: .json
+      - sqs:
+          arn:
+            Fn::GetAtt:
+              - ExtractQueue
+              - Arn
+          batchSize: 1
+    deadLetter:
+      targetArn:
+        GetResourceArn: ExtractDeadLetterQueue
 
-plugins:
-  - serverless-plugin-scripts
-  - serverless-webpack
-  - serverless-tag-api-gateway
-  - serverless-offline
-  - serverless-plugin-log-retention
-  - serverless-stage-manager
-  - serverless-domain-manager
-  - serverless-plugin-existing-s3
-  - serverless-plugin-tracing
+
+
+
+resources:
+  Resources:
+    TVAQueue:
+      Type: 'AWS::SQS::Queue'
+      Properties:
+        QueueName: ${self:custom.sqs}-tva
+        VisibilityTimeout: 300
+    TVADeadLetterQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: ${self:custom.sqs}-tva-dl
+    ExtractQueue:
+      Type: 'AWS::SQS::Queue'
+      Properties:
+        QueueName: ${self:custom.sqs}-export
+        VisibilityTimeout: 300
+    ExtractDeadLetterQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: ${self:custom.sqs}-export-dl
+    # ExtractDeadLetterQueuePolicy:
+    #   Type: AWS::SQS::QueuePolicy
+    #   Properties:
+    #     Queues:
+    #       - Ref: ExtractDeadLetterQueue
+    #     PolicyDocument:
+    #       # This probably needs something more unique
+    #       # like 'Fn::GetAtt: [ServerlessTplLambdaDlQueue, Arn]'  + '/SQSPolicy'
+    #       Id: ExtractDeadLetterQueueId
+    #       Version: '2012-10-17'
+    #       Statement:
+    #         - Sid: Allow-Lambda-SendMessage
+    #           Effect: Allow
+    #           Principal:
+    #             AWS: "*"
+    #           Action:
+    #             - SQS:SendMessage
+    #           Resource:
+    #             Ref: ExtractDeadLetterQueue
+    #           Condition:
+    #             ArnEquals:
+    #               aws:SourceArn:
+    #                 Fn::GetAtt: [ExtractLambdaFunction, Arn]
+
+
+
 
 custom:
+  # region: ${self:provider.region}
+  stage: ${opt:stage, self:provider.stage}
+  prefix: ${self:custom.stage}-${self:service}
+  sqs: ${self:custom.prefix}-messages
+  # process: ${self:custom.prefix}-process
+  # config: ${self:custom.prefix}-config
+  # sns: ${self:custom.prefix}-trigger
   stages:
     - dev
     - staging
     - prod
+  sqsTags:
+    project: contextubot
   customDomain:
     domainName: api.contextubot.net
     stage: dev
@@ -114,3 +211,19 @@ custom:
       # 'package:createDeploymentArtifacts': zip -d .serverless/extract.zip "*win32*" "*darwin*"
       'package:createDeploymentArtifacts': zip .serverless/extract.zip ffmpeg/ffmpeg ffmpeg/ffprobe ; zip .serverless/query.zip ffmpeg/ffprobe
       'deploy:finalize': serverless s3deploy
+
+
+
+
+plugins:
+  - serverless-plugin-scripts
+  - serverless-webpack
+  - serverless-tag-api-gateway
+  - serverless-offline
+  - serverless-plugin-log-retention
+  - serverless-stage-manager
+  - serverless-domain-manager
+  - serverless-plugin-existing-s3
+  - serverless-plugin-tracing
+  - serverless-plugin-lambda-dead-letter
+  - serverless-tag-sqs
