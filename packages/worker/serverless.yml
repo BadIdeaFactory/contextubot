@@ -4,20 +4,24 @@ service:
 provider:
   name: aws
   region: us-east-1
+  tags:
+    project: contextubot
 
   runtime: python3.6
   timeout: 300
   stage: dev
   tracing: true
 
-  tags:
-    project: contextubot
+  environment:
+    BUCKET_NAME: 'data.contextubot.net'
+    PUBNUB_PUB: ${ssm:/contextubot/pubNubPublishKey}
+    PUBNUB_SUB: ${ssm:/contextubot/pubNubSubscribeKey}
+    PUBNUB_SECRET: ${ssm:/contextubot/pubNubSecretKey}
 
   iamRoleStatements:
     - Effect: 'Allow'
       Action:
         - 's3:*'
-        # - 's3:PutBucketNotification'
       Resource:
         Fn::Join:
           - ''
@@ -34,22 +38,44 @@ provider:
         - 'xray:PutTraceSegments'
         - 'xray:PutTelemetryRecords'
       Resource:
-        - "*"
+        - '*'
 
-  environment:
-    BUCKET_NAME: 'data.contextubot.net'
-    PUBNUB_PUB: ${ssm:/contextubot/pubNubPublishKey}
-    PUBNUB_SUB: ${ssm:/contextubot/pubNubSubscribeKey}
-    PUBNUB_SECRET: ${ssm:/contextubot/pubNubSecretKey}
 
 
 package:
   individually: true
   exclude:
     - '*/**'
+  include:
+    - 'audfprint/*.py'
+    - 'audfprint/.requirements.zip'
+
+
 
 functions:
   create:
+    handler: handler.create
+    module: audfprint
+    memorySize: 3008
+    events:
+      - schedule:
+          rate: cron(0 1 * * ? *)
+          input:
+            channel: 'CNNW'
+      - schedule:
+          rate: cron(0 1 * * ? *)
+          input:
+            channel: 'MSNBCW'
+      - schedule:
+          rate: cron(0 1 * * ? *)
+          input:
+            channel: 'FOXNEWSW'
+      - schedule:
+          rate: cron(0 1 * * ? *)
+          input:
+            channel: 'BBCNEWS'
+
+  fingerprint:
     handler: handler.fingerprint
     module: audfprint
     events:
@@ -60,24 +86,13 @@ functions:
           rules:
             - prefix: wave/
             - suffix: .wav
-    package:
-      include:
-        - 'audfprint/*.py'
-        - 'audfprint/.requirements.zip'
+
   match:
     handler: handler.match
     module: audfprint
-    package:
-      include:
-        - 'audfprint/*.py'
-        - 'audfprint/.requirements.zip'
 
-plugins:
-  - serverless-python-requirements
-  - serverless-plugin-log-retention
-  - serverless-stage-manager
-  - serverless-plugin-existing-s3
-  - serverless-plugin-tracing
+
+
 
 custom:
   stages:
@@ -91,3 +106,17 @@ custom:
     zip: true
     useDownloadCache: true
     useStaticCache: true
+  scripts:
+    hooks:
+      'deploy:finalize': serverless s3deploy
+
+
+
+
+plugins:
+  - serverless-plugin-scripts
+  - serverless-python-requirements
+  - serverless-plugin-log-retention
+  - serverless-stage-manager
+  - serverless-plugin-existing-s3
+  - serverless-plugin-tracing

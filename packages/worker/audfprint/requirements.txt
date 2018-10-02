@@ -2,3 +2,4 @@ numpy
 psutil
 librosa
 scipy
+aws_xray_sdk
