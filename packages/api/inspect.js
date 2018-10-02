@@ -1,6 +1,5 @@
 import fs from 'fs';
 import { promisify } from 'util';
-// import Promise from 'promise';
 import axios from 'axios';
 import embedly from 'embedly';
 import youtubedl from 'youtube-dl';

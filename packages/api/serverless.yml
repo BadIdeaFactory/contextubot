@@ -20,7 +20,6 @@ provider:
     - Effect: 'Allow'
       Action:
         - 's3:*'
-        # - 's3:PutBucketNotification'
       Resource:
         Fn::Join:
           - ''
@@ -66,13 +65,12 @@ functions:
   tvaFeed:
     handler: tva.feed
     events:
-      - schedule: rate(2 hours)
+      - schedule: rate(1 hour)
     environment:
       TVA_QUEUE: https://sqs.us-east-1.amazonaws.com/195195539908/${self:custom.sqs}-tva
 
   tvaFingerprint:
     handler: tva.fingerprint
-    reservedConcurrency: 10
     timeout: 300
     events:
       - sqs:
@@ -102,7 +100,6 @@ functions:
 
   extract:
     handler: extract.audio
-    reservedConcurrency: 10
     timeout: 300
     events:
       - existingS3:
@@ -145,29 +142,6 @@ resources:
       Type: AWS::SQS::Queue
       Properties:
         QueueName: ${self:custom.sqs}-export-dl
-    # ExtractDeadLetterQueuePolicy:
-    #   Type: AWS::SQS::QueuePolicy
-    #   Properties:
-    #     Queues:
-    #       - Ref: ExtractDeadLetterQueue
-    #     PolicyDocument:
-    #       # This probably needs something more unique
-    #       # like 'Fn::GetAtt: [ServerlessTplLambdaDlQueue, Arn]'  + '/SQSPolicy'
-    #       Id: ExtractDeadLetterQueueId
-    #       Version: '2012-10-17'
-    #       Statement:
-    #         - Sid: Allow-Lambda-SendMessage
-    #           Effect: Allow
-    #           Principal:
-    #             AWS: "*"
-    #           Action:
-    #             - SQS:SendMessage
-    #           Resource:
-    #             Ref: ExtractDeadLetterQueue
-    #           Condition:
-    #             ArnEquals:
-    #               aws:SourceArn:
-    #                 Fn::GetAtt: [ExtractLambdaFunction, Arn]
 
 
 
@@ -189,8 +163,6 @@ custom:
   customDomain:
     domainName: api.contextubot.net
     stage: dev
-    # basePath: api
-    # certificateName: '*.contextubot.net'
     certificateArn: arn:aws:acm:us-east-1:195195539908:certificate/cb24598f-e14c-4856-a2d3-58ce80beef23
     createRoute53Record: true
     endpointType: 'regional'
@@ -202,13 +174,8 @@ custom:
       forceExclude:
         - aws-sdk
     packager: 'yarn'
-    # packager: 'npm'
-    # packagerOptions:
-    #   scripts:
-    #     - npm rebuild ffmpeg-static --target=8.10.0 --target_arch=x64 --target_platform=linux
   scripts:
     hooks:
-      # 'package:createDeploymentArtifacts': zip -d .serverless/extract.zip "*win32*" "*darwin*"
       'package:createDeploymentArtifacts': zip .serverless/extract.zip ffmpeg/ffmpeg ffmpeg/ffprobe ; zip .serverless/query.zip ffmpeg/ffprobe
       'deploy:finalize': serverless s3deploy
 
@@ -227,3 +194,4 @@ plugins:
   - serverless-plugin-tracing
   - serverless-plugin-lambda-dead-letter
   - serverless-tag-sqs
+  # - serverless-plugin-cloudfront-lambda-edge

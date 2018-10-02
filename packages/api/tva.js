@@ -6,7 +6,7 @@ import request from 'requisition';
 import AwsSdk from 'aws-sdk';
 import AWSXRay from 'aws-xray-sdk';
 import https from 'https';
-// import stream from 'stream';
+
 
 const writeFile = promisify(fs.writeFile);
 const readFile = promisify(fs.readFile);

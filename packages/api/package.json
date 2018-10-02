@@ -10,6 +10,7 @@
     "babel-preset-env": "^1.7.0",
     "serverless-domain-manager": "^2.6.5",
     "serverless-offline": "^3.25.17",
+    "serverless-plugin-cloudfront-lambda-edge": "^2.1.0",
     "serverless-plugin-existing-s3": "^2.2.2",
     "serverless-plugin-lambda-dead-letter": "^1.2.1",
     "serverless-plugin-log-retention": "^1.0.3",
