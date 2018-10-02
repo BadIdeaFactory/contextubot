@@ -6,8 +6,8 @@ git:
 cache:
   directories:
   - node_modules
-before_install:
-- git lfs pull
+# before_install:
+# - git lfs pull
 script:
   - echo "TODO"
 # - yarn build
