@@ -13,7 +13,7 @@ const s3 = new AWS.S3();
 
 
 export const audio = async (event, context, cb) => {
-  console.log(JSON.stringify(event));
+  // console.log(JSON.stringify(event));
   if (!event.Records[0].s3) return cb(null, { event });
 
   const input = JSON.parse((await s3.getObject({

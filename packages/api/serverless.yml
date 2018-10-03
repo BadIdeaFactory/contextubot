@@ -119,6 +119,17 @@ functions:
       targetArn:
         GetResourceArn: ExtractDeadLetterQueue
 
+  # search:
+  #   handler: search.fingerprint
+  #   events:
+  #     - existingS3:
+  #         bucket: 'data.contextubot.net'
+  #         events:
+  #           - s3:ObjectCreated:*
+  #         rules:
+  #           - prefix: wave/
+  #           - suffix: .afpt
+
 
 
 
@@ -194,4 +205,4 @@ plugins:
   - serverless-plugin-tracing
   - serverless-plugin-lambda-dead-letter
   - serverless-tag-sqs
-  # - serverless-plugin-cloudfront-lambda-edge
+  - serverless-plugin-cloudfront-lambda-edge

@@ -57,20 +57,20 @@ export const query = async (event, context, cb) => {
     Key,
   }).promise();
 
-  await sqs.sendMessage({
-    QueueUrl: process.env.EXPORT_QUEUE,
-    MessageAttributes: {
-      URL: {
-        DataType: 'String',
-        StringValue: url,
-      },
-      Key: {
-        DataType: 'String',
-        StringValue: Key,
-      }
-    },
-    MessageBody: 'test',
-  }).promise();
+  // await sqs.sendMessage({
+  //   QueueUrl: process.env.EXPORT_QUEUE,
+  //   MessageAttributes: {
+  //     URL: {
+  //       DataType: 'String',
+  //       StringValue: url,
+  //     },
+  //     Key: {
+  //       DataType: 'String',
+  //       StringValue: Key,
+  //     }
+  //   },
+  //   MessageBody: 'test',
+  // }).promise();
 
   cb(null, {
     statusCode: 200,
