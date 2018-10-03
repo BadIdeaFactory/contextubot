@@ -14,12 +14,12 @@ import os
 import struct  # For reading/writing hashes to file
 import time  # For glob2hashtable, localtester
 
-try:
-    import librosa
-except:
-    pass
+# try:
+#     import librosa
+# except:
+#     pass
 
-# import librosa
+import librosa
 import numpy as np
 import scipy.signal
 
@@ -357,8 +357,8 @@ class Analyzer(object):
             dur = np.max(peaks, axis=0)[0] * self.n_hop / self.target_sr
         else:
             try:
-                # [d, sr] = librosa.load(filename, sr=self.target_sr)
-                d, sr = audio_read.audio_read(filename, sr=self.target_sr, channels=1)
+                [d, sr] = librosa.load(filename, sr=self.target_sr)
+                # d, sr = audio_read.audio_read(filename, sr=self.target_sr, channels=1)
             except Exception as e:  # audioread.NoBackendError:
                 message = "wavfile2peaks: Error reading " + filename
                 if self.fail_on_error:

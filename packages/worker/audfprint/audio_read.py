@@ -158,8 +158,12 @@ class FFmpegAudioFile(object):
 
     def __init__(self, filename, channels=None, sample_rate=None, block_size=4096):
         if not os.path.isfile(filename):
+            print(filename + " not found.")
             raise ValueError(filename + " not found.")
-        popen_args = ['ffmpeg', '-i', filename, '-f', 's16le']
+        if not os.path.isfile(os.path.dirname(os.path.realpath(__file__)) + '/ffmpeg/ffmpeg'):
+            print(os.path.dirname(os.path.realpath(__file__)) + '/ffmpeg/ffmpeg' + " not found.")
+            raise ValueError(os.path.dirname(os.path.realpath(__file__)) + '/ffmpeg/ffmpeg' + " not found.")
+        popen_args = [os.path.dirname(os.path.realpath(__file__)) + '/ffmpeg/ffmpeg', '-i', filename, '-f', 's16le']
         self.channels = channels
         self.sample_rate = sample_rate
         if channels:
@@ -169,7 +173,7 @@ class FFmpegAudioFile(object):
         popen_args.append('-')
         self.proc = subprocess.Popen(
                 popen_args,
-                stdout=subprocess.PIPE, stderr=subprocess.PIPE
+                stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True
         )
 
         # Start another thread to consume the standard output of the

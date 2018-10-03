@@ -17,6 +17,9 @@ import botocore
 from aws_xray_sdk.core import xray_recorder
 from aws_xray_sdk.core import patch_all
 
+from pubnub.pnconfiguration import PNConfiguration
+from pubnub.pubnub import PubNub
+ 
 import numpy as np
 
 import audfprint_match
@@ -29,9 +32,35 @@ s3 = boto3.resource('s3')
 s3client = boto3.client('s3')
 BUCKET_NAME = os.environ['BUCKET_NAME']
 
+pnconfig = PNConfiguration()
+pnconfig.subscribe_key = os.environ['PUBNUB_SUB']
+pnconfig.publish_key = os.environ['PUBNUB_PUB']
+pnconfig.ssl = False
+ 
+pubnub = PubNub(pnconfig)
+
 
 def fingerprint(event, context):
-    print(event)
+    key = event['Records'][0]['s3']['object']['key']
+    id = key.split('/')[1]
+    print(os.path.dirname(os.path.realpath(__file__)))
+
+    s3.Bucket(BUCKET_NAME).download_file(key, '/tmp/{}.wav'.format(id))
+
+    analyzer = audfprint_analyze.Analyzer()
+    analyzer.n_fft = 512
+    analyzer.n_hop = analyzer.n_fft/2
+    analyzer.shifts = 1
+    # analyzer.exact_count = True
+    analyzer.density = 20.0
+    analyzer.target_sr = 11025
+    analyzer.verbose = False
+
+    saver = audfprint_analyze.hashes_save
+    output = analyzer.wavfile2hashes('/tmp/{}.wav'.format(id))
+    saver('/tmp/{}.afpt'.format(id), output)
+
+    s3.Bucket(BUCKET_NAME).upload_file('/tmp/{}.afpt'.format(id), key.replace('.wav', '.afpt'))
 
     body = {
         "input": event
@@ -41,6 +70,9 @@ def fingerprint(event, context):
         "statusCode": 200,
         "body": json.dumps(body)
     }
+
+    # pubnub.publish().channel(id).message({  }).pn_async(publish_callback)
+
     return response
 
 
@@ -86,49 +118,53 @@ def create(event, context):
 
 
 def match(event, context):
-    s3.Bucket(BUCKET_NAME).download_file('_test-fprint.afpt', '/tmp/_test-fprint.afpt')
-    s3.Bucket(BUCKET_NAME).download_file('_test-db.pklz', '/tmp/_test-db.pklz')
+    # s3.Bucket(BUCKET_NAME).download_file('_test-fprint.afpt', '/tmp/_test-fprint.afpt')
+    # s3.Bucket(BUCKET_NAME).download_file('_test-db.pklz', '/tmp/_test-db.pklz')
 
-    qry = '/tmp/_test-fprint.afpt'
-    hashFile = '/tmp/_test-db.pklz'
+    # qry = '/tmp/_test-fprint.afpt'
+    # hashFile = '/tmp/_test-db.pklz'
 
-    matcher = audfprint_match.Matcher()
-    matcher.find_time_range = True
-    matcher.verbose = False
-    matcher.max_returns = 100
+    # matcher = audfprint_match.Matcher()
+    # matcher.find_time_range = True
+    # matcher.verbose = False
+    # matcher.max_returns = 100
 
-    matcher.exact_count = True
-    matcher.max_alignments_per_id = 20
+    # matcher.exact_count = True
+    # matcher.max_alignments_per_id = 20
 
-    analyzer = audfprint_analyze.Analyzer()
-    analyzer.n_fft = 512
-    analyzer.n_hop = analyzer.n_fft/2
-    analyzer.shifts = 1
-    # analyzer.exact_count = True
-    analyzer.density = 20.0
-    analyzer.target_sr = 11025
-    analyzer.verbose = False
+    # analyzer = audfprint_analyze.Analyzer()
+    # analyzer.n_fft = 512
+    # analyzer.n_hop = analyzer.n_fft/2
+    # analyzer.shifts = 1
+    # # analyzer.exact_count = True
+    # analyzer.density = 20.0
+    # analyzer.target_sr = 11025
+    # analyzer.verbose = False
 
-    hash_tab = hash_table.HashTable(hashFile)
-    hash_tab.params['samplerate'] = analyzer.target_sr
+    # hash_tab = hash_table.HashTable(hashFile)
+    # hash_tab.params['samplerate'] = analyzer.target_sr
 
-    rslts, dur, nhash = matcher.match_file(analyzer, hash_tab, qry, 0)
-    t_hop = analyzer.n_hop / float(analyzer.target_sr)
-    qrymsg = qry + (' %.1f ' % dur) + "sec " + str(nhash) + " raw hashes"
+    # rslts, dur, nhash = matcher.match_file(analyzer, hash_tab, qry, 0)
+    # t_hop = analyzer.n_hop / float(analyzer.target_sr)
+    # qrymsg = qry + (' %.1f ' % dur) + "sec " + str(nhash) + " raw hashes"
 
-    # print "duration,start,from,time,source,sourceId,nhashaligned,aligntime,nhashraw,rank,min_time,max_time, t_hop"
-    matches = []
-    if len(rslts) == 0:
-        nhashaligned = 0
-    else:
-        for (tophitid, nhashaligned, aligntime, nhashraw, rank, min_time, max_time) in rslts:
-                msg = ("{:f},{:f},{:s},{:f},{:s},{:n},{:n},{:n},{:n},{:n},{:n},{:n},{:f}").format(
-                        (max_time - min_time) * t_hop, min_time * t_hop, qry,
-                        (min_time + aligntime) * t_hop, hash_tab.names[tophitid], tophitid, nhashaligned, aligntime, nhashraw, rank, min_time, max_time, t_hop)
-                matches.append(msg)
+    # # print "duration,start,from,time,source,sourceId,nhashaligned,aligntime,nhashraw,rank,min_time,max_time, t_hop"
+    # matches = []
+    # if len(rslts) == 0:
+    #     nhashaligned = 0
+    # else:
+    #     for (tophitid, nhashaligned, aligntime, nhashraw, rank, min_time, max_time) in rslts:
+    #             msg = ("{:f},{:f},{:s},{:f},{:s},{:n},{:n},{:n},{:n},{:n},{:n},{:n},{:f}").format(
+    #                     (max_time - min_time) * t_hop, min_time * t_hop, qry,
+    #                     (min_time + aligntime) * t_hop, hash_tab.names[tophitid], tophitid, nhashaligned, aligntime, nhashraw, rank, min_time, max_time, t_hop)
+    #             matches.append(msg)
 
     response = {
         "statusCode": 200,
-        "body": json.dumps(matches)
+        # "body": json.dumps(matches),
+        "event": event
     }
     return response
+
+def publish_callback(result, status):
+    pass

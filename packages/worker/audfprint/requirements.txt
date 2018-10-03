@@ -1,5 +1,7 @@
 numpy
 psutil
-librosa
 scipy
+librosa
 aws_xray_sdk
+pubnub>=4.1.2
+numba
