@@ -173,7 +173,7 @@ class FFmpegAudioFile(object):
         popen_args.append('-')
         self.proc = subprocess.Popen(
                 popen_args,
-                stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True
+                stdout=subprocess.PIPE, stderr=subprocess.PIPE
         )
 
         # Start another thread to consume the standard output of the

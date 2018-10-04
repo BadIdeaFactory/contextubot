@@ -58,7 +58,6 @@ package:
   include:
     - 'audfprint/*.py'
     - 'audfprint/.requirements.zip'
-    - 'audfprint/librosa/*'
 
 
 
@@ -85,20 +84,20 @@ functions:
           input:
             channel: 'BBCNEWS'
 
-  fingerprint:
-    handler: handler.fingerprint
-    module: audfprint
-    events:
-      - existingS3:
-          bucket: 'data.contextubot.net'
-          events:
-            - s3:ObjectCreated:*
-          rules:
-            - prefix: wave/
-            - suffix: .wav
-    package:
-        include:
-          - 'audfprint/ffmpeg/ffmpeg'
+  # fingerprint:
+  #   handler: handler.fingerprint
+  #   module: audfprint
+  #   events:
+  #     - existingS3:
+  #         bucket: 'data.contextubot.net'
+  #         events:
+  #           - s3:ObjectCreated:*
+  #         rules:
+  #           - prefix: wave/
+  #           - suffix: .wav
+  #   package:
+  #       include:
+  #         - 'audfprint/ffmpeg/ffmpeg'
 
   match:
     handler: handler.match
@@ -151,9 +150,9 @@ custom:
     dockerizePip: true
     slim: true
     zip: true
-    vendor: ./vendored-libraries
-    # useDownloadCache: true
-    # useStaticCache: true
+    # vendor: ./vendored-libraries
+    useDownloadCache: true
+    useStaticCache: true
     noDeploy:
       - boto3
       - botocore
@@ -163,7 +162,7 @@ custom:
   scripts:
     hooks:
       'deploy:finalize': serverless s3deploy
-      before:package:createDeploymentArtifacts: "pwd ; ls -al ; zip -d audfprint/.requirements.zip 'boto3/*' 'botocore/*' 'jmespath/*' 'docutils/*' 'librosa/*' || echo ERR: UNABLE TO REMOVE FROM ZIP" 
+      before:package:createDeploymentArtifacts: "zip -d audfprint/.requirements.zip 'boto3/*' 'botocore/*' 'jmespath/*' 'docutils/*' || echo ERR: UNABLE TO REMOVE FROM ZIP" 
 
 
 

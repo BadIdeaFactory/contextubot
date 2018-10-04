@@ -10,7 +10,7 @@ from __future__ import division, print_function
 import os
 import time
 
-import psutil
+# import psutil
 # import matplotlib.pyplot as plt
 # import librosa
 # import librosa.display
@@ -23,13 +23,13 @@ import audfprint_analyze  # for localtest and illustrate
 
 def process_info():
     rss = usrtime = 0
-    p = psutil.Process(os.getpid())
-    if os.name == 'nt':
-        rss = p.memory_info()[0]
-        usrtime = p.cpu_times()[0]
-    else:
-        rss = p.get_memory_info()[0]
-        usrtime = p.get_cpu_times()[0]
+    # p = psutil.Process(os.getpid())
+    # if os.name == 'nt':
+    #     rss = p.memory_info()[0]
+    #     usrtime = p.cpu_times()[0]
+    # else:
+    #     rss = p.get_memory_info()[0]
+    #     usrtime = p.get_cpu_times()[0]
     return rss, usrtime
 
 

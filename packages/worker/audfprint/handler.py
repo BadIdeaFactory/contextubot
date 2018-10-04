@@ -1,3 +1,4 @@
+# from __future__ import print_function
 import warnings
 with warnings.catch_warnings():
     warnings.simplefilter('ignore')
@@ -5,6 +6,11 @@ with warnings.catch_warnings():
 try:
     import unzip_requirements
 except ImportError:
+    pass
+
+try:
+    import subprocess
+except:
     pass
 
 import os
@@ -32,35 +38,39 @@ s3 = boto3.resource('s3')
 s3client = boto3.client('s3')
 BUCKET_NAME = os.environ['BUCKET_NAME']
 
-pnconfig = PNConfiguration()
-pnconfig.subscribe_key = os.environ['PUBNUB_SUB']
-pnconfig.publish_key = os.environ['PUBNUB_PUB']
-pnconfig.ssl = False
+# pnconfig = PNConfiguration()
+# pnconfig.subscribe_key = os.environ['PUBNUB_SUB']
+# pnconfig.publish_key = os.environ['PUBNUB_PUB']
+# pnconfig.ssl = False
  
-pubnub = PubNub(pnconfig)
+# pubnub = PubNub(pnconfig)
 
 
 def fingerprint(event, context):
-    key = event['Records'][0]['s3']['object']['key']
-    id = key.split('/')[1]
-    print(os.path.dirname(os.path.realpath(__file__)))
+    key = os.environ.get('S3_OBJECT_KEY')
 
+    if not key:
+        key = event['Records'][0]['s3']['object']['key']
+    
+    id = key.split('/')[1]
     s3.Bucket(BUCKET_NAME).download_file(key, '/tmp/{}.wav'.format(id))
 
-    analyzer = audfprint_analyze.Analyzer()
-    analyzer.n_fft = 512
-    analyzer.n_hop = analyzer.n_fft/2
-    analyzer.shifts = 1
-    # analyzer.exact_count = True
-    analyzer.density = 20.0
-    analyzer.target_sr = 11025
-    analyzer.verbose = False
+    # analyzer = audfprint_analyze.Analyzer()
+    # analyzer.n_fft = 512
+    # analyzer.n_hop = analyzer.n_fft/2
+    # analyzer.shifts = 1
+    # # analyzer.exact_count = True
+    # analyzer.density = 20.0
+    # analyzer.target_sr = 11025
+    # analyzer.verbose = False
 
-    saver = audfprint_analyze.hashes_save
-    output = analyzer.wavfile2hashes('/tmp/{}.wav'.format(id))
-    saver('/tmp/{}.afpt'.format(id), output)
+    # saver = audfprint_analyze.hashes_save
+    # output = analyzer.wavfile2hashes('/tmp/{}.wav'.format(id))
+    # saver('/tmp/{}.afpt'.format(id), output)
 
-    s3.Bucket(BUCKET_NAME).upload_file('/tmp/{}.afpt'.format(id), key.replace('.wav', '.afpt'))
+    subprocess.run(['python', 'audfprint/audfprint.py', 'precompute', '', '/tmp/{}.wav'.format(id)])
+
+    s3.Bucket(BUCKET_NAME).upload_file('./tmp/{}.afpt'.format(id), key.replace('.wav', '.afpt'))
 
     body = {
         "input": event
@@ -168,3 +178,34 @@ def match(event, context):
 
 def publish_callback(result, status):
     pass
+
+# def lambda_test(event, context):
+#     for arg in sys.argv:
+#         print(arg)
+#     print(os.getcwd())
+#     print(os.path.basename(__file__))
+#     for key in os.environ.keys():
+#         print('{0}={1}'.format(key,os.environ[key]))
+#     print(os.getuid())
+#     print(os.getgid())
+#     print(os.geteuid())
+#     print(os.getegid())
+#     print(os.getgroups())
+#     print(os.umask(0o222))
+
+#     print(event)
+#     print(context.get_remaining_time_in_millis())
+#     print(context.aws_request_id)
+#     if context.client_context:
+#         print(context.client_context)
+#     print(context.function_name)
+#     print(context.function_version)
+#     print(context.identity.cognito_identity_id)
+#     print(context.identity.cognito_identity_pool_id)
+#     print(context.invoked_function_arn)
+#     print(context.log('Log this for me please'))
+#     print(context.log_group_name)
+#     print(context.log_stream_name)
+#     print(context.memory_limit_in_mb)
+
+#     return 'It works!'
