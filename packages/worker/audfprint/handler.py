@@ -48,7 +48,6 @@ BUCKET_NAME = os.environ['BUCKET_NAME']
 
 def fingerprint(event, context):
     key = os.environ.get('S3_OBJECT_KEY')
-
     if not key:
         key = event['Records'][0]['s3']['object']['key']
     
@@ -68,7 +67,7 @@ def fingerprint(event, context):
     # output = analyzer.wavfile2hashes('/tmp/{}.wav'.format(id))
     # saver('/tmp/{}.afpt'.format(id), output)
 
-    subprocess.run(['python', 'audfprint/audfprint.py', 'precompute', '', '/tmp/{}.wav'.format(id)])
+    subprocess.run(['python', 'audfprint/audfprint.py', 'precompute', '--samplerate=11025', '--density=20', '--shifts=1', '/tmp/{}.wav'.format(id)])
 
     s3.Bucket(BUCKET_NAME).upload_file('./tmp/{}.afpt'.format(id), key.replace('.wav', '.afpt'))
 
