@@ -15,6 +15,11 @@ provider:
   environment:
     BUCKET_NAME: 'data.contextubot.net'
     EMBEDLY_KEY: ${ssm:/contextubot/embedlyKey}
+    # AWS_REGION: us-east-1
+    ECS_CLUSTER_NAME: 
+    ECS_TASK_DEFINITION:
+    ECS_TASK_VPC_SUBNET_1:
+    ECS_TASK_VPC_SUBNET_2:
 
   iamRoleStatements:
     - Effect: 'Allow'
@@ -53,6 +58,14 @@ provider:
       Action:
         - sqs:*
       Resource: arn:aws:sqs:*:*:${self:custom.sqs}-tva-dl
+    - Effect: "Allow"
+      Action:
+        - ecs:RunTask
+      Resource: "*"
+    - Effect: Allow
+      Action:
+        - iam:PassRole
+      Resource: ${self:custom.execRoleArn}
 
 
 package:
@@ -158,13 +171,14 @@ resources:
 
 
 custom:
-  # region: ${self:provider.region}
+  region: ${self:provider.region}
   stage: ${opt:stage, self:provider.stage}
   prefix: ${self:custom.stage}-${self:service}
   sqs: ${self:custom.prefix}-messages
   # process: ${self:custom.prefix}-process
   # config: ${self:custom.prefix}-config
   # sns: ${self:custom.prefix}-trigger
+  execRoleArn: { "Fn::Join" : ["", [ "arn:aws:iam::", { "Ref" : "AWS::AccountId" }, ":role/ecsTaskExecutionRole" ] ] }
   stages:
     - dev
     - staging
@@ -206,3 +220,4 @@ plugins:
   - serverless-plugin-lambda-dead-letter
   - serverless-tag-sqs
   - serverless-plugin-cloudfront-lambda-edge
+  # - serverless-pseudo-parameters

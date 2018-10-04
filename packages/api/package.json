@@ -16,6 +16,7 @@
     "serverless-plugin-log-retention": "^1.0.3",
     "serverless-plugin-scripts": "^1.0.2",
     "serverless-plugin-tracing": "^2.0.0",
+    "serverless-pseudo-parameters": "^2.2.0",
     "serverless-stage-manager": "^1.0.5",
     "serverless-tag-api-gateway": "^1.0.0",
     "serverless-tag-sqs": "^1.0.0",
