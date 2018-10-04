@@ -26,6 +26,6 @@ ADD . /var/task
 RUN mv ./ffmpeg/ffmpeg /usr/local/bin/
 
 # ENTRYPOINT ["/var/lang/bin/python3.6", "-c", "import lambda_function; lambda_function.lambda_handler({}, {})"]
-# ENTRYPOINT ["/var/lang/bin/python3.6", "-c", "import handler; handler.fingerprint({}, {})"]
+CMD ["/var/lang/bin/python3.6", "-c", "import handler; handler.fingerprint({}, {})"]
 
 RUN rm -fr audfprint/.git && rm -f libsamplerate-0.1.8.tar.gz && rm -fr libsamplerate-0.1.8 rm -r /root/.cache

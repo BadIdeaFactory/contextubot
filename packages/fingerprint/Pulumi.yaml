@@ -1,0 +1,6 @@
+name: contextubot-fingerprint
+runtime: nodejs
+template:
+  config:
+    aws:region:
+      default: us-east-1

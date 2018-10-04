@@ -53,18 +53,18 @@ export const audio = async (event, context, cb) => {
   }).promise();
 
   const task = await promisify(ECS.runTask).runECSTask({
-    cluster: `${process.env.ECS_CLUSTER_NAME}`,
+    cluster: process.env.ECS_CLUSTER_NAME,
     launchType: 'FARGATE',
-    taskDefinition: `${process.env.ECS_TASK_DEFINITION}`,
+    taskDefinition: process.env.ECS_TASK_DEFINITION,
     count: 1,
     platformVersion:'LATEST',
     networkConfiguration: {
       awsvpcConfiguration: {
           subnets: [
-              `${process.env.ECS_TASK_VPC_SUBNET_1}`,
-              `${process.env.ECS_TASK_VPC_SUBNET_2}`
+              process.env.ECS_TASK_VPC_SUBNET_1,
+              process.env.ECS_TASK_VPC_SUBNET_2,
           ],
-          assignPublicIp: 'ENABLED'
+          assignPublicIp: 'ENABLED',
       }
     },
     overrides: {
@@ -72,30 +72,18 @@ export const audio = async (event, context, cb) => {
         {
           name: 'ffmpeg-thumb',
           environment: [
-            // {
-            //   name: 'INPUT_VIDEO_FILE_URL',
-            //   value: `${s3_video_url}`
-            // },
-            // {
-            //   name: 'OUTPUT_THUMBS_FILE_NAME',
-            //   value: `${thumbnail_file}`
-            // },
-            // {
-            //   name: 'POSITION_TIME_DURATION',
-            //   value: `${frame_pos}`
-            // },
-            // {
-            //   name: 'OUTPUT_S3_PATH',
-            //   value: `${OUTPUT_S3_PATH}`
-            // },
-            // {
-            //   name: 'AWS_REGION',
-            //   value: `${process.env.AWS_REGION}`
-            // }
-          ]
-        }
-      ]
-    }
+            {
+              name: 'S3_OBJECT_KEY',
+              value: `wave/${id}/audio.wav`,
+            },
+            {
+              name: 'BUCKET_NAME',
+              value: process.env.BUCKET_NAME,
+            },
+          ],
+        },
+      ],
+    },
   });
 
   cb(null, {

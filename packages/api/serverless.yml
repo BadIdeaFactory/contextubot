@@ -16,10 +16,10 @@ provider:
     BUCKET_NAME: 'data.contextubot.net'
     EMBEDLY_KEY: ${ssm:/contextubot/embedlyKey}
     # AWS_REGION: us-east-1
-    ECS_CLUSTER_NAME: 
-    ECS_TASK_DEFINITION:
-    ECS_TASK_VPC_SUBNET_1:
-    ECS_TASK_VPC_SUBNET_2:
+    ECS_CLUSTER_NAME: contextubot-fargate
+    ECS_TASK_DEFINITION: task_contextubot-fingerprint:1
+    ECS_TASK_VPC_SUBNET_1: subnet-a8201af5
+    # ECS_TASK_VPC_SUBNET_2:
 
   iamRoleStatements:
     - Effect: 'Allow'
