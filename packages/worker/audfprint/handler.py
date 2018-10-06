@@ -20,37 +20,40 @@ from datetime import date, timedelta
 
 import boto3
 import botocore
-from aws_xray_sdk.core import xray_recorder
-from aws_xray_sdk.core import patch_all
 
 from pubnub.pnconfiguration import PNConfiguration
 from pubnub.pubnub import PubNub
- 
+
 import numpy as np
 
 import audfprint_match
 import audfprint_analyze
 import hash_table
 
-patch_all()
+try:
+    from aws_xray_sdk.core import xray_recorder
+    from aws_xray_sdk.core import patch_all
+    patch_all()
+except:
+    pass
 
 s3 = boto3.resource('s3')
 s3client = boto3.client('s3')
 BUCKET_NAME = os.environ['BUCKET_NAME']
 
-# pnconfig = PNConfiguration()
-# pnconfig.subscribe_key = os.environ['PUBNUB_SUB']
-# pnconfig.publish_key = os.environ['PUBNUB_PUB']
-# pnconfig.ssl = False
- 
-# pubnub = PubNub(pnconfig)
+pnconfig = PNConfiguration()
+pnconfig.subscribe_key = os.environ['PUBNUB_SUB']
+pnconfig.publish_key = os.environ['PUBNUB_PUB']
+pnconfig.ssl = False
+
+pubnub = PubNub(pnconfig)
 
 
 def fingerprint(event, context):
     key = os.environ.get('S3_OBJECT_KEY')
     if not key:
         key = event['Records'][0]['s3']['object']['key']
-    
+
     id = key.split('/')[1]
     s3.Bucket(BUCKET_NAME).download_file(key, '/tmp/{}.wav'.format(id))
 
@@ -80,7 +83,8 @@ def fingerprint(event, context):
         "body": json.dumps(body)
     }
 
-    # pubnub.publish().channel(id).message({  }).pn_async(publish_callback)
+    pubnub.publish().channel('Channel-cbotcast').message({ 'fingerprint': id }).pn_async(publish_callback)
+    pubnub.publish().channel(id).message({ 'fingerprint': id }).pn_async(publish_callback)
 
     return response
 

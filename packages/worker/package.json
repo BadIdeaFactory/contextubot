@@ -4,10 +4,12 @@
   "version": "0.3.0",
   "dependencies": {},
   "devDependencies": {
+    "serverless-plugin-elastic-beanstalk": "^1.4.0",
     "serverless-plugin-existing-s3": "^2.2.2",
     "serverless-plugin-lambda-dead-letter": "^1.2.1",
     "serverless-plugin-log-retention": "^1.0.3",
     "serverless-plugin-scripts": "^1.0.2",
+    "serverless-plugin-stack-config": "^1.1.0",
     "serverless-plugin-tracing": "^2.0.0",
     "serverless-python-requirements": "^4.2.4",
     "serverless-stage-manager": "^1.0.5",

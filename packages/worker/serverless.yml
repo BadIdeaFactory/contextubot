@@ -161,8 +161,8 @@ custom:
       - joblib
   scripts:
     hooks:
-      'deploy:finalize': serverless s3deploy
-      before:package:createDeploymentArtifacts: "zip -d audfprint/.requirements.zip 'boto3/*' 'botocore/*' 'jmespath/*' 'docutils/*' || echo ERR: UNABLE TO REMOVE FROM ZIP" 
+      # 'deploy:finalize': serverless s3deploy
+      before:package:createDeploymentArtifacts: "zip -d audfprint/.requirements.zip 'boto3/*' 'botocore/*' 'jmespath/*' 'docutils/*' || echo ERR: UNABLE TO REMOVE FROM ZIP"
 
 
 
@@ -172,7 +172,9 @@ plugins:
   - serverless-python-requirements
   - serverless-plugin-log-retention
   - serverless-stage-manager
-  - serverless-plugin-existing-s3
+  # - serverless-plugin-existing-s3
   - serverless-plugin-tracing
   - serverless-tag-sqs
   - serverless-plugin-lambda-dead-letter
+  - serverless-plugin-stack-config
+  - serverless-plugin-elastic-beanstalk
