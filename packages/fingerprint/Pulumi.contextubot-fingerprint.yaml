@@ -1,3 +1,0 @@
-config:
-  cloud-aws:useFargate: "true"
-  aws:region: us-east-1
