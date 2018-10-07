@@ -318,7 +318,7 @@ class SearchMedia extends Component {
             <PageSubtitle display="h5">
               {uid.replace(/_/g, ' ')}
             </PageSubtitle>
-            <small>
+            <small style={{ fontSize: 8 }}>
               {match.duration}s @{match.start}
               <br />
               {match.nhashaligned} / {match.nhashraw}
@@ -346,9 +346,9 @@ class SearchMedia extends Component {
       ) : (
         <Content dir="row" align="center">
           <PageTitle display="h3">
-            <span style={{ color: color.redM }}>
+            <pre style={{ color: color.redM }}>
               {main.state.message ? main.state.message : '…'}
-            </span>
+            </pre>
           </PageTitle>
           <Separator silent size="s" />
           ¯\_(ツ)_/¯

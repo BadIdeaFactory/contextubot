@@ -45,7 +45,7 @@ class Main extends React.Component {
       step3: '',
       data: {},
       preview: false,
-      message: null
+      message: ''
     };
     main = this;
 
@@ -54,9 +54,9 @@ class Main extends React.Component {
         const msg = m.message;
         console.log(msg);
         setTimeout(() => {
-          if (msg.audio) this.setState({ message: `extracted audio for ${msg.audio.id}`});
-          if (msg.fingerprint) this.setState({ message: `fingerprinted audio for ${msg.fingerprint.id}`});
-          if (msg.search) this.setState({ message: `searching ${msg.search.id}`});
+          if (msg.audio) this.setState({ message: `${this.state.message}\nextracted audio for ${msg.audio.id}`});
+          if (msg.fingerprint) this.setState({ message: `${this.state.message}\nfingerprinted audio for ${msg.fingerprint}`});
+          if (msg.search) this.setState({ message: `${this.state.message}\nsearching ${msg.search.id}`});
           if (msg.hash && msg.matches.length > 0) {
             this.state.data.matches = this.state.data.matches.concat(msg.matches.map(r => ({
               duration: r.duration,
@@ -69,7 +69,7 @@ class Main extends React.Component {
               rank: r.rank,
             }))).sort((a, b) => a.rank - b.rank);
             this.setState({
-              message: `${msg.matches.length} matches in ${msg.hash} for ${msg.id}`,
+              message: `${this.state.message}\n${msg.matches.length} matches in ${msg.hash} for ${msg.id}`,
               data: this.state.data,
             });
           }
