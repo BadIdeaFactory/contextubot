@@ -67,7 +67,7 @@ class Main extends React.Component {
               // aligntime: 85584,
               nhashraw: r.totalHashes,
               rank: r.rank,
-            })));
+            }))).sort((a, b) => a.rank - b.rank);
             this.setState({
               message: `${msg.matches.length} matches in ${msg.hash} for ${msg.id}`,
               data: this.state.data,

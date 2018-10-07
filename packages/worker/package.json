@@ -2,10 +2,13 @@
   "name": "contextubot-worker",
   "description": "",
   "version": "0.3.0",
-  "dependencies": {},
+  "dependencies": {
+    "@iopipe/iopipe": "^1.11.1"
+  },
   "devDependencies": {
     "serverless-plugin-elastic-beanstalk": "^1.4.0",
     "serverless-plugin-existing-s3": "^2.2.2",
+    "serverless-plugin-iopipe": "^1.6.2",
     "serverless-plugin-lambda-dead-letter": "^1.2.1",
     "serverless-plugin-log-retention": "^1.0.3",
     "serverless-plugin-scripts": "^1.0.2",

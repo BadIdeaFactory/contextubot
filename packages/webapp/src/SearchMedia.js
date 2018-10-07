@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { Component } from 'react';
 import ReactJson from 'react-json-view';
 import styled from 'styled-components';
@@ -308,6 +309,7 @@ class SearchMedia extends Component {
                 height="254"
                 onClick={e => e.stopPropagation()}
                 width="300"
+                key={mp4Url}
               >
                 <source src={mp4Url} />
               </video>
@@ -315,8 +317,14 @@ class SearchMedia extends Component {
             </div>
             <PageSubtitle display="h5">
               {uid.replace(/_/g, ' ')}
-              {/* ({match.duration}s) */}
             </PageSubtitle>
+            <small>
+              {match.duration}s @{match.start}
+              <br />
+              {match.nhashaligned} / {match.nhashraw}
+              <br />
+              rank {match.rank}
+            </small>
           </SearchResult>
         );
       };

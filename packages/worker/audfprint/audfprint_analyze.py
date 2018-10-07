@@ -27,7 +27,7 @@ try:
 except:
     pass
 
-import audio_read
+# import audio_read
 import hash_table  # For utility, glob2hashtable
 
 try:

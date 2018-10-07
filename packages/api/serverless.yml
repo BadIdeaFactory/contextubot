@@ -18,6 +18,8 @@ provider:
     PUBNUB_PUB: ${ssm:/contextubot/pubNubPublishKey}
     PUBNUB_SUB: ${ssm:/contextubot/pubNubSubscribeKey}
     PUBNUB_SECRET: ${ssm:/contextubot/pubNubSecretKey}
+    IOPIPE_TOKEN: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6ImdpdGh1YnwyMTY3OSIsImlhdCI6MTQ3MjQ4ODc3OSwiYXVkIjoiaHR0cHM6Ly9tZXRyaWNzLWFwaS5pb3BpcGUuY29tL2V2ZW50LyJ9.GEB3siyK8ey3gwQvUcVGbXSt527Jk6uYtL-54tVWXCM
+    IOPIPE_PROFILER_ENABLED: True
 
   iamRoleStatements:
     - Effect: 'Allow'
@@ -204,6 +206,7 @@ custom:
 
 plugins:
   - serverless-plugin-scripts
+  # - serverless-plugin-iopipe
   - serverless-webpack
   - serverless-tag-api-gateway
   - serverless-offline

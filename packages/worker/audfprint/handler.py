@@ -37,6 +37,14 @@ try:
 except:
     pass
 
+from iopipe.iopipe import IOpipe
+from iopipe.contrib.eventinfo import EventInfoPlugin
+from iopipe.contrib.logger import LoggerPlugin
+from iopipe.contrib.profiler import ProfilerPlugin
+from iopipe.contrib.trace import TracePlugin
+
+iopipe = IOpipe(plugins=[EventInfoPlugin(), LoggerPlugin(), ProfilerPlugin(), TracePlugin(auto_http=True)])
+
 s3 = boto3.resource('s3')
 s3client = boto3.client('s3')
 BUCKET_NAME = os.environ['BUCKET_NAME']
@@ -86,12 +94,12 @@ def fingerprint(event, context):
         "body": json.dumps(body)
     }
 
-    pubnub.publish().channel('Channel-cbotcast').message({ 'fingerprint': id }).pn_async(publish_callback)
     pubnub.publish().channel(id).message({ 'fingerprint': id }).pn_async(publish_callback)
 
     return response
 
 
+@iopipe.decorator
 def create(event, context):
     day = event.get('date')
     if not day:
@@ -101,7 +109,7 @@ def create(event, context):
 
     analyzer = audfprint_analyze.Analyzer()
     analyzer.n_fft = 512
-    analyzer.n_hop = analyzer.n_fft/2
+    analyzer.n_hop = analyzer.n_fft // 2
     analyzer.shifts = 1
     # analyzer.exact_count = True
     analyzer.density = 20.0
@@ -110,7 +118,7 @@ def create(event, context):
 
     # hashbits=20, depth=100, maxtime=16384
     # maxtime=262144
-    hash_tab = hash_table.HashTable(hashbits=20, depth=100, maxtime=4294967296)
+    hash_tab = hash_table.HashTable(hashbits=20, depth=100, maxtime=262144)
     hash_tab.params['samplerate'] = analyzer.target_sr
 
     fingerprints = s3client.list_objects_v2(Bucket=BUCKET_NAME, Prefix='tva/{}/{}/'.format(day, channel))['Contents']
@@ -137,6 +145,7 @@ def create(event, context):
     return response
 
 
+@iopipe.decorator
 def match(event, context):
     hash = event['Records'][0]['body']
     id = event['Records'][0]['messageAttributes']['Id']['stringValue']
@@ -151,13 +160,14 @@ def match(event, context):
     matcher.find_time_range = True
     matcher.verbose = False
     matcher.max_returns = 100
+    # matcher.threshcount = 20
 
     matcher.exact_count = True
     matcher.max_alignments_per_id = 20
 
     analyzer = audfprint_analyze.Analyzer()
     analyzer.n_fft = 512
-    analyzer.n_hop = analyzer.n_fft/2
+    analyzer.n_hop = analyzer.n_fft // 2
     analyzer.shifts = 1
     # analyzer.exact_count = True
     analyzer.density = 20.0
@@ -196,7 +206,6 @@ def match(event, context):
 
     data = { 'id': id, 'matches': matches, 'hash': hash }
 
-    pubnub.publish().channel('Channel-cbotcast').message(data).pn_async(publish_callback)
     pubnub.publish().channel(id).message(data).pn_async(publish_callback)
 
     if len(matches) > 0:
