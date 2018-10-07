@@ -1,16 +1,29 @@
 language: node_js
 node_js:
-- lts/carbon
+  - lts/carbon
+
 git:
   lfs_skip_smudge: true
+
+sudo: required
+before_install:
+  - sudo apt-key adv --fetch-keys http://dl.yarnpkg.com/debian/pubkey.gpg
+  - echo "deb http://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
+  - sudo apt-get update -qq
+  - sudo apt-get install -y -qq yarn=1.10.1-1
+  
 cache:
+  yarn: true
   directories:
   - node_modules
   - packages/webapp/node_modules
+  
 # before_install:
 # - git lfs pull
+
 script:
   - cd packages/webapp ; yarn build
+
 deploy:
   - provider: s3
     skip_cleanup: true
@@ -30,6 +43,7 @@ deploy:
 #     branch: master
 # notifications:
 #   irc: chat.freenode.net#contextubot
+
 env:
   global:
     - secure: HvaiqxJVUk09n70DaAOLGIBpM5CBElighbBznosAG0dmNYC7nRUdKXIsur1D5uS8ZOyYYAwQhJef7QwZtxLiuouiZFKN+WKDZSZ9PDWg3rK0Gy82ZWLG2AvP8JDvSMmbYyTdcYyRZZmZZ/gGPOwwP6yYPMkcOC04TGSnYlWqRYNrHa8XvkOGqMFHG807pUoVud/uRZPlh8WWvUS62cCFgboG0DaNragpecJZvO3QGkQiPyCBxvDSgaIUK6QDLzX1B5rfOJ4nNfIiKrjJlSNWY8MyQeJ48AyX0vnWCqUGTCyzPllsGen7dSlV1ma9TkKAH6n8GMINYUQbi1sjaTlwUbhTlcDlrw1VlfrbaaQS6mV/NbblUDuHOasZsejXVmdidQE20MSCwaVDiH6ScTIhqDDCGM4Nu7l0AO6CsaPzvsY/hHgUtnxHNbzb1tpK+K/x/pNMDA+K7Jr66XLZAHivvWlV+MF2YqM4A7jVti1tPcMpzTYDbKEywoxZ68DvZ+Xtv19kysI7NFjY9s/e3mR303sDJQIYcIDe9tXrbCULpJp7sZLsnsGbM3Xi72XNsRuxvu89wFZabH+s3CFxxJXGRw1q7/bbFCV4oPFYl1jhblhb8Z+nfXstHwTnKwRg+pwDwJBwzDwpn5BE7dHfzo3ARPNZ7N8oU3Ff/J+okrmeDYo=
