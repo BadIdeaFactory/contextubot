@@ -7,6 +7,7 @@ import ffprobe from 'ffprobe';
 import AwsSdk from 'aws-sdk';
 import AWSXRay from 'aws-xray-sdk';
 import https from 'https';
+import PubNub from 'pubnub';
 
 AWSXRay.captureHTTPsGlobal(https);
 AWSXRay.capturePromise();
@@ -15,11 +16,28 @@ const AWS = AWSXRay.captureAWS(AwsSdk);
 const s3 = new AWS.S3();
 const sqs = new AWS.SQS({ apiVersion: '2012-11-05' });
 
+const pubnub = new PubNub({
+  publishKey: process.env.PUBNUB_PUB,
+  subscribeKey: process.env.PUBNUB_SUB,
+});
+
 
 export const query = async (event, context, cb) => {
 
   const data = [ { event } ];
   const { url } = event.queryStringParameters;
+
+  pubnub.publish({
+    channel: event.requestContext.requestId,
+    message: {
+      query: {
+        url,
+        id: event.requestContext.requestId
+      }
+    }
+  }, (status, response) => {
+    console.log(status, response);
+  });
 
   const { headers } = await axios.head(url);
   data.push({ headers });
@@ -56,6 +74,18 @@ export const query = async (event, context, cb) => {
     Bucket: process.env.BUCKET_NAME,
     Key,
   }).promise();
+
+  pubnub.publish({
+    channel: 'Channel-cbotcast',
+    message: {
+      query: {
+        url,
+        id: event.requestContext.requestId
+      }
+    }
+  }, (status, response) => {
+    console.log(status, response);
+  })
 
   // await sqs.sendMessage({
   //   QueueUrl: process.env.EXPORT_QUEUE,

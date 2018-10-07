@@ -15,11 +15,9 @@ provider:
   environment:
     BUCKET_NAME: 'data.contextubot.net'
     EMBEDLY_KEY: ${ssm:/contextubot/embedlyKey}
-    # AWS_REGION: us-east-1
-    ECS_CLUSTER_NAME: contextubot-fargate
-    ECS_TASK_DEFINITION: task_contextubot-fingerprint:1
-    ECS_TASK_VPC_SUBNET_1: subnet-a8201af5
-    # ECS_TASK_VPC_SUBNET_2:
+    PUBNUB_PUB: ${ssm:/contextubot/pubNubPublishKey}
+    PUBNUB_SUB: ${ssm:/contextubot/pubNubSubscribeKey}
+    PUBNUB_SECRET: ${ssm:/contextubot/pubNubSecretKey}
 
   iamRoleStatements:
     - Effect: 'Allow'
@@ -58,14 +56,10 @@ provider:
       Action:
         - sqs:*
       Resource: arn:aws:sqs:*:*:${self:custom.sqs}-tva-dl
-    - Effect: "Allow"
-      Action:
-        - ecs:RunTask
-      Resource: "*"
     - Effect: Allow
       Action:
-        - iam:PassRole
-      Resource: ${self:custom.execRoleArn}
+        - sqs:*
+      Resource: arn:aws:sqs:us-east-1:195195539908:dev-contextubot-worker-messages-match
 
 
 package:
@@ -132,16 +126,18 @@ functions:
       targetArn:
         GetResourceArn: ExtractDeadLetterQueue
 
-  # search:
-  #   handler: search.fingerprint
-  #   events:
-  #     - existingS3:
-  #         bucket: 'data.contextubot.net'
-  #         events:
-  #           - s3:ObjectCreated:*
-  #         rules:
-  #           - prefix: wave/
-  #           - suffix: .afpt
+  search:
+    handler: search.fingerprint
+    events:
+      - existingS3:
+          bucket: 'data.contextubot.net'
+          events:
+            - s3:ObjectCreated:*
+          rules:
+            - prefix: wave/
+            - suffix: .afpt
+    environment:
+      SEARCH_QUEUE: https://sqs.us-east-1.amazonaws.com/195195539908/dev-contextubot-worker-messages-match
 
 
 
@@ -178,7 +174,6 @@ custom:
   # process: ${self:custom.prefix}-process
   # config: ${self:custom.prefix}-config
   # sns: ${self:custom.prefix}-trigger
-  execRoleArn: { "Fn::Join" : ["", [ "arn:aws:iam::", { "Ref" : "AWS::AccountId" }, ":role/ecsTaskExecutionRole" ] ] }
   stages:
     - dev
     - staging

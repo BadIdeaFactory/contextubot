@@ -50,6 +50,9 @@ pubnub = PubNub(pnconfig)
 
 
 def fingerprint(event, context):
+    if event.get('Event') == 's3:TestEvent':
+        return
+
     key = os.environ.get('S3_OBJECT_KEY')
     if not key:
         key = event['Records'][0]['s3']['object']['key']
@@ -131,46 +134,69 @@ def create(event, context):
 
 
 def match(event, context):
-    # s3.Bucket(BUCKET_NAME).download_file('_test-fprint.afpt', '/tmp/_test-fprint.afpt')
-    # s3.Bucket(BUCKET_NAME).download_file('_test-db.pklz', '/tmp/_test-db.pklz')
+    hash = event['Records'][0]['body']
+    id = event['Records'][0]['messageAttributes']['Id']['stringValue']
 
-    # qry = '/tmp/_test-fprint.afpt'
-    # hashFile = '/tmp/_test-db.pklz'
+    s3.Bucket(BUCKET_NAME).download_file('wave/{}/audio.afpt'.format(id), '/tmp/{}.afpt'.format(id))
+    s3.Bucket(BUCKET_NAME).download_file(hash, '/tmp/{}'.format(hash.split('/').pop()))
 
-    # matcher = audfprint_match.Matcher()
-    # matcher.find_time_range = True
-    # matcher.verbose = False
-    # matcher.max_returns = 100
+    qry = '/tmp/{}.afpt'.format(id)
+    hashFile = '/tmp/{}'.format(hash.split('/').pop())
 
-    # matcher.exact_count = True
-    # matcher.max_alignments_per_id = 20
+    matcher = audfprint_match.Matcher()
+    matcher.find_time_range = True
+    matcher.verbose = False
+    matcher.max_returns = 100
 
-    # analyzer = audfprint_analyze.Analyzer()
-    # analyzer.n_fft = 512
-    # analyzer.n_hop = analyzer.n_fft/2
-    # analyzer.shifts = 1
-    # # analyzer.exact_count = True
-    # analyzer.density = 20.0
-    # analyzer.target_sr = 11025
-    # analyzer.verbose = False
+    matcher.exact_count = True
+    matcher.max_alignments_per_id = 20
 
-    # hash_tab = hash_table.HashTable(hashFile)
-    # hash_tab.params['samplerate'] = analyzer.target_sr
+    analyzer = audfprint_analyze.Analyzer()
+    analyzer.n_fft = 512
+    analyzer.n_hop = analyzer.n_fft/2
+    analyzer.shifts = 1
+    # analyzer.exact_count = True
+    analyzer.density = 20.0
+    analyzer.target_sr = 11025
+    analyzer.verbose = False
 
-    # rslts, dur, nhash = matcher.match_file(analyzer, hash_tab, qry, 0)
-    # t_hop = analyzer.n_hop / float(analyzer.target_sr)
-    # qrymsg = qry + (' %.1f ' % dur) + "sec " + str(nhash) + " raw hashes"
+    hash_tab = hash_table.HashTable(hashFile)
+    hash_tab.params['samplerate'] = analyzer.target_sr
 
-    # # print "duration,start,from,time,source,sourceId,nhashaligned,aligntime,nhashraw,rank,min_time,max_time, t_hop"
-    # matches = []
-    # if len(rslts) == 0:
-    #     nhashaligned = 0
-    # else:
-    #     for (tophitid, nhashaligned, aligntime, nhashraw, rank, min_time, max_time) in rslts:
-    #             msg = ("{:f},{:f},{:s},{:f},{:s},{:n},{:n},{:n},{:n},{:n},{:n},{:n},{:f}").format(
-    #                     (max_time - min_time) * t_hop, min_time * t_hop, qry,
-    #                     (min_time + aligntime) * t_hop, hash_tab.names[tophitid], tophitid, nhashaligned, aligntime, nhashraw, rank, min_time, max_time, t_hop)
-    #             matches.append(msg)
+    rslts, dur, nhash = matcher.match_file(analyzer, hash_tab, qry, 0)
+    t_hop = analyzer.n_hop / float(analyzer.target_sr)
+    qrymsg = qry + (' %.1f ' % dur) + "sec " + str(nhash) + " raw hashes"
+
+    # print "duration,start,from,time,source,sourceId,nhashaligned,aligntime,nhashraw,rank,min_time,max_time, t_hop"
+    matches = []
+    if len(rslts) == 0:
+        nhashaligned = 0
+    else:
+        for (tophitid, nhashaligned, aligntime, nhashraw, rank, min_time, max_time) in rslts:
+                msg = ("{:f},{:f},{:s},{:f},{:s},{:n},{:n},{:n},{:n},{:n},{:n},{:n},{:f}").format(
+                        (max_time - min_time) * t_hop, min_time * t_hop, qry,
+                        (min_time + aligntime) * t_hop, hash_tab.names[tophitid], tophitid, nhashaligned, aligntime, nhashraw, rank, min_time, max_time, t_hop)
+                print(msg)
+                duration = (max_time - min_time) * t_hop
+                start = min_time * t_hop
+                time = (min_time + aligntime) * t_hop
+                matches.append({
+                    'duration': np.asscalar(duration) if isinstance(duration, np.generic) else duration,
+                    'start': np.asscalar(start) if isinstance(start, np.generic) else start,
+                    'time': np.asscalar(time) if isinstance(time, np.generic) else time,
+                    'match': hash_tab.names[tophitid].split('/').pop().replace('.afpt', ''),
+                    'alignedHashes': np.asscalar(nhashaligned) if isinstance(nhashaligned, np.generic) else nhashaligned,
+                    'totalHashes': np.asscalar(nhashraw) if isinstance(nhashraw, np.generic) else nhashraw,
+                    'rank': np.asscalar(rank) if isinstance(rank, np.generic) else rank
+                })
+
+    data = { 'id': id, 'matches': matches, 'hash': hash }
+
+    pubnub.publish().channel('Channel-cbotcast').message(data).pn_async(publish_callback)
+    pubnub.publish().channel(id).message(data).pn_async(publish_callback)
+
+    if len(matches) > 0:
+        s3.Object(BUCKET_NAME, 'query/{}/{}.json'.format(id, hash.split('/').pop().replace('.pklz', ''))).put(Body=(bytes(json.dumps(data, indent=2).encode('UTF-8'))))
 
     response = {
         "statusCode": 200,

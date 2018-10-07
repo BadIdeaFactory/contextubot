@@ -4,6 +4,8 @@ import youtubedl from 'youtube-dl';
 import AwsSdk from 'aws-sdk';
 import AWSXRay from 'aws-xray-sdk';
 import https from 'https';
+import PubNub from 'pubnub';
+
 
 AWSXRay.captureHTTPsGlobal(https);
 AWSXRay.capturePromise();
@@ -12,6 +14,10 @@ const AWS = AWSXRay.captureAWS(AwsSdk);
 const s3 = new AWS.S3();
 const ECS = new AWS.ECS();
 
+const pubnub = new PubNub({
+  publishKey: process.env.PUBNUB_PUB,
+  subscribeKey: process.env.PUBNUB_SUB,
+});
 
 export const audio = async (event, context, cb) => {
   // console.log(JSON.stringify(event));
@@ -52,39 +58,61 @@ export const audio = async (event, context, cb) => {
     Key: `wave/${id}/audio.wav`,
   }).promise();
 
-  const task = await promisify(ECS.runTask).runECSTask({
-    cluster: process.env.ECS_CLUSTER_NAME,
-    launchType: 'FARGATE',
-    taskDefinition: process.env.ECS_TASK_DEFINITION,
-    count: 1,
-    platformVersion:'LATEST',
-    networkConfiguration: {
-      awsvpcConfiguration: {
-          subnets: [
-              process.env.ECS_TASK_VPC_SUBNET_1,
-              process.env.ECS_TASK_VPC_SUBNET_2,
-          ],
-          assignPublicIp: 'ENABLED',
+  pubnub.publish({
+    channel: id,
+    message: {
+      audio: {
+        id,
       }
-    },
-    overrides: {
-      containerOverrides: [
-        {
-          name: 'ffmpeg-thumb',
-          environment: [
-            {
-              name: 'S3_OBJECT_KEY',
-              value: `wave/${id}/audio.wav`,
-            },
-            {
-              name: 'BUCKET_NAME',
-              value: process.env.BUCKET_NAME,
-            },
-          ],
-        },
-      ],
-    },
+    }
+  }, (status, response) => {
+    console.log(status, response);
   });
+
+  pubnub.publish({
+    channel: 'Channel-cbotcast',
+    message: {
+      audio: {
+        id,
+      }
+    }
+  }, (status, response) => {
+    console.log(status, response);
+  });
+
+  // const task = await promisify(ECS.runTask).runECSTask({
+  //   cluster: process.env.ECS_CLUSTER_NAME,
+  //   launchType: 'FARGATE',
+  //   taskDefinition: process.env.ECS_TASK_DEFINITION,
+  //   count: 1,
+  //   platformVersion:'LATEST',
+  //   networkConfiguration: {
+  //     awsvpcConfiguration: {
+  //         subnets: [
+  //             process.env.ECS_TASK_VPC_SUBNET_1,
+  //             process.env.ECS_TASK_VPC_SUBNET_2,
+  //         ],
+  //         assignPublicIp: 'ENABLED',
+  //     }
+  //   },
+  //   overrides: {
+  //     containerOverrides: [
+  //       {
+  //         name: 'ffmpeg-thumb',
+  //         environment: [
+  //           {
+  //             name: 'S3_OBJECT_KEY',
+  //             value: `wave/${id}/audio.wav`,
+  //           },
+  //           {
+  //             name: 'BUCKET_NAME',
+  //             value: process.env.BUCKET_NAME,
+  //           },
+  //         ],
+  //       },
+  //     ],
+  //   },
+  // });
 
   cb(null, {
     statusCode: 200,

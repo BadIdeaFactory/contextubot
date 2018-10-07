@@ -6,6 +6,7 @@ import request from 'requisition';
 import AwsSdk from 'aws-sdk';
 import AWSXRay from 'aws-xray-sdk';
 import https from 'https';
+import PubNub from 'pubnub';
 
 
 const writeFile = promisify(fs.writeFile);
@@ -18,51 +19,76 @@ const AWS = AWSXRay.captureAWS(AwsSdk);
 const s3 = new AWS.S3();
 const sqs = new AWS.SQS({ apiVersion: '2012-11-05' });
 
-// const CHANNELS = ['CNNW', 'MSNBCW', 'FOXNEWSW', 'BBCNEWS'];
+const pubnub = new PubNub({
+  publishKey: process.env.PUBNUB_PUB,
+  subscribeKey: process.env.PUBNUB_SUB,
+});
 
+// const CHANNELS = ['CNNW', 'MSNBCW', 'FOXNEWSW', 'BBCNEWS'];
 
 export const fingerprint = async (event, context, cb) => {
   if (!event.Records[0].s3) return cb(null, { event });
 
-  const currMonth = dateParts(new Date()).slice(0,2).join('');
+  // const currMonth = dateParts(new Date()).slice(0,2).join('');
+
+  const key = event.Records[0].s3.object.key;
+  const id = key.split('/')[1];
+  pubnub.publish({
+    channel: id,
+    message: {
+      search: {
+        id,
+      }
+    }
+  }, (status, response) => {
+    console.log(status, response);
+  });
+
+  pubnub.publish({
+    channel: 'Channel-cbotcast',
+    message: {
+      search: {
+        id,
+      }
+    }
+  }, (status, response) => {
+    console.log(status, response);
+  });
 
   const hashes = (await Promise.all([
     s3.listObjectsV2({
       Bucket: process.env.BUCKET_NAME,
-      Prefix: `hash/${currMonth}`,
+      // Prefix: `hash/${currMonth}`,
+      Prefix: `hash/`,
     }).promise(),
     // s3.listObjectsV2({
     //   Bucket: process.env.BUCKET_NAME,
     //   Prefix: `hash/${prevMonth}`,
     // }).promise(),
-  ])).reduce((acc, data) => [...acc, ...data.Contents.map(object => object.Key.split('/').pop())], []);
+  ])).reduce((acc, data) => [...acc, ...data.Contents.map(object => object.Key)], []);
 
-  const batches = (await axios.get(FEED)).data.filter((segment) => {
-    const [ channel, date ] = segment.split('_');
-    return (date === today || date === yesterday) && CHANNELS.includes(channel) && !downloaded.includes(segment);
-  }).reduce((acc, segment, i) => (i % 10 ? acc[acc.length - 1].push(segment) : acc.push([ segment ])) && acc, []);
+  const batches = hashes.reduce((acc, segment, i) => (i % 10 ? acc[acc.length - 1].push(segment) : acc.push([ segment ])) && acc, []);
 
   await Promise.all(batches.map(batch => sqs.sendMessageBatch({
-    QueueUrl: process.env.TVA_QUEUE,
-    Entries: batch.map((segment) => {
-      const [ channel, date, time, ...title ] = segment.split('_');
+    QueueUrl: process.env.SEARCH_QUEUE,
+    Entries: batch.map((hash) => {
       return {
-        Id: `${channel}-${date}-${time}`,
+        Id: `${id}-${hash.split('/').pop().replace('.pklz', '')}`,
         MessageAttributes: {
-          Title: {
+          Hash: {
             DataType: 'String',
-            StringValue: title.join(' '),
+            StringValue: hash,
           },
-          Channel: {
+          Id: {
             DataType: 'String',
-            StringValue: channel,
+            StringValue: id,
           },
-          Date: {
-            DataType: 'String',
-            StringValue: date,
-          },
+          // Date: {
+          //   DataType: 'String',
+          //   StringValue: date,
+          // },
         },
-        MessageBody: segment,
+        MessageBody: hash,
       };
     }),
   }).promise()));
