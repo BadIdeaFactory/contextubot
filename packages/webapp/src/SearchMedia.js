@@ -339,7 +339,7 @@ class SearchMedia extends Component {
         <Content dir="row" align="center">
           <PageTitle display="h3">
             <span style={{ color: color.redM }}>
-              I couldn’t find any matching video. Try another clip.
+              {main.state.message ? main.state.message : '…'}
             </span>
           </PageTitle>
           <Separator silent size="s" />

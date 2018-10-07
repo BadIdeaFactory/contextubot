@@ -93,7 +93,10 @@ def fingerprint(event, context):
 
 
 def create(event, context):
-    day = (date.today() - timedelta(2)).strftime('%Y%m%d')
+    day = event.get('date')
+    if not day:
+        day = (date.today() - timedelta(2)).strftime('%Y%m%d')
+
     channel = event['channel']
 
     analyzer = audfprint_analyze.Analyzer()
@@ -106,7 +109,8 @@ def create(event, context):
     analyzer.verbose = False
 
     # hashbits=20, depth=100, maxtime=16384
-    hash_tab = hash_table.HashTable(hashbits=20, depth=100, maxtime=262144)
+    # maxtime=262144
+    hash_tab = hash_table.HashTable(hashbits=20, depth=100, maxtime=4294967296)
     hash_tab.params['samplerate'] = analyzer.target_sr
 
     fingerprints = s3client.list_objects_v2(Bucket=BUCKET_NAME, Prefix='tva/{}/{}/'.format(day, channel))['Contents']
@@ -208,33 +212,3 @@ def match(event, context):
 def publish_callback(result, status):
     pass
 
-# def lambda_test(event, context):
-#     for arg in sys.argv:
-#         print(arg)
-#     print(os.getcwd())
-#     print(os.path.basename(__file__))
-#     for key in os.environ.keys():
-#         print('{0}={1}'.format(key,os.environ[key]))
-#     print(os.getuid())
-#     print(os.getgid())
-#     print(os.geteuid())
-#     print(os.getegid())
-#     print(os.getgroups())
-#     print(os.umask(0o222))
-
-#     print(event)
-#     print(context.get_remaining_time_in_millis())
-#     print(context.aws_request_id)
-#     if context.client_context:
-#         print(context.client_context)
-#     print(context.function_name)
-#     print(context.function_version)
-#     print(context.identity.cognito_identity_id)
-#     print(context.identity.cognito_identity_pool_id)
-#     print(context.invoked_function_arn)
-#     print(context.log('Log this for me please'))
-#     print(context.log_group_name)
-#     print(context.log_stream_name)
-#     print(context.memory_limit_in_mb)
-
-#     return 'It works!'

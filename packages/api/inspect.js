@@ -104,6 +104,9 @@ export const query = async (event, context, cb) => {
 
   cb(null, {
     statusCode: 200,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+    },
     body: JSON.stringify({ data }),
   });
 };
