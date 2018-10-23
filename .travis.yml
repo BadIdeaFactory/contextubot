@@ -2,26 +2,22 @@ language: node_js
 node_js:
   - lts/carbon
 
-# git:
-#   lfs_skip_smudge: true
+git:
+  lfs_skip_smudge: true
 
-# sudo: required
 before_install:
-  # - sudo apt-key adv --fetch-keys http://dl.yarnpkg.com/debian/pubkey.gpg
-  # - echo "deb http://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
-  # - sudo apt-get update -qq
-  # - sudo apt-get install -y -qq yarn=1.10.1-1
   - curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.5.1
   - export PATH=$HOME/.yarn/bin:$PATH
   
 cache:
   yarn: true
   directories:
+  - .git/lfs
   - node_modules
   - packages/webapp/node_modules
   
-# before_install:
-# - git lfs pull
+install:
+  - git lfs pull
 
 script:
   - cd packages/webapp ; yarn build
@@ -35,16 +31,17 @@ deploy:
     local_dir: build
     on:
       branch: develop
-# - provider: s3
-#   skip_cleanup: true
-#   bucket: contextubot.com
-#   region: us-east-1
-#   acl: public_read
-#   local_dir: build
-#   on:
-#     branch: master
-# notifications:
-#   irc: chat.freenode.net#contextubot
+- provider: s3
+  skip_cleanup: true
+  bucket: contextubot.com
+  region: us-east-1
+  acl: public_read
+  local_dir: build
+  on:
+    branch: master
+
+notifications:
+  irc: chat.freenode.net#contextubot
 
 env:
   global:
