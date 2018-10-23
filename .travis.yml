@@ -16,8 +16,8 @@ cache:
   - node_modules
   - packages/webapp/node_modules
   
-# install:
-#   - git lfs pull
+install:
+  - git lfs pull
 
 script:
   - cd packages/webapp ; yarn build
