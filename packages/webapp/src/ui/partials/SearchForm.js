@@ -42,7 +42,7 @@ export default class SearchForm extends Component {
       <SearchFormEl onSubmit={this.handleSubmit}>
         <FormItem>
           <TextInput
-            value="https://www.youtube.com/watch?v=Uc6zD6gTfEE"
+            placeholder="Paste in a video link, i.e. https://www.youtube.com/watch?v=3g39ZaBIbwg"
             onChange={this.handleChange}
             name="searchKey"
           />
