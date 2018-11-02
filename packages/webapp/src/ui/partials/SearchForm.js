@@ -23,7 +23,7 @@ export default class SearchForm extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      searchKey: ''
+      searchKey: 'https://www.youtube.com/watch?v=Uc6zD6gTfEE'
     };
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -42,8 +42,9 @@ export default class SearchForm extends Component {
       <SearchFormEl onSubmit={this.handleSubmit}>
         <FormItem>
           <TextInput
-            value="https://www.youtube.com/watch?v=Uc6zD6gTfEE"
+            placeholder="Paste in a video link, i.e. https://www.youtube.com/watch?v=3g39ZaBIbwg"
             onChange={this.handleChange}
+            value={this.state.searchKey}
             name="searchKey"
           />
           <Action primary onClick={hasSearchKey ? this.handleSubmit : null}>
