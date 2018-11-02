@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { Component } from 'react';
 import ReactJson from 'react-json-view';
 import styled from 'styled-components';
@@ -268,7 +269,8 @@ class SearchMedia extends Component {
         <Content dir="row" align="center">
           <Container limit="m">
             <PageTitle display="h1">
-              Source-check questionable media. <br />Stand by reputable sources.
+              Source-check questionable media. <br />
+              Stand by reputable sources.
             </PageTitle>
             <Separator dir="h" silent size="m" />
             <SearchForm
@@ -307,6 +309,7 @@ class SearchMedia extends Component {
                 height="254"
                 onClick={e => e.stopPropagation()}
                 width="300"
+                key={mp4Url}
               >
                 <source src={mp4Url} />
               </video>
@@ -314,8 +317,14 @@ class SearchMedia extends Component {
             </div>
             <PageSubtitle display="h5">
               {uid.replace(/_/g, ' ')}
-              {/* ({match.duration}s) */}
             </PageSubtitle>
+            <small style={{ fontSize: 8 }}>
+              {match.duration}s @{match.start}
+              <br />
+              {match.nhashaligned} / {match.nhashraw}
+              <br />
+              rank {match.rank}
+            </small>
           </SearchResult>
         );
       };
@@ -337,9 +346,9 @@ class SearchMedia extends Component {
       ) : (
         <Content dir="row" align="center">
           <PageTitle display="h3">
-            <span style={{ color: color.redM }}>
-              I couldn’t find any matching video. Try another clip.
-            </span>
+            <pre style={{ color: color.redM }}>
+              {main.state.message ? main.state.message : '…'}
+            </pre>
           </PageTitle>
           <Separator silent size="s" />
           ¯\_(ツ)_/¯

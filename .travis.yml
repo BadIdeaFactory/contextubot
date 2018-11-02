@@ -1,22 +1,36 @@
 language: node_js
 node_js:
-- lts/carbon
-cache:
-  directories:
-  - node_modules
+  - lts/carbon
+
+git:
+  lfs_skip_smudge: true
+
 before_install:
-- git lfs pull
+  - curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.5.1
+  - export PATH=$HOME/.yarn/bin:$PATH
+  
+cache:
+  yarn: true
+  directories:
+  - .git/lfs
+  - node_modules
+  - packages/webapp/node_modules
+  
+# install:
+#   - git lfs pull
+
 script:
-- yarn build
+  - cd packages/webapp ; yarn build
+
 deploy:
-- provider: s3
-  skip_cleanup: true
-  bucket: contextubot.net
-  region: us-east-1
-  acl: public_read
-  local_dir: build
-  on:
-    branch: develop
+  - provider: s3
+    skip_cleanup: true
+    bucket: contextubot.net
+    region: us-east-1
+    acl: public_read
+    local_dir: build
+    on:
+      branch: develop
 - provider: s3
   skip_cleanup: true
   bucket: contextubot.com
@@ -25,9 +39,11 @@ deploy:
   local_dir: build
   on:
     branch: master
+
 notifications:
   irc: chat.freenode.net#contextubot
+
 env:
   global:
-  - secure: HvaiqxJVUk09n70DaAOLGIBpM5CBElighbBznosAG0dmNYC7nRUdKXIsur1D5uS8ZOyYYAwQhJef7QwZtxLiuouiZFKN+WKDZSZ9PDWg3rK0Gy82ZWLG2AvP8JDvSMmbYyTdcYyRZZmZZ/gGPOwwP6yYPMkcOC04TGSnYlWqRYNrHa8XvkOGqMFHG807pUoVud/uRZPlh8WWvUS62cCFgboG0DaNragpecJZvO3QGkQiPyCBxvDSgaIUK6QDLzX1B5rfOJ4nNfIiKrjJlSNWY8MyQeJ48AyX0vnWCqUGTCyzPllsGen7dSlV1ma9TkKAH6n8GMINYUQbi1sjaTlwUbhTlcDlrw1VlfrbaaQS6mV/NbblUDuHOasZsejXVmdidQE20MSCwaVDiH6ScTIhqDDCGM4Nu7l0AO6CsaPzvsY/hHgUtnxHNbzb1tpK+K/x/pNMDA+K7Jr66XLZAHivvWlV+MF2YqM4A7jVti1tPcMpzTYDbKEywoxZ68DvZ+Xtv19kysI7NFjY9s/e3mR303sDJQIYcIDe9tXrbCULpJp7sZLsnsGbM3Xi72XNsRuxvu89wFZabH+s3CFxxJXGRw1q7/bbFCV4oPFYl1jhblhb8Z+nfXstHwTnKwRg+pwDwJBwzDwpn5BE7dHfzo3ARPNZ7N8oU3Ff/J+okrmeDYo=
-  - secure: PUgbSAdmC44pNl98KIOHxu0QW41zJ5s/NLWTutNWkHw7UZbjoaqTd7U19QHOOZjFH2Q7GuEczWXsTQtDsxFKlP0/gWRCRW0CkRkZQaWyMni7yI3eF4/eDYLf8iuXIQbTKzaw1Wlq/QD9UPIogxhTIEci6pJUPnD4tR8a4WBQ5if5c95TlPq4BlO3cwQFQOEga23kbZMxv9zoyFItqP0hkUCo3Ppl7bwI8Gkh/TnFs4ULjgw/UgglYBlnbPGQlLUxZFv+jhGgT8TdJUgK+LAeSmHrBKFdsL1zwtckqr55F31dN+kpKcESYAUvAlykI/T/b3Xi14xvgKzDCYl0SFDYHz8gM0QQZGS1rBvbWtlPrsYSvvNAmF2Idik97ea+1N1kVc/hOY29r12SrDFDCDJIkaq4JCG+4RknZfcEMSWZNCowaNx0nzsHMbGDa7wcSqHm/B7v2mENpxSJlGeQG91lBhVMAu2uNVu9a0rqnlnjGYw9ICIneP14jzGw4QGEHpraqeBt/tjduVdeyaIc+stZkKkk7yvtvD6fgxVzz+xjoWja+1Paj98bo/ZJONsBVa3BTVxcBgsbtTOT95eWQN9EZvFxdbbPqQaOtY4fk9XUFeiOiJjaielcg4AM4xo0f7ZJD8++y1SQMZ3FiXQA/T7Qtlad2Dcu4wugkv2bVjtO0cM=
+    - secure: HvaiqxJVUk09n70DaAOLGIBpM5CBElighbBznosAG0dmNYC7nRUdKXIsur1D5uS8ZOyYYAwQhJef7QwZtxLiuouiZFKN+WKDZSZ9PDWg3rK0Gy82ZWLG2AvP8JDvSMmbYyTdcYyRZZmZZ/gGPOwwP6yYPMkcOC04TGSnYlWqRYNrHa8XvkOGqMFHG807pUoVud/uRZPlh8WWvUS62cCFgboG0DaNragpecJZvO3QGkQiPyCBxvDSgaIUK6QDLzX1B5rfOJ4nNfIiKrjJlSNWY8MyQeJ48AyX0vnWCqUGTCyzPllsGen7dSlV1ma9TkKAH6n8GMINYUQbi1sjaTlwUbhTlcDlrw1VlfrbaaQS6mV/NbblUDuHOasZsejXVmdidQE20MSCwaVDiH6ScTIhqDDCGM4Nu7l0AO6CsaPzvsY/hHgUtnxHNbzb1tpK+K/x/pNMDA+K7Jr66XLZAHivvWlV+MF2YqM4A7jVti1tPcMpzTYDbKEywoxZ68DvZ+Xtv19kysI7NFjY9s/e3mR303sDJQIYcIDe9tXrbCULpJp7sZLsnsGbM3Xi72XNsRuxvu89wFZabH+s3CFxxJXGRw1q7/bbFCV4oPFYl1jhblhb8Z+nfXstHwTnKwRg+pwDwJBwzDwpn5BE7dHfzo3ARPNZ7N8oU3Ff/J+okrmeDYo=
+    - secure: PUgbSAdmC44pNl98KIOHxu0QW41zJ5s/NLWTutNWkHw7UZbjoaqTd7U19QHOOZjFH2Q7GuEczWXsTQtDsxFKlP0/gWRCRW0CkRkZQaWyMni7yI3eF4/eDYLf8iuXIQbTKzaw1Wlq/QD9UPIogxhTIEci6pJUPnD4tR8a4WBQ5if5c95TlPq4BlO3cwQFQOEga23kbZMxv9zoyFItqP0hkUCo3Ppl7bwI8Gkh/TnFs4ULjgw/UgglYBlnbPGQlLUxZFv+jhGgT8TdJUgK+LAeSmHrBKFdsL1zwtckqr55F31dN+kpKcESYAUvAlykI/T/b3Xi14xvgKzDCYl0SFDYHz8gM0QQZGS1rBvbWtlPrsYSvvNAmF2Idik97ea+1N1kVc/hOY29r12SrDFDCDJIkaq4JCG+4RknZfcEMSWZNCowaNx0nzsHMbGDa7wcSqHm/B7v2mENpxSJlGeQG91lBhVMAu2uNVu9a0rqnlnjGYw9ICIneP14jzGw4QGEHpraqeBt/tjduVdeyaIc+stZkKkk7yvtvD6fgxVzz+xjoWja+1Paj98bo/ZJONsBVa3BTVxcBgsbtTOT95eWQN9EZvFxdbbPqQaOtY4fk9XUFeiOiJjaielcg4AM4xo0f7ZJD8++y1SQMZ3FiXQA/T7Qtlad2Dcu4wugkv2bVjtO0cM=

@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="theme-color" content="#000000">
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json">
+    <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico">
+    <!--<script src="https://labs.hyperaud.io/temp/hyperaudio-lite.js"></script>-->
+    <script src="https://rawgit.com/hyperaudio/hyperaudio-lite/master/js/hyperaudio-lite.js"></script>
+    <!--<script src="https://labs.hyperaud.io/temp/hyperaudio-lite-wrapper.js"></script>-->
+    <!--<script src="https://labs.hyperaud.io/temp/hyperaudio-lite-init.js"></script>-->
+    <script src="https://labs.hyperaud.io/temp/imagefilters.js"></script>
+    <script src="https://hyperaudio.github.io/sharect/sharect.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/velocity/1.5.0/velocity.js"></script>
+
+    <title>Contextubot</title>
+  </head>
+  <body>
+    <noscript>
+      You need to enable JavaScript to run this app.
+    </noscript>
+    <div id="root"></div>
+    <script>
+    var sharect = new Sharect();
+    sharect
+      .config({
+        /*facebook: true,*/
+        twitter: true,
+        twitterUsername: '%23hashtag' /*hashtag example*/,
+        /*backgroundColor: '#ff4081',*/
+        iconColor: '#fff'
+      })
+      .init();
+    </script>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-117420092-1"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+    gtag('js', new Date());
+
+    gtag('config', 'UA-117420092-1');
+    </script>
+  </body>
+</html>

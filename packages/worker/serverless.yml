@@ -1,0 +1,185 @@
+service:
+  name: contextubot-worker
+
+provider:
+  name: aws
+  region: us-east-1
+  tags:
+    project: contextubot
+
+  runtime: python3.6
+  timeout: 300
+  stage: dev
+  tracing: true
+
+  environment:
+    BUCKET_NAME: 'data.contextubot.net'
+    PUBNUB_PUB: ${ssm:/contextubot/pubNubPublishKey}
+    PUBNUB_SUB: ${ssm:/contextubot/pubNubSubscribeKey}
+    PUBNUB_SECRET: ${ssm:/contextubot/pubNubSecretKey}
+    JOBLIB_MULTIPROCESSING: 0
+    IOPIPE_TOKEN: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6ImdpdGh1YnwyMTY3OSIsImlhdCI6MTQ3MjQ4ODc3OSwiYXVkIjoiaHR0cHM6Ly9tZXRyaWNzLWFwaS5pb3BpcGUuY29tL2V2ZW50LyJ9.GEB3siyK8ey3gwQvUcVGbXSt527Jk6uYtL-54tVWXCM
+    IOPIPE_PROFILER_ENABLED: True
+
+
+  iamRoleStatements:
+    - Effect: 'Allow'
+      Action:
+        - 's3:*'
+      Resource:
+        Fn::Join:
+          - ''
+          - - 'arn:aws:s3:::data.contextubot.net'
+    - Effect: 'Allow'
+      Action:
+        - 's3:*'
+      Resource:
+        Fn::Join:
+          - ''
+          - - 'arn:aws:s3:::data.contextubot.net/*'
+    - Effect: 'Allow'
+      Action:
+        - 'xray:PutTraceSegments'
+        - 'xray:PutTelemetryRecords'
+      Resource:
+        - '*'
+    - Effect: Allow
+      Action:
+        - sqs:*
+      Resource: arn:aws:sqs:*:*:${self:custom.sqs}-match
+    - Effect: Allow
+      Action:
+        - sqs:*
+      Resource: arn:aws:sqs:*:*:${self:custom.sqs}-match-dl
+
+
+
+package:
+  individually: true
+  exclude:
+    - '*/**'
+  include:
+    - 'audfprint/*.py'
+    - 'audfprint/.requirements.zip'
+
+
+
+functions:
+  create:
+    handler: handler.create
+    module: audfprint
+    memorySize: 3008
+    events:
+      - schedule:
+          rate: cron(0 1 * * ? *)
+          input:
+            channel: 'CNNW'
+      - schedule:
+          rate: cron(0 1 * * ? *)
+          input:
+            channel: 'MSNBCW'
+      - schedule:
+          rate: cron(0 1 * * ? *)
+          input:
+            channel: 'FOXNEWSW'
+      - schedule:
+          rate: cron(0 1 * * ? *)
+          input:
+            channel: 'BBCNEWS'
+
+  # fingerprint:
+  #   handler: handler.fingerprint
+  #   module: audfprint
+  #   events:
+  #     - existingS3:
+  #         bucket: 'data.contextubot.net'
+  #         events:
+  #           - s3:ObjectCreated:*
+  #         rules:
+  #           - prefix: wave/
+  #           - suffix: .wav
+  #   package:
+  #       include:
+  #         - 'audfprint/ffmpeg/ffmpeg'
+
+  match:
+    handler: handler.match
+    module: audfprint
+    memorySize: 3008
+    events:
+      - sqs:
+          arn:
+            Fn::GetAtt:
+              - MatchQueue
+              - Arn
+          batchSize: 1
+    deadLetter:
+      targetArn:
+        GetResourceArn: MatchDeadLetterQueue
+
+
+
+
+resources:
+  Resources:
+    MatchQueue:
+      Type: 'AWS::SQS::Queue'
+      Properties:
+        QueueName: ${self:custom.sqs}-match
+        VisibilityTimeout: 300
+    MatchDeadLetterQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: ${self:custom.sqs}-match-dl
+
+
+
+
+custom:
+  # region: ${self:provider.region}
+  stage: ${opt:stage, self:provider.stage}
+  prefix: ${self:custom.stage}-${self:service}
+  sqs: ${self:custom.prefix}-messages
+  # process: ${self:custom.prefix}-process
+  # config: ${self:custom.prefix}-config
+  # sns: ${self:custom.prefix}-trigger
+  stages:
+    - dev
+    - staging
+    - prod
+  sqsTags:
+    project: contextubot
+  logRetentionInDays: 5
+  pythonRequirements:
+    dockerizePip: true
+    slim: true
+    zip: true
+    # vendor: ./vendored-libraries
+    useDownloadCache: true
+    useStaticCache: true
+    noDeploy:
+      - boto3
+      - botocore
+      - jmespath
+      - docutils
+      - joblib
+  scripts:
+    hooks:
+      # 'deploy:finalize': serverless s3deploy
+      before:package:createDeploymentArtifacts: "zip -d audfprint/.requirements.zip 'boto3/*' 'botocore/*' 'jmespath/*' 'docutils/*' || echo ERR: UNABLE TO REMOVE FROM ZIP"
+
+
+
+
+plugins:
+  - serverless-plugin-scripts
+  - serverless-python-requirements
+  - serverless-plugin-log-retention
+  - serverless-stage-manager
+  # - serverless-plugin-existing-s3
+  - serverless-plugin-tracing
+  - serverless-tag-sqs
+  - serverless-plugin-lambda-dead-letter
+  - serverless-plugin-stack-config
+  - serverless-plugin-elastic-beanstalk
+  # - serverless-plugin-iopipe

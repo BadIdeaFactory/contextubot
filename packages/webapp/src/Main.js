@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React from 'react';
 import { Switch, Route, withRouter } from 'react-router-dom';
 import SearchMedia from './SearchMedia';
@@ -6,6 +7,7 @@ import ComicView from './ComicView';
 import Button from 'antd/lib/button';
 import axios from 'axios';
 import isUrl from 'is-url-superb';
+import PubNub from 'pubnub';
 
 import { Footer, Header, Layout } from './ui';
 
@@ -18,10 +20,16 @@ import { Footer, Header, Layout } from './ui';
 // It is also responsible for holding state.
 
 let API = 'https://api.contextubot.net';
-if (document.location.hostname === '127.0.0.1.xip.io')
-  API = 'http://localhost:8080';
-if (document.location.hostname === 'eb.127.0.0.1.xip.io')
-  API = 'http://contextubot-dev-api.us-east-1.elasticbeanstalk.com';
+// if (document.location.hostname === '127.0.0.1.xip.io')
+//   API = 'http://localhost:8080';
+// if (document.location.hostname === 'eb.127.0.0.1.xip.io')
+//   API = 'http://contextubot-dev-api.us-east-1.elasticbeanstalk.com';
+
+const pubnub = new PubNub({
+  subscribeKey: 'sub-c-79339ef4-3622-11e8-8741-e2a40c21c595',
+  publishKey: 'pub-c-0c10c685-2b8a-4aa9-a835-766676172c5a',
+  ssl: true
+});
 
 let main;
 
@@ -36,9 +44,38 @@ class Main extends React.Component {
       step2: '',
       step3: '',
       data: {},
-      preview: false
+      preview: false,
+      message: ''
     };
     main = this;
+
+    pubnub.addListener({
+      message: m => {
+        const msg = m.message;
+        console.log(msg);
+        setTimeout(() => {
+          if (msg.audio) this.setState({ message: `${this.state.message}\nextracted audio for ${msg.audio.id}`});
+          if (msg.fingerprint) this.setState({ message: `${this.state.message}\nfingerprinted audio for ${msg.fingerprint}`});
+          if (msg.search) this.setState({ message: `${this.state.message}\nsearching ${msg.search.id}`});
+          if (msg.hash && msg.matches.length > 0) {
+            this.state.data.matches = this.state.data.matches.concat(msg.matches.map(r => ({
+              duration: r.duration,
+              start: r.start,
+              time: r.time,
+              source: r.match,
+              nhashaligned: r.alignedHashes,
+              // aligntime: 85584,
+              nhashraw: r.totalHashes,
+              rank: r.rank,
+            }))).sort((a, b) => a.rank - b.rank);
+            this.setState({
+              message: `${this.state.message}\n${msg.matches.length} matches in ${msg.hash} for ${msg.id}`,
+              data: this.state.data,
+            });
+          }
+        }, 0);
+      }
+    });
   }
 
   // I don’t think it’s used anywhere anymore
@@ -91,18 +128,35 @@ class Main extends React.Component {
 
     axios
       .post(
-        `${API}?url=${encodeURIComponent(value.trim())}`,
+        `${API}/query?url=${encodeURIComponent(value.trim())}`,
         {},
         { timeout: 3 * 60 * 1000 }
       )
       /* as well as uncommenting the above, comment the line below for live data */
       // .get(`../dummy.json`, {}, { timeout: 3 * 60 * 1000 })
       .then(({ data }) => {
-        console.log('the data');
-        console.log(data);
+        console.log(data.data);
+        const id = data.data.find(k => !!k.event).event.requestContext.requestId;
+        console.log(id);
+
+        pubnub.subscribe({ channels: [id] });
+
+        const partialData = {
+          id,
+          headers: data.data.find(k => !!k.headers).headers,
+          embed: data.data.find(k => !!k.oembed).oembed,
+          info: data.data.find(k => !!k.info).info,
+          file: null,
+          fingerprint: `https://s3.amazonaws.com/data.contextubot.net/wave/${id}/audio.afpt`,
+          matches: [],
+        };
+
+        // console.log('the data');
+        console.log(partialData);
         main.setState({
-          data,
-          status: 'finish'
+          data: partialData,
+          status: 'finish',
+          message: `search id ${id}`
         });
 
         if (data.headers) {
@@ -111,43 +165,43 @@ class Main extends React.Component {
           });
         }
 
-        // media?
-        if (data.info) {
-          main.setState({
-            step: 1,
-            status: 'finish',
-            step1: data.info.extractor
-          });
-        } else if (data.file) {
-          main.setState({
-            step: 1,
-            status: 'finish',
-            step1: `${data.file.streams.length} streams`
-          });
-        }
-
-        // fingerprint?
-        if (data.fingerprint) {
-          main.setState({
-            step: 2,
-            status: 'finish',
-            step2: (
-              <a href={data.fingerprint}>
-                <Button type="dashed" size="small">
-                  Download
-                </Button>
-              </a>
-            )
-          });
-        }
-
-        // matches?
-        if (data.matches) {
-          main.setState({
-            step: 3,
-            status: 'finish'
-          });
-        }
+        // // media?
+        // if (data.info) {
+        //   main.setState({
+        //     step: 1,
+        //     status: 'finish',
+        //     step1: data.info.extractor
+        //   });
+        // } else if (data.file) {
+        //   main.setState({
+        //     step: 1,
+        //     status: 'finish',
+        //     step1: `${data.file.streams.length} streams`
+        //   });
+        // }
+        //
+        // // fingerprint?
+        // if (data.fingerprint) {
+        //   main.setState({
+        //     step: 2,
+        //     status: 'finish',
+        //     step2: (
+        //       <a href={data.fingerprint}>
+        //         <Button type="dashed" size="small">
+        //           Download
+        //         </Button>
+        //       </a>
+        //     )
+        //   });
+        // }
+        //
+        // // matches?
+        // if (data.matches) {
+        //   main.setState({
+        //     step: 3,
+        //     status: 'finish'
+        //   });
+        // }
       })
       .catch(error => {
         console.log(error);
