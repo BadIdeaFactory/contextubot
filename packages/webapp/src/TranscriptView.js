@@ -235,7 +235,7 @@ class TranscriptView extends Component {
     const clipCc5End = parseInt(clipEnd, 0) + 5;
 
     const mp4Url =
-      'https://api.contextubot.net/proxy?url=https%3A//archive.org/download/' +
+      'https://proxy.contextubot.net/proxy?url=https%3A//archive.org/download/' +
       uid +
       '/' +
       uid +
@@ -245,7 +245,7 @@ class TranscriptView extends Component {
       clipEnd;
 
     const srtUrl =
-      'https://api.contextubot.net/proxy?url=https%3A//archive.org/download/' +
+      'https://proxy.contextubot.net/proxy?url=https%3A//archive.org/download/' +
       uid +
       '/' +
       uid +
