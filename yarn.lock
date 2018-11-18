@@ -157,7 +157,7 @@
     flat "^4.0.0"
     lodash.get "^4.4.2"
 
-"@iopipe/iopipe@^1.11.1":
+"@iopipe/iopipe@1.11.1", "@iopipe/iopipe@^1.11.1":
   version "1.11.1"
   resolved "https://registry.yarnpkg.com/@iopipe/iopipe/-/iopipe-1.11.1.tgz#bafd8d80c1725b31ffbbe9572d1ff4a8eefef7cf"
   integrity sha512-xoo56r7XvODtDz7HKBfhnCEW1LrXfckghdUllgIWgDYCeO8h4NgzLBc5mGiLHZstkRXzz+fuf3k0M65a0pIcPA==

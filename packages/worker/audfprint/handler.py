@@ -132,6 +132,7 @@ def create(event, context):
         hash_tab.save('/tmp/{}-{}.pklz'.format(channel, day))
 
     s3.Bucket(BUCKET_NAME).upload_file('/tmp/{}-{}.pklz'.format(channel, day), 'hash/{}/{}-{}.pklz'.format(day, channel, day))
+    os.remove('/tmp/{}-{}.pklz'.format(channel, day))
 
     body = {
         "input": event,
@@ -175,6 +176,7 @@ def match(event, context):
     analyzer.verbose = False
 
     hash_tab = hash_table.HashTable(hashFile)
+    os.remove(hashFile)
     hash_tab.params['samplerate'] = analyzer.target_sr
 
     rslts, dur, nhash = matcher.match_file(analyzer, hash_tab, qry, 0)
@@ -220,4 +222,3 @@ def match(event, context):
 
 def publish_callback(result, status):
     pass
-
