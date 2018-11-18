@@ -37,13 +37,13 @@ try:
 except:
     pass
 
-from iopipe.iopipe import IOpipe
-from iopipe.contrib.eventinfo import EventInfoPlugin
-from iopipe.contrib.logger import LoggerPlugin
-from iopipe.contrib.profiler import ProfilerPlugin
-from iopipe.contrib.trace import TracePlugin
+# from iopipe.iopipe import IOpipe
+# from iopipe.contrib.eventinfo import EventInfoPlugin
+# from iopipe.contrib.logger import LoggerPlugin
+# from iopipe.contrib.profiler import ProfilerPlugin
+# from iopipe.contrib.trace import TracePlugin
 
-iopipe = IOpipe(plugins=[EventInfoPlugin(), LoggerPlugin(), ProfilerPlugin(), TracePlugin(auto_http=True)])
+# iopipe = IOpipe(plugins=[EventInfoPlugin(), LoggerPlugin(), ProfilerPlugin(), TracePlugin(auto_http=True)])
 
 s3 = boto3.resource('s3')
 s3client = boto3.client('s3')
@@ -99,7 +99,7 @@ def fingerprint(event, context):
     return response
 
 
-@iopipe.decorator
+# @iopipe.decorator
 def create(event, context):
     day = event.get('date')
     if not day:
@@ -146,7 +146,7 @@ def create(event, context):
     return response
 
 
-@iopipe.decorator
+# @iopipe.decorator
 def match(event, context):
     hash = event['Records'][0]['body']
     id = event['Records'][0]['messageAttributes']['Id']['stringValue']
