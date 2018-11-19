@@ -283,7 +283,7 @@ class SearchMedia extends Component {
 
     const renderResults = () => {
       const renderResult = match => {
-        if (!match.duration || match.duration === 0) return null;
+        if (!match.duration || match.duration < 3) return null;
 
         const uid = match.source
           .replace('.afpt', '')
