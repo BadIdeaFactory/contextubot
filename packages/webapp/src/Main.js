@@ -54,9 +54,9 @@ class Main extends React.Component {
         const msg = m.message;
         console.log(msg);
         setTimeout(() => {
-          if (msg.audio) this.setState({ message: `${this.state.message}\nextracted audio for ${msg.audio.id}`});
-          if (msg.fingerprint) this.setState({ message: `${this.state.message}\nfingerprinted audio for ${msg.fingerprint}`});
-          if (msg.search) this.setState({ message: `${this.state.message}\nsearching ${msg.search.id}`});
+          if (msg.audio) this.setState({ message: `searching: extracted audio…`});
+          if (msg.fingerprint) this.setState({ message: `searching: fingerprinted audio…`});
+          if (msg.search) this.setState({ message: `searching…`});
           if (msg.hash && msg.matches.length > 0) {
             this.state.data.matches = this.state.data.matches.concat(msg.matches.map(r => ({
               duration: r.duration,
