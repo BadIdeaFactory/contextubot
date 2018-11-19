@@ -69,7 +69,7 @@ class Main extends React.Component {
               rank: r.rank,
             }))).sort((a, b) => a.rank - b.rank);
             this.setState({
-              message: `${this.state.message}\n${msg.matches.length} matches in ${msg.hash} for ${msg.id}`,
+              message: `searching: found ${msg.matches.length} matches in ${msg.hash} for ${msg.id}`,
               data: this.state.data,
             });
           }
@@ -156,7 +156,7 @@ class Main extends React.Component {
         main.setState({
           data: partialData,
           status: 'finish',
-          message: `search id ${id}`
+          message: `searching…`
         });
 
         if (data.headers) {
