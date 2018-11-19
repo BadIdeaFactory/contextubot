@@ -54,9 +54,9 @@ class Main extends React.Component {
         const msg = m.message;
         console.log(msg);
         setTimeout(() => {
-          if (msg.audio) this.setState({ message: `${this.state.message}\nextracted audio for ${msg.audio.id}`});
-          if (msg.fingerprint) this.setState({ message: `${this.state.message}\nfingerprinted audio for ${msg.fingerprint}`});
-          if (msg.search) this.setState({ message: `${this.state.message}\nsearching ${msg.search.id}`});
+          if (msg.audio) this.setState({ message: `searching: extracted audio…`});
+          if (msg.fingerprint) this.setState({ message: `searching: fingerprinted audio…`});
+          if (msg.search) this.setState({ message: `searching…`});
           if (msg.hash && msg.matches.length > 0) {
             this.state.data.matches = this.state.data.matches.concat(msg.matches.map(r => ({
               duration: r.duration,
@@ -69,7 +69,7 @@ class Main extends React.Component {
               rank: r.rank,
             }))).sort((a, b) => a.rank - b.rank);
             this.setState({
-              message: `${this.state.message}\n${msg.matches.length} matches in ${msg.hash} for ${msg.id}`,
+              message: `searching: found ${msg.matches.length} matches in ${msg.hash} for ${msg.id}`,
               data: this.state.data,
             });
           }
@@ -156,7 +156,7 @@ class Main extends React.Component {
         main.setState({
           data: partialData,
           status: 'finish',
-          message: `search id ${id}`
+          message: `searching…`
         });
 
         if (data.headers) {
