@@ -81,7 +81,7 @@ def fingerprint(event, context):
     # output = analyzer.wavfile2hashes('/tmp/{}.wav'.format(id))
     # saver('/tmp/{}.afpt'.format(id), output)
 
-    subprocess.run(['python', 'audfprint/audfprint.py', 'precompute', '--samplerate=11025', '--density=70', '--shifts=1', '/tmp/{}.wav'.format(id)])
+    subprocess.run(['python', 'audfprint/audfprint.py', 'precompute', '--samplerate=11025', '--density=100', '--shifts=1', '/tmp/{}.wav'.format(id)])
 
     s3.Bucket(BUCKET_NAME).upload_file('./tmp/{}.afpt'.format(id), key.replace('.wav', '.afpt'))
 
