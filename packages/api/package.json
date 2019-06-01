@@ -27,7 +27,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@iopipe/iopipe": "1.11.1",
+    "@iopipe/iopipe": "1.12.9",
     "aws-sdk": "^2.325.0",
     "aws-xray-sdk": "^2.0.0",
     "axios": "^0.18.0",
@@ -36,6 +36,6 @@
     "ffprobe": "^1.1.0",
     "pubnub": "^4.21.5",
     "requisition": "^1.7.0",
-    "youtube-dl": "^1.12.2"
+    "youtube-dl": "^2.0.0"
   }
 }

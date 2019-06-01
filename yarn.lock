@@ -140,10 +140,27 @@
     "@iopipe/event-info" "^1.3.0"
     "@iopipe/trace" "^1.2.1"
 
+"@iopipe/config@^1.3.2":
+  version "1.3.2"
+  resolved "https://registry.yarnpkg.com/@iopipe/config/-/config-1.3.2.tgz#60e9ca1b4171eb70025cd546c0c873fac6894779"
+  integrity sha512-IEZ8ELGF4Z5gXciDxDN7WRcrUQR+QiOlbXfZCy/KwUFGXWyLT7QGWJCYH82rBHw0lLIYUdn42UvaSh0ZwCWq5Q==
+  dependencies:
+    "@iopipe/event-info" "^1.3.1"
+    "@iopipe/trace" "^1.3.0"
+
 "@iopipe/core@^1.14.4":
   version "1.14.4"
   resolved "https://registry.yarnpkg.com/@iopipe/core/-/core-1.14.4.tgz#ce9e1db75e7d19abd9078ecff6fa94c3c06a9332"
   integrity sha512-pROLxMiyjWNttnGn1KZFs7C+oJi33F58vIXseUVchKSVyVTBAbOJFXz67jintuMwFg4HNBaRBPmBQy0hdmVXag==
+  dependencies:
+    cosmiconfig "^4"
+    lodash.uniqby "^4.7.0"
+    simple-get "^3.0.2"
+
+"@iopipe/core@^1.17.4":
+  version "1.17.5"
+  resolved "https://registry.yarnpkg.com/@iopipe/core/-/core-1.17.5.tgz#f53294232d6adc47fefa74b017ec4f6dd5351841"
+  integrity sha512-f5A+aB93+dN/S1pxi0yo8BD1HdgJRzwWZ/SXvr+lMOArKQh+/oMYrFDW7VPLNvXTuNB1NApvhu+xdV9l88jS4Q==
   dependencies:
     cosmiconfig "^4"
     lodash.uniqby "^4.7.0"
@@ -157,7 +174,23 @@
     flat "^4.0.0"
     lodash.get "^4.4.2"
 
-"@iopipe/iopipe@1.11.1", "@iopipe/iopipe@^1.11.1":
+"@iopipe/event-info@^1.3.1":
+  version "1.3.1"
+  resolved "https://registry.yarnpkg.com/@iopipe/event-info/-/event-info-1.3.1.tgz#5a7407b3da73a558c7958b780c41d22d45790ae2"
+  integrity sha512-qI7pHnz2aCU4cj87kuWZDGNLgMy7kQPzOfpp0R6WuwvKjOz+M5uwYYTcs2CJyHbBREQH+Q6Xf0osYdEDNUhsug==
+  dependencies:
+    flat "^4.0.0"
+    lodash.get "^4.4.2"
+
+"@iopipe/iopipe@1.12.9":
+  version "1.12.9"
+  resolved "https://registry.yarnpkg.com/@iopipe/iopipe/-/iopipe-1.12.9.tgz#5809beac2eefae4b21b15f3d3a4cec907cbae983"
+  integrity sha512-wg4BKYpoi7YKOmbouSB54XHbyqjtjpHX3ZUDDlDfFcKaw71KGOHaVTkeyxf8bq+cyyhg3u00Q+EHSC1Ohfy4dQ==
+  dependencies:
+    "@iopipe/config" "^1.3.2"
+    "@iopipe/core" "^1.17.4"
+
+"@iopipe/iopipe@^1.11.1":
   version "1.11.1"
   resolved "https://registry.yarnpkg.com/@iopipe/iopipe/-/iopipe-1.11.1.tgz#bafd8d80c1725b31ffbbe9572d1ff4a8eefef7cf"
   integrity sha512-xoo56r7XvODtDz7HKBfhnCEW1LrXfckghdUllgIWgDYCeO8h4NgzLBc5mGiLHZstkRXzz+fuf3k0M65a0pIcPA==
@@ -169,6 +202,18 @@
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/@iopipe/trace/-/trace-1.2.1.tgz#e4f66f17c61f86015f17b4d2e3e627f6364b5050"
   integrity sha512-kfCHuYHd3ZzXlmVDDib7pEBly4aCZiO9SMu6E9FaTS/9vx/jJMBtYIgiJXwS5uN8sb5P3nej8Uz4Z5Gxcfr+MQ==
+  dependencies:
+    flat "^4.0.0"
+    isarray "^2.0.4"
+    lodash.pickby "^4.6.0"
+    performance-node "^0.2.0"
+    shimmer "^1.2.0"
+    uuid "^3.2.1"
+
+"@iopipe/trace@^1.3.0":
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/@iopipe/trace/-/trace-1.3.0.tgz#b85ef709b533a05f027824a83138eaedb702ddb7"
+  integrity sha512-H7kw8hdBnopTYEpZaK+QGmMLSFlaUa1NNM2yi7of5zFOEz3UVmqSgpf4PLY0W/5144qlL89fKZwcf59BW3vjiw==
   dependencies:
     flat "^4.0.0"
     isarray "^2.0.4"
@@ -5074,7 +5119,7 @@ heavy@4.x.x:
     hoek "4.x.x"
     joi "10.x.x"
 
-hh-mm-ss@^1.2.0:
+hh-mm-ss@~1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/hh-mm-ss/-/hh-mm-ss-1.2.0.tgz#6d0f0b8280824a634cb1d1f20e0bc7bc8b689948"
   integrity sha512-f4I9Hz1dLpX/3mrEs7yq30+FiuO3tt5NWAqAGeBTaoeoBfB8vhcQ3BphuDc5DjZb/K809agqrAaFlP0jhEU/8w==
@@ -9388,7 +9433,7 @@ request@2.86.0:
     tunnel-agent "^0.6.0"
     uuid "^3.1.0"
 
-request@^2.79.0, request@^2.83.0:
+request@^2.79.0, request@~2.88.0:
   version "2.88.0"
   resolved "https://registry.yarnpkg.com/request/-/request-2.88.0.tgz#9c2fca4f7d35b592efe57c7f0a55e81052124fef"
   integrity sha512-NAqBSrijGLZdM0WZNsInLJpkJokL72XYjUpnB0iwsRgxh7dB6COrHnTBNwN0E+lHDAJzu7kLAkDeY08z2/A0hg==
@@ -10325,7 +10370,7 @@ stream-to-array@^2.0.2:
   dependencies:
     any-promise "^1.1.0"
 
-streamify@^0.2.9:
+streamify@~0.2.9:
   version "0.2.9"
   resolved "https://registry.yarnpkg.com/streamify/-/streamify-0.2.9.tgz#8938b14db491e2b6be4f8d99cc4133c9f0384f0b"
   integrity sha512-8pUxeLEef9UO1FxtTt5iikAiyzGI4SZRnGuJ3sz8axZ5Xk+/7ezEV5kuJQsMEFxw7AKYw3xp0Ow+20mmSaJbQQ==
@@ -11748,15 +11793,15 @@ yn@^2.0.0:
   resolved "https://registry.yarnpkg.com/yn/-/yn-2.0.0.tgz#e5adabc8acf408f6385fc76495684c88e6af689a"
   integrity sha1-5a2ryKz0CPY4X8dklWhMiOavaJo=
 
-youtube-dl@^1.12.2:
-  version "1.12.2"
-  resolved "https://registry.yarnpkg.com/youtube-dl/-/youtube-dl-1.12.2.tgz#11985268564c92b229f62b43d97374f86a605d1d"
-  integrity sha512-TDGmUxzEsQCp1Ux3IEkEhJ2LfRlUjBo5AaaGmW5Hqm8uX8jd2sB+Rq37S9vy505qnFhpy05uUSQsBtpvBuQBYA==
+youtube-dl@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/youtube-dl/-/youtube-dl-2.0.0.tgz#64f85beff21a5b0b5651437ea51d10effd3dad5a"
+  integrity sha512-1R5bcnBMVqQIk85wqTJ8pxPq5UbzxZXJy4KSaf3N1dedZG4uAzq5zuoiHcNcsGle5JtoHNpTWDBjTDhHO0SipQ==
   dependencies:
-    hh-mm-ss "^1.2.0"
-    mkdirp "^0.5.1"
-    request "^2.83.0"
-    streamify "^0.2.9"
+    hh-mm-ss "~1.2.0"
+    mkdirp "~0.5.1"
+    request "~2.88.0"
+    streamify "~0.2.9"
 
 zero-fill@^2.2.3:
   version "2.2.3"
