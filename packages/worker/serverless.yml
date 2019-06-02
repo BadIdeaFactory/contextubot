@@ -96,11 +96,11 @@ functions:
   #         events:
   #           - s3:ObjectCreated:*
   #         rules:
-  #           - prefix: wave/
+  #           - prefix: wave2/
   #           - suffix: .wav
-  #   package:
-  #       include:
-  #         - 'audfprint/ffmpeg/ffmpeg'
+    # package:
+    #     include:
+    #       - 'audfprint/ffmpeg/ffmpeg'
 
   match:
     handler: handler.match
@@ -116,6 +116,9 @@ functions:
     deadLetter:
       targetArn:
         GetResourceArn: MatchDeadLetterQueue
+    # package:
+    #     include:
+    #       - 'audfprint/ffmpeg/ffmpeg'
 
 
 
@@ -176,7 +179,7 @@ plugins:
   - serverless-python-requirements
   - serverless-plugin-log-retention
   - serverless-stage-manager
-  # - serverless-plugin-existing-s3
+  - serverless-plugin-existing-s3
   - serverless-plugin-tracing
   - serverless-tag-sqs
   - serverless-plugin-lambda-dead-letter

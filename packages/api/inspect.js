@@ -26,6 +26,7 @@ export const query = async (event, context, cb) => {
 
   const data = [ { event } ];
   const { url } = event.queryStringParameters;
+  const today = dateParts(new Date()).slice(0,3).join('');
 
   pubnub.publish({
     channel: event.requestContext.requestId,
@@ -67,7 +68,7 @@ export const query = async (event, context, cb) => {
     } catch (ignored) { }
   }
 
-  const Key = `query/${event.requestContext.requestId}/info.json`;
+  const Key = `query/${today}/${event.requestContext.requestId}/info.json`;
   await s3.putObject({
     Body: JSON.stringify({ data }),
     ACL: 'public-read',
@@ -110,3 +111,17 @@ export const query = async (event, context, cb) => {
     body: JSON.stringify({ data }),
   });
 };
+
+const dateParts = (date) => {
+  const parts = new Intl.DateTimeFormat('en-gb', {
+    timeZone: 'UTC',
+    hour12: false,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+  }).formatToParts(date).filter(p => p.type !== 'literal').map(p => p.value);
+  return [ parts[2], parts[0], parts[1], ...parts.slice(3) ];
+}

@@ -30,9 +30,10 @@ export const fingerprint = async (event, context, cb) => {
   if (!event.Records[0].s3) return cb(null, { event });
 
   // const currMonth = dateParts(new Date()).slice(0,2).join('');
+  const today = dateParts(new Date()).slice(0,3).join('');
 
   const key = event.Records[0].s3.object.key;
-  const id = key.split('/')[1];
+  const id = key.split('/')[2];
   pubnub.publish({
     channel: id,
     message: {
@@ -83,10 +84,10 @@ export const fingerprint = async (event, context, cb) => {
             DataType: 'String',
             StringValue: id,
           },
-          // Date: {
-          //   DataType: 'String',
-          //   StringValue: date,
-          // },
+          Date: {
+            DataType: 'String',
+            StringValue: today,
+          },
         },
         MessageBody: hash,
       };
