@@ -1,6 +1,6 @@
 language: node_js
 node_js:
-  - lts/carbon
+  - lts/dubnium
 
 git:
   lfs_skip_smudge: true
@@ -12,9 +12,9 @@ before_install:
 cache:
   yarn: true
   directories:
-  - .git/lfs
-  - node_modules
-  - packages/webapp/node_modules
+    - .git/lfs
+    - node_modules
+    - packages/webapp/node_modules
 
 # install:
 #   - git lfs pull
