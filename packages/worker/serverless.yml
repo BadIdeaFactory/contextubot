@@ -18,9 +18,6 @@ provider:
     PUBNUB_SUB: ${ssm:/contextubot/pubNubSubscribeKey}
     PUBNUB_SECRET: ${ssm:/contextubot/pubNubSecretKey}
     JOBLIB_MULTIPROCESSING: 0
-    # IOPIPE_TOKEN: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6ImdpdGh1YnwyMTY3OSIsImlhdCI6MTQ3MjQ4ODc3OSwiYXVkIjoiaHR0cHM6Ly9tZXRyaWNzLWFwaS5pb3BpcGUuY29tL2V2ZW50LyJ9.GEB3siyK8ey3gwQvUcVGbXSt527Jk6uYtL-54tVWXCM
-    # IOPIPE_PROFILER_ENABLED: True
-
 
   iamRoleStatements:
     - Effect: 'Allow'
@@ -52,8 +49,6 @@ provider:
         - sqs:*
       Resource: arn:aws:sqs:*:*:${self:custom.sqs}-match-dl
 
-
-
 package:
   individually: true
   exclude:
@@ -61,8 +56,6 @@ package:
   include:
     - 'audfprint/*.py'
     - 'audfprint/.requirements.zip'
-
-
 
 functions:
   create:
@@ -96,11 +89,11 @@ functions:
   #         events:
   #           - s3:ObjectCreated:*
   #         rules:
-  #           - prefix: wave/
+  #           - prefix: wave2/
   #           - suffix: .wav
-  #   package:
-  #       include:
-  #         - 'audfprint/ffmpeg/ffmpeg'
+  # package:
+  #     include:
+  #       - 'audfprint/ffmpeg/ffmpeg'
 
   match:
     handler: handler.match
@@ -116,9 +109,9 @@ functions:
     deadLetter:
       targetArn:
         GetResourceArn: MatchDeadLetterQueue
-
-
-
+    # package:
+    #     include:
+    #       - 'audfprint/ffmpeg/ffmpeg'
 
 resources:
   Resources:
@@ -131,9 +124,6 @@ resources:
       Type: AWS::SQS::Queue
       Properties:
         QueueName: ${self:custom.sqs}-match-dl
-
-
-
 
 custom:
   # region: ${self:provider.region}
@@ -168,18 +158,14 @@ custom:
       # 'deploy:finalize': serverless s3deploy
       before:package:createDeploymentArtifacts: "zip -d audfprint/.requirements.zip 'boto3/*' 'botocore/*' 'jmespath/*' 'docutils/*' || echo ERR: UNABLE TO REMOVE FROM ZIP"
 
-
-
-
 plugins:
   - serverless-plugin-scripts
   - serverless-python-requirements
   - serverless-plugin-log-retention
   - serverless-stage-manager
-  # - serverless-plugin-existing-s3
+  - serverless-plugin-existing-s3
   - serverless-plugin-tracing
   - serverless-tag-sqs
   - serverless-plugin-lambda-dead-letter
   - serverless-plugin-stack-config
   - serverless-plugin-elastic-beanstalk
-  # - serverless-plugin-iopipe

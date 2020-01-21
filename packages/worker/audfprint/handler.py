@@ -42,8 +42,17 @@ except:
 # from iopipe.contrib.logger import LoggerPlugin
 # from iopipe.contrib.profiler import ProfilerPlugin
 # from iopipe.contrib.trace import TracePlugin
-
+#
 # iopipe = IOpipe(plugins=[EventInfoPlugin(), LoggerPlugin(), ProfilerPlugin(), TracePlugin(auto_http=True)])
+
+# from iopipe import IOpipeiopipe
+# iopipe = IOpipe()
+
+# from iopipe import IOpipeCore
+# from iopipe.contrib.trace import TracePlugin
+# from iopipe.contrib.eventinfo import EventInfoPlugin
+#
+# iopipe = IOpipeCore(plugins=[TracePlugin(), EventInfoPlugin()])
 
 s3 = boto3.resource('s3')
 s3client = boto3.client('s3')
@@ -56,7 +65,7 @@ pnconfig.ssl = False
 
 pubnub = PubNub(pnconfig)
 
-
+# @iopipe
 def fingerprint(event, context):
     if event.get('Event') == 's3:TestEvent':
         return
@@ -68,22 +77,22 @@ def fingerprint(event, context):
     id = key.split('/')[1]
     s3.Bucket(BUCKET_NAME).download_file(key, '/tmp/{}.wav'.format(id))
 
-    # analyzer = audfprint_analyze.Analyzer()
-    # analyzer.n_fft = 512
-    # analyzer.n_hop = analyzer.n_fft/2
-    # analyzer.shifts = 1
-    # # analyzer.exact_count = True
-    # analyzer.density = 20.0
-    # analyzer.target_sr = 11025
-    # analyzer.verbose = False
+    analyzer = audfprint_analyze.Analyzer()
+    analyzer.n_fft = 512
+    analyzer.n_hop = analyzer.n_fft/2
+    analyzer.shifts = 1
+    # analyzer.exact_count = True
+    analyzer.density = 20.0
+    analyzer.target_sr = 11025
+    analyzer.verbose = False
 
-    # saver = audfprint_analyze.hashes_save
-    # output = analyzer.wavfile2hashes('/tmp/{}.wav'.format(id))
-    # saver('/tmp/{}.afpt'.format(id), output)
+    saver = audfprint_analyze.hashes_save
+    output = analyzer.wavfile2hashes('/tmp/{}.wav'.format(id))
+    saver('/tmp/{}.afpt'.format(id), output)
 
-    subprocess.run(['python', 'audfprint/audfprint.py', 'precompute', '--samplerate=11025', '--density=100', '--shifts=1', '/tmp/{}.wav'.format(id)])
+    # subprocess.run(['python', 'audfprint/audfprint.py', 'precompute', '--samplerate=11025', '--density=100', '--shifts=1', '/tmp/{}.wav'.format(id)])
 
-    s3.Bucket(BUCKET_NAME).upload_file('./tmp/{}.afpt'.format(id), key.replace('.wav', '.afpt'))
+    s3.Bucket(BUCKET_NAME).upload_file('./tmp/{}.afpt'.format(id), key.replace('wave', 'fingerprint').replace('.wav', '.afpt'))
 
     body = {
         "input": event
@@ -99,7 +108,7 @@ def fingerprint(event, context):
     return response
 
 
-# @iopipe.decorator
+# @iopipe
 def create(event, context):
     day = event.get('date')
     if not day:
@@ -146,16 +155,20 @@ def create(event, context):
     return response
 
 
-# @iopipe.decorator
+# @iopipe
 def match(event, context):
     hash = event['Records'][0]['body']
     id = event['Records'][0]['messageAttributes']['Id']['stringValue']
+    date = event['Records'][0]['messageAttributes']['Date']['stringValue']
+    # print(id)
 
-    s3.Bucket(BUCKET_NAME).download_file('wave/{}/audio.afpt'.format(id), '/tmp/{}.afpt'.format(id))
+    s3.Bucket(BUCKET_NAME).download_file('wave/{}/{}/audio.afpt'.format(date, id), '/tmp/{}.afpt'.format(id))
     s3.Bucket(BUCKET_NAME).download_file(hash, '/tmp/{}'.format(hash.split('/').pop()))
 
     qry = '/tmp/{}.afpt'.format(id)
     hashFile = '/tmp/{}'.format(hash.split('/').pop())
+
+    # print(qry)
 
     matcher = audfprint_match.Matcher()
     matcher.find_time_range = True

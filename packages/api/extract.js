@@ -22,6 +22,7 @@ const pubnub = new PubNub({
 export const audio = async (event, context, cb) => {
   // console.log(JSON.stringify(event));
   if (!event.Records[0].s3) return cb(null, { event });
+  const today = dateParts(new Date()).slice(0,3).join('');
 
   const input = JSON.parse((await s3.getObject({
     Bucket: process.env.BUCKET_NAME,
@@ -47,7 +48,7 @@ export const audio = async (event, context, cb) => {
     Body: JSON.stringify({ input, event, output }),
     ACL: 'public-read',
     Bucket: process.env.BUCKET_NAME,
-    Key: `wave/${id}/info.json`,
+    Key: `wave/${today}/${id}/info.json`,
   }).promise();
 
   const fileStream = fs.createReadStream(`/tmp/${id}.wav`);
@@ -55,7 +56,7 @@ export const audio = async (event, context, cb) => {
     Body: fileStream,
     ACL: 'public-read',
     Bucket: process.env.BUCKET_NAME,
-    Key: `wave/${id}/audio.wav`,
+    Key: `wave/${today}/${id}/audio.wav`,
   }).promise();
 
   pubnub.publish({
@@ -122,3 +123,17 @@ export const audio = async (event, context, cb) => {
     }),
   });
 };
+
+const dateParts = (date) => {
+  const parts = new Intl.DateTimeFormat('en-gb', {
+    timeZone: 'UTC',
+    hour12: false,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+  }).formatToParts(date).filter(p => p.type !== 'literal').map(p => p.value);
+  return [ parts[2], parts[0], parts[1], ...parts.slice(3) ];
+}
