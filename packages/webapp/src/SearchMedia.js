@@ -14,7 +14,7 @@ import {
   PNGRationalizer,
   SearchForm,
   Preloader,
-  Separator
+  Separator,
 } from './ui';
 import { breakpoint, color, setSpace } from './ui/utils';
 
@@ -88,7 +88,7 @@ class SearchMedia extends Component {
           padding: 16,
           width: 480,
           fontWeight: '600',
-          fontSize: 24
+          fontSize: 24,
         }}
       >
         <span>{this.props.main.state.data.info.title}</span>
@@ -101,13 +101,10 @@ class SearchMedia extends Component {
     return (
       <div
         style={{
-          padding: 16
+          padding: 16,
         }}
       >
-        <img
-          alt="thumbnail"
-          src={this.props.main.state.data.embed[0].thumbnail_url}
-        />
+        <img alt="thumbnail" src={this.props.main.state.data.embed[0].thumbnail_url} />
       </div>
     );
   }
@@ -118,7 +115,7 @@ class SearchMedia extends Component {
       <div
         style={{
           padding: 16,
-          width: 480
+          width: 480,
         }}
       >
         <span>{this.props.main.state.data.embed[0].description}</span>
@@ -133,15 +130,10 @@ class SearchMedia extends Component {
         style={{
           padding: 16,
           width: 480,
-          fontWeight: '600'
+          fontWeight: '600',
         }}
       >
-        <span>
-          Views :{' '}
-          {new Intl.NumberFormat().format(
-            this.props.main.state.data.info.view_count
-          )}
-        </span>
+        <span>Views : {new Intl.NumberFormat().format(this.props.main.state.data.info.view_count)}</span>
       </div>
     );
   }
@@ -187,9 +179,7 @@ class SearchMedia extends Component {
     return (
       <Panel header="Fingerprint" key="5">
         {this.props.main.state.data.fingerprint ? (
-          <Action href={this.props.main.state.data.fingerprint}>
-            Download
-          </Action>
+          <Action href={this.props.main.state.data.fingerprint}>Download</Action>
         ) : null}
       </Panel>
     );
@@ -211,33 +201,30 @@ class SearchMedia extends Component {
     });
 
     return (
-      <Panel
-        header={`Errors${filteredArr ? ': ' + filteredArr.length : ''}`}
-        key="X"
-      >
+      <Panel header={`Errors${filteredArr ? ': ' + filteredArr.length : ''}`} key="X">
         <ReactJson name="errors" src={filteredArr} />
       </Panel>
     );
   }
 
-  renderResult(match) {}
+  // renderResult(match) {}
 
-  // renderCollapse() {
-  //   console.log('In renderCollapse()');
-  //   if (Object.keys(this.props.main.state.data).length === 0) return null;
-  //   console.log('Object.keys present...');
-  //   return (
-  //     <Collapse style={{ marginTop: 14 }}>
-  //       {this.renderHeaders()}
-  //       {this.renderEmbed()}
-  //       {this.renderInfo()}
-  //       {this.renderFile()}
-  //       {this.renderFingerprint()}
-  //       {this.renderMatches()}
-  //       {this.renderErrors()}
-  //     </Collapse>
-  //   );
-  // }
+  renderCollapse() {
+    console.log('In renderCollapse()');
+    if (Object.keys(this.props.main.state.data).length === 0) return null;
+    console.log('Object.keys present...');
+    return (
+      <Collapse style={{ marginTop: 14 }}>
+        {this.renderHeaders()}
+        {this.renderEmbed()}
+        {this.renderInfo()}
+        {this.renderFile()}
+        {this.renderFingerprint()}
+        {this.renderMatches()}
+        {this.renderErrors()}
+      </Collapse>
+    );
+  }
 
   handleSubmit(e) {
     if (e) e.preventDefault();
@@ -253,9 +240,7 @@ class SearchMedia extends Component {
 
     const hasFetchedResults = Object.keys(main.state.data).length > 0;
     const hasFingerprint = main.state.data.fingerprint !== undefined;
-    const hasMatches =
-      main.state.data.matches !== undefined &&
-      main.state.data.matches.length > 0;
+    const hasMatches = main.state.data.matches !== undefined && main.state.data.matches.length > 0;
     const isStillSearching = main.state.status === 'process';
 
     console.log('—— hasFetchedResults: ', hasFetchedResults);
@@ -273,9 +258,7 @@ class SearchMedia extends Component {
               Stand by reputable sources.
             </PageTitle>
             <Separator dir="h" silent size="m" />
-            <SearchForm
-              handleSubmit={data => main.handleSearch.bind(this)(data)}
-            />
+            <SearchForm handleSubmit={data => main.handleSearch.bind(this)(data)} />
           </Container>
         </Content>
       );
@@ -298,26 +281,15 @@ class SearchMedia extends Component {
         const transcriptURL = `TranscriptView?${uid}/${clipStart}/${clipEnd}`;
 
         return (
-          <SearchResult
-            key={mp4Url}
-            onClick={() => this.props.history.push(transcriptURL)}
-          >
+          <SearchResult key={mp4Url} onClick={() => this.props.history.push(transcriptURL)}>
             <div>
               <img src={PNGRationalizer} alt="" />
-              <video
-                controls
-                height="254"
-                onClick={e => e.stopPropagation()}
-                width="300"
-                key={mp4Url}
-              >
+              <video controls height="254" onClick={e => e.stopPropagation()} width="300" key={mp4Url}>
                 <source src={mp4Url} />
               </video>
               <Preloader />
             </div>
-            <PageSubtitle display="h5">
-              {uid.replace(/_/g, ' ')}
-            </PageSubtitle>
+            <PageSubtitle display="h5">{uid.replace(/_/g, ' ')}</PageSubtitle>
             <small style={{ fontSize: 8 }}>
               Matched {match.duration.toFixed(1)}s with {match.nhashaligned} hashes out of {match.nhashraw}
             </small>
@@ -329,22 +301,16 @@ class SearchMedia extends Component {
         <Content>
           <SearchResultsWrapper limit="m">
             <PageTitle display="h2">
-              Here are the{' '}
-              <strong>{main.state.data.matches.length} possible matches</strong>{' '}
-              I found:
+              Here are the <strong>{main.state.data.matches.length} possible matches</strong> I found:
             </PageTitle>
             <Separator dir="h" silent size="m" />
-            <SearchResults>
-              {main.state.data.matches.map(renderResult)}
-            </SearchResults>
+            <SearchResults>{main.state.data.matches.map(renderResult)}</SearchResults>
           </SearchResultsWrapper>
         </Content>
       ) : (
         <Content dir="row" align="center">
           <PageTitle display="h3">
-            <pre style={{ color: color.redM }}>
-              {main.state.message ? main.state.message : '…'}
-            </pre>
+            <pre style={{ color: color.redM }}>{main.state.message ? main.state.message : '…'}</pre>
           </PageTitle>
           <Separator silent size="s" />
         </Content>

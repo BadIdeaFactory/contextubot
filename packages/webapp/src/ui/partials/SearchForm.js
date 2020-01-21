@@ -23,7 +23,7 @@ export default class SearchForm extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      searchKey: 'https://www.youtube.com/watch?v=Uc6zD6gTfEE'
+      searchKey: '',
     };
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
